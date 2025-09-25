@@ -52,8 +52,8 @@ export default function HeroSection() {
               transition={{ delay: 0.4 }}
               className="text-xl text-gray-600 max-w-lg leading-relaxed"
             >
-              Discover our curated collection of first-copy luxury goggles, watches, and belts. 
-              Premium quality meets affordable luxury.
+              Discover our curated collection of luxury goggles, watches, and belts. 
+              Premium quality, thoughtfully priced.
             </motion.p>
           </div>
 

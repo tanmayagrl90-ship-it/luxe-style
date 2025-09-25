@@ -49,7 +49,7 @@ export default function Footer() {
               <h2 className="text-2xl font-bold mb-4">LUXE</h2>
               <p className="text-gray-400 mb-6 max-w-md">
                 Premium fashion accessories that redefine luxury. Discover our curated collection 
-                of first-copy high-quality goggles, watches, and belts.
+                of high-quality goggles, watches, and belts.
               </p>
               <div className="flex space-x-4">
                 <Button variant="ghost" size="icon" className="text-gray-400 hover:text-white">

@@ -54,7 +54,7 @@ export default function CategorySection() {
               viewport={{ once: true }}
               transition={{ delay: index * 0.1 }}
             >
-              <Card className="group cursor-pointer overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300">
+              <Card className="group cursor-pointer overflow-hidden border border-gray-200 hover:border-gray-300 transition-all duration-300">
                 <div className="relative aspect-[4/3] overflow-hidden">
                   <div className={`absolute inset-0 bg-gradient-to-br ${category.color} opacity-90`} />
                   <div className="absolute inset-0 bg-gray-200 flex items-center justify-center">

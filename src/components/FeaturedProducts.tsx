@@ -53,7 +53,7 @@ const featuredProducts = [
 
 export default function FeaturedProducts() {
   return (
-    <section className="py-24 bg-gray-50">
+    <section className="py-24 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -78,7 +78,7 @@ export default function FeaturedProducts() {
               viewport={{ once: true }}
               transition={{ delay: index * 0.1 }}
             >
-              <Card className="group cursor-pointer overflow-hidden border-0 shadow-md hover:shadow-xl transition-all duration-300 bg-white">
+              <Card className="group cursor-pointer overflow-hidden border border-gray-200 hover:border-gray-300 transition-all duration-300 bg-white">
                 <div className="relative aspect-square overflow-hidden">
                   <div className="absolute inset-0 bg-gray-200 flex items-center justify-center">
                     <span className="text-gray-500 font-medium">{product.category}</span>
