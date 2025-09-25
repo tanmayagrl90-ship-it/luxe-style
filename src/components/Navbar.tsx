@@ -146,7 +146,7 @@ export default function Navbar() {
 
       {/* Cart Drawer */}
       <Drawer open={isCartOpen} onOpenChange={setIsCartOpen}>
-        <DrawerContent className="ml-auto w-full sm:max-w-md border-l border-white/10 bg-white">
+        <DrawerContent className="ml-auto w-full sm:max-w-md border-l border-white/10 bg-gray-100">
           <DrawerHeader className="flex items-center justify-between">
             <DrawerTitle className="text-lg font-semibold">Your Cart</DrawerTitle>
             <DrawerClose asChild>
@@ -156,14 +156,20 @@ export default function Navbar() {
 
           <div className="px-6 pb-6">
             {!cartItems || cartItems.length === 0 ? (
-              <div className="min-h-[60vh] flex flex-col items-center justify-center text-center">
-                <h3 className="text-2xl font-bold mb-4">Your cart is empty</h3>
-                <Button className="rounded-full px-6" onClick={() => setIsCartOpen(false)}>
+              <div className="min-h-[70vh] flex flex-col items-center justify-center text-center">
+                <h3 className="text-2xl font-extrabold mb-6 text-gray-900">Your cart is empty</h3>
+                <Button
+                  className="rounded-full h-12 px-8 bg-black text-white hover:bg-black/90"
+                  onClick={() => setIsCartOpen(false)}
+                >
                   Continue shopping
                 </Button>
-                <p className="text-sm text-gray-600 mt-6">
+                <p className="text-sm text-gray-600 mt-10">
                   Have an account?{" "}
-                  <a href="/auth" className="underline">Log in</a> to check out faster.
+                  <a href="/auth" className="underline font-medium text-gray-800">
+                    Log in
+                  </a>{" "}
+                  to check out faster.
                 </p>
               </div>
             ) : (
