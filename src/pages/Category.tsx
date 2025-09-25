@@ -63,7 +63,7 @@ export default function CategoryPage() {
                 <p className="text-gray-300">No products found in this category.</p>
               </div>
             ) : (
-              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
                 {products.map((product, index) => (
                   <motion.div
                     key={product._id}
@@ -73,11 +73,11 @@ export default function CategoryPage() {
                     transition={{ delay: index * 0.05 }}
                   >
                     <Card
-                      className="group overflow-hidden rounded-2xl border border-white/10 hover:border-white/20 transition-all duration-300 bg-white cursor-pointer"
+                      className="group bg-transparent border-transparent shadow-none cursor-pointer"
                       onClick={() => navigate(`/product/${product._id}`)}
                     >
                       <div
-                        className="relative aspect-square overflow-hidden"
+                        className="relative aspect-square overflow-hidden rounded-2xl ring-1 ring-white/10"
                         onClick={(e) => e.stopPropagation()}
                       >
                         {product.images && product.images.length > 0 ? (
@@ -95,60 +95,28 @@ export default function CategoryPage() {
                           </div>
                         )}
                         {product.originalPrice && product.originalPrice > product.price ? (
-                          <Badge className="absolute top-3 left-3 z-10 bg-gray-900 text-white">Sale</Badge>
+                          <Badge className="absolute top-3 left-3 z-10 bg-white text-black">Sale</Badge>
                         ) : product.featured ? (
-                          <Badge className="absolute top-3 left-3 z-10 bg-gray-900 text-white">Featured</Badge>
+                          <Badge className="absolute top-3 left-3 z-10 bg-white text-black">Featured</Badge>
                         ) : null}
                       </div>
 
-                      <div className="p-4" onClick={(e) => e.stopPropagation()}>
-                        <div className="flex items-center mb-2">
-                          <div className="flex items-center space-x-1">
-                            <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
-                            <span className="text-sm text-gray-600">4.8</span>
-                            <span className="text-sm text-gray-400">(100+)</span>
-                          </div>
-                        </div>
-
-                        <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-gray-700 transition-colors">
+                      <div className="px-1 sm:px-0 pt-3" onClick={(e) => e.stopPropagation()}>
+                        {/* Name */}
+                        <h3 className="font-extrabold tracking-tight text-white text-base md:text-lg mb-1 line-clamp-2">
                           {product.name}
                         </h3>
 
-                        <p className="text-sm text-gray-600 line-clamp-2 mb-3">{product.description}</p>
-
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center space-x-2">
-                            <span className="text-lg font-bold text-gray-900">₹{product.price.toLocaleString()}</span>
-                            {product.originalPrice && (
-                              <span className="text-sm text-gray-500 line-through">
-                                ₹{product.originalPrice.toLocaleString()}
-                              </span>
-                            )}
-                          </div>
-                        </div>
-
-                        {/* Actions */}
-                        <div className="mt-3 grid grid-cols-2 gap-2">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="w-full gap-2"
-                            onClick={() => {
-                              const message = `Hi! I'm interested in "${product.name}" (${prettyName[product.category] ?? product.category}). Price: ₹${product.price.toLocaleString()}${product.originalPrice ? ` (MRP ₹${product.originalPrice.toLocaleString()})` : ""}. Please share more details.`;
-                              const url = `https://wa.me/9871629699?text=${encodeURIComponent(message)}`;
-                              window.open(url, "_blank");
-                            }}
-                          >
-                            <MessageCircle className="h-4 w-4" />
-                            WhatsApp
-                          </Button>
-                          <Button
-                            size="sm"
-                            className="w-full"
-                            onClick={() => handleAddToCart(product._id as any)}
-                          >
-                            Add to Cart
-                          </Button>
+                        {/* Prices */}
+                        <div className="flex items-center gap-3">
+                          {product.originalPrice && (
+                            <span className="text-sm text-white/50 line-through">
+                              ₹{product.originalPrice.toLocaleString()}
+                            </span>
+                          )}
+                          <span className="text-white font-semibold">
+                            ₹{product.price.toLocaleString()}
+                          </span>
                         </div>
                       </div>
                     </Card>
