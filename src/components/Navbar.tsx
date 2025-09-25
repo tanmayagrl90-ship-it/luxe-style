@@ -22,44 +22,35 @@ export default function Navbar() {
     <motion.nav
       initial={{ y: -100 }}
       animate={{ y: 0 }}
-      className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-100"
+      className="fixed top-0 left-0 right-0 z-50 bg-black text-white border-b border-white/10"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          {/* Logo */}
+        <div className="relative flex items-center justify-between h-16">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-10 w-10 border border-white/50 hover:bg-white/10 rounded-md"
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+          >
+            <Menu className="h-5 w-5 text-white" />
+          </Button>
+
           <motion.div
             whileHover={{ scale: 1.05 }}
-            className="flex items-center cursor-pointer"
+            className="absolute left-1/2 -translate-x-1/2 cursor-pointer select-none"
             onClick={() => navigate("/")}
           >
-            <span className="text-2xl font-bold tracking-tight text-gray-900">
-              LUXE
-            </span>
+            <span className="text-xl font-extrabold tracking-widest">LUXE</span>
           </motion.div>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
-            {categories.map((category) => (
-              <motion.a
-                key={category.name}
-                href={category.href}
-                whileHover={{ y: -2 }}
-                className="text-gray-700 hover:text-gray-900 font-medium transition-colors"
-              >
-                {category.name}
-              </motion.a>
-            ))}
-          </div>
-
-          {/* Right Side Actions */}
           <div className="flex items-center space-x-4">
-            <Button variant="ghost" size="icon" className="hidden sm:flex">
-              <Search className="h-5 w-5" />
+            <Button variant="ghost" size="icon" className="hidden sm:flex hover:bg-white/10">
+              <Search className="h-5 w-5 text-white" />
             </Button>
-            
-            <Button variant="ghost" size="icon" className="relative">
-              <ShoppingBag className="h-5 w-5" />
-              <Badge className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 text-xs">
+
+            <Button variant="ghost" size="icon" className="relative hover:bg-white/10">
+              <ShoppingBag className="h-5 w-5 text-white" />
+              <Badge className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 text-xs bg-transparent border border-white/60 text-white">
                 0
               </Badge>
             </Button>
@@ -70,14 +61,15 @@ export default function Navbar() {
                   variant="ghost"
                   size="icon"
                   onClick={() => navigate("/profile")}
+                  className="hover:bg-white/10"
                 >
-                  <User className="h-5 w-5" />
+                  <User className="h-5 w-5 text-white" />
                 </Button>
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => signOut()}
-                  className="hidden sm:flex"
+                  className="hidden sm:flex border-white/40 text-white hover:bg-white/10"
                 >
                   Sign Out
                 </Button>
@@ -85,21 +77,12 @@ export default function Navbar() {
             ) : (
               <Button
                 onClick={() => navigate("/auth")}
-                className="bg-gray-900 hover:bg-gray-800 text-white"
+                className="border border-white/40 text-white bg-transparent hover:bg-white/10"
+                variant="outline"
               >
                 Sign In
               </Button>
             )}
-
-            {/* Mobile Menu Button */}
-            <Button
-              variant="ghost"
-              size="icon"
-              className="md:hidden"
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-            >
-              <Menu className="h-5 w-5" />
-            </Button>
           </div>
         </div>
 
@@ -109,19 +92,19 @@ export default function Navbar() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden border-t border-gray-100 py-4"
+            className="md:hidden border-t border-white/10 py-4 bg-black"
           >
             <div className="flex flex-col space-y-4">
               {categories.map((category) => (
                 <a
                   key={category.name}
                   href={category.href}
-                  className="text-gray-700 hover:text-gray-900 font-medium"
+                  className="text-white/90 hover:text-white font-medium"
                 >
                   {category.name}
                 </a>
               ))}
-              <Button variant="ghost" className="justify-start">
+              <Button variant="ghost" className="justify-start text-white hover:bg-white/10">
                 <Search className="h-4 w-4 mr-2" />
                 Search
               </Button>
