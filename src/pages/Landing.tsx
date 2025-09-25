@@ -2,7 +2,6 @@ import { motion } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
 import CategorySection from "@/components/CategorySection";
-import FeaturedProducts from "@/components/FeaturedProducts";
 import Footer from "@/components/Footer";
 
 export default function Landing() {
@@ -17,7 +16,6 @@ export default function Landing() {
       <main className="pt-16">
         <HeroSection />
         <CategorySection />
-        <FeaturedProducts />
       </main>
       <Footer />
     </motion.div>
