@@ -11,6 +11,7 @@ import { useQuery } from "convex/react";
 import { motion } from "framer-motion";
 import { MessageCircle, Star } from "lucide-react";
 import { useParams } from "react-router";
+import { useNavigate } from "react-router";
 
 const prettyName: Record<string, string> = {
   goggles: "Goggles",
@@ -23,6 +24,7 @@ export default function CategoryPage() {
   const products = useQuery(api.products.getProductsByCategory, { category });
   const { isAuthenticated, user, signIn } = useAuth();
   const addToCart = useMutation(api.cart.addToCart);
+  const navigate = useNavigate();
 
   const handleAddToCart = async (productId: string) => {
     try {
@@ -70,8 +72,14 @@ export default function CategoryPage() {
                     viewport={{ once: true }}
                     transition={{ delay: index * 0.05 }}
                   >
-                    <Card className="group overflow-hidden border border-gray-200 hover:border-gray-300 transition-all duration-300 bg-white">
-                      <div className="relative aspect-square overflow-hidden">
+                    <Card
+                      className="group overflow-hidden border border-gray-200 hover:border-gray-300 transition-all duration-300 bg-white cursor-pointer"
+                      onClick={() => navigate(`/product/${product._id}`)}
+                    >
+                      <div
+                        className="relative aspect-square overflow-hidden"
+                        onClick={(e) => e.stopPropagation()}
+                      >
                         {product.images && product.images.length > 0 ? (
                           <img
                             src={product.images[0]}
@@ -91,7 +99,7 @@ export default function CategoryPage() {
                         )}
                       </div>
 
-                      <div className="p-4">
+                      <div className="p-4" onClick={(e) => e.stopPropagation()}>
                         <div className="flex items-center mb-2">
                           <div className="flex items-center space-x-1">
                             <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />

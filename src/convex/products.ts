@@ -28,6 +28,13 @@ export const getFeaturedProducts = query({
   },
 });
 
+export const getProductById = query({
+  args: { id: v.id("products") },
+  handler: async (ctx, args) => {
+    return await ctx.db.get(args.id);
+  },
+});
+
 export const createProduct = mutation({
   args: {
     name: v.string(),
