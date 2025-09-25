@@ -26,8 +26,10 @@ export default function ProductPage() {
   const addToCart = useMutation(api.cart.addToCart);
   const [qty, setQty] = useState(1);
   // Add color state only for the Coach belt
-  const supportsColors = (product?.name ?? "").toLowerCase() === "coach premium belt";
-  const [color, setColor] = useState<"black" | "grey">("black");
+  const supportsColors =
+    (product?.name ?? "").toLowerCase() === "coach belt" ||
+    (product?.name ?? "").toLowerCase() === "coach premium belt";
+  const [color, setColor] = useState<"black" | "white">("black");
 
   // Add: active image index for gallery
   const [activeIndex, setActiveIndex] = useState(0);
@@ -36,10 +38,9 @@ export default function ProductPage() {
   useEffect(() => {
     if (!product?.images?.length) return;
     if (supportsColors) {
-      // Assume index 0 => black, index 1 => grey if exists
+      // Map: black -> index 0, white -> index 1 (fallback to available)
       setActiveIndex(color === "black" ? 0 : Math.min(1, product.images.length - 1));
     } else {
-      // Default to first image
       setActiveIndex(0);
     }
   }, [product?._id, product?.images?.length, supportsColors, color]);
@@ -165,28 +166,27 @@ export default function ProductPage() {
               )}
             </div>
 
-            {/* Color (Coach premium belt only) */}
+            {/* Shipping notice */}
+            <p className="mt-2 text-sm text-white/70">
+              <span className="underline">Shipping</span> calculated at checkout.
+            </p>
+
+            {/* Color (Coach belt only) - dropdown like reference "Size" selector */}
             {supportsColors && (
               <div className="mt-6">
                 <p className="text-sm text-white/70 mb-2">Color</p>
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant={color === "black" ? "default" : "ghost"}
-                    size="sm"
-                    className={`rounded-full px-4 ${color === "black" ? "bg-white text-black hover:bg-white/90" : "hover:bg-white/10"}`}
-                    onClick={() => setColor("black")}
-                  >
-                    Black
-                  </Button>
-                  <Button
-                    variant={color === "grey" ? "default" : "ghost"}
-                    size="sm"
-                    className={`rounded-full px-4 ${color === "grey" ? "bg-white text-black hover:bg-white/90" : "hover:bg-white/10"}`}
-                    onClick={() => setColor("grey")}
-                  >
-                    Grey
-                  </Button>
-                </div>
+                <Select
+                  value={color}
+                  onValueChange={(v) => setColor((v as "black" | "white"))}
+                >
+                  <SelectTrigger className="h-12 rounded-full border-white/20 bg-transparent text-white">
+                    <SelectValue placeholder="Select color" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="black">Black</SelectItem>
+                    <SelectItem value="white">White</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             )}
 
