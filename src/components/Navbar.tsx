@@ -5,11 +5,18 @@ import { ShoppingBag, User, Search, Menu } from "lucide-react";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { useNavigate } from "react-router";
+import { api } from "@/convex/_generated/api";
+import { useQuery } from "convex/react";
 
 export default function Navbar() {
   const { isAuthenticated, user, signOut } = useAuth();
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  // Add live cart count
+  const cartCount = useQuery(api.cart.getCartCount, {
+    userId: user?._id ?? null,
+  });
 
   const categories = [
     { name: "Home page", href: "/" },
@@ -69,7 +76,7 @@ export default function Navbar() {
             <Button variant="ghost" size="icon" className="relative hover:bg-white/10">
               <ShoppingBag className="h-5 w-5 text-white" />
               <Badge className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 text-xs bg-transparent border border-white/60 text-white">
-                0
+                {cartCount ?? 0}
               </Badge>
             </Button>
 

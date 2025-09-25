@@ -47,7 +47,9 @@ const schema = defineSchema(
       userId: v.id("users"),
       productId: v.id("products"),
       quantity: v.number(),
-    }).index("by_user", ["userId"]),
+    })
+      .index("by_user", ["userId"])
+      .index("by_user_and_product", ["userId", "productId"]),
 
     orders: defineTable({
       userId: v.id("users"),

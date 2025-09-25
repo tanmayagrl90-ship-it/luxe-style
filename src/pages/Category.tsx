@@ -3,7 +3,10 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { useAuth } from "@/hooks/use-auth";
+import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { toast } from "sonner";
 import { useQuery } from "convex/react";
 import { motion } from "framer-motion";
 import { MessageCircle, Star } from "lucide-react";
@@ -18,6 +21,25 @@ const prettyName: Record<string, string> = {
 export default function CategoryPage() {
   const { category = "" } = useParams();
   const products = useQuery(api.products.getProductsByCategory, { category });
+  const { isAuthenticated, user, signIn } = useAuth();
+  const addToCart = useMutation(api.cart.addToCart);
+
+  const handleAddToCart = async (productId: string) => {
+    try {
+      let currentUserId = user?._id;
+      if (!isAuthenticated || !currentUserId) {
+        await signIn("anonymous");
+        toast("Signed in as guest");
+        // After anonymous sign in completes, the hook will refresh user doc automatically.
+        return; // User will click again; keeps logic simple and avoids race with auth refresh
+      }
+      await addToCart({ userId: currentUserId, productId: productId as any, quantity: 1 });
+      toast("Added to cart");
+    } catch (e) {
+      console.error(e);
+      toast("Failed to add to cart");
+    }
+  };
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="min-h-screen">
@@ -95,7 +117,8 @@ export default function CategoryPage() {
                           </div>
                         </div>
 
-                        <div className="mt-3">
+                        {/* Actions */}
+                        <div className="mt-3 grid grid-cols-2 gap-2">
                           <Button
                             variant="outline"
                             size="sm"
@@ -107,7 +130,14 @@ export default function CategoryPage() {
                             }}
                           >
                             <MessageCircle className="h-4 w-4" />
-                            Order on WhatsApp
+                            WhatsApp
+                          </Button>
+                          <Button
+                            size="sm"
+                            className="w-full"
+                            onClick={() => handleAddToCart(product._id as any)}
+                          >
+                            Add to Cart
                           </Button>
                         </div>
                       </div>
