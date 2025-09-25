@@ -31,6 +31,9 @@ export default function Navbar() {
             size="icon"
             className="h-10 w-10 border border-white/50 hover:bg-white/10 rounded-md"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
+            aria-label="Open menu"
+            aria-expanded={isMenuOpen}
+            aria-controls="luxe-nav-overlay"
           >
             <Menu className="h-5 w-5 text-white" />
           </Button>
@@ -104,21 +107,26 @@ export default function Navbar() {
         {/* Mobile Menu */}
         {isMenuOpen && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            className="md:hidden border-t border-white/10 py-4 bg-black"
+            id="luxe-nav-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            // Full-viewport overlay below the navbar on ALL screen sizes
+            className="fixed left-0 right-0 top-16 bottom-0 bg-black/80 backdrop-blur-sm border-t border-white/10 z-50"
           >
-            <div className="flex flex-col space-y-4">
-              {categories.map((category) => (
-                <a
-                  key={category.name}
-                  href={category.href}
-                  className="text-white/90 hover:text-white font-medium"
-                >
-                  {category.name}
-                </a>
-              ))}
+            <div className="max-w-md w-full h-full bg-black/90 p-6">
+              <div className="flex flex-col space-y-4">
+                {categories.map((category) => (
+                  <a
+                    key={category.name}
+                    href={category.href}
+                    className="text-white/90 hover:text-white font-medium py-3 px-2 rounded hover:bg-white/5"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    {category.name}
+                  </a>
+                ))}
+              </div>
             </div>
           </motion.div>
         )}
