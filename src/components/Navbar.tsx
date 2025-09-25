@@ -94,7 +94,7 @@ export default function Navbar() {
                   variant="outline"
                   size="sm"
                   onClick={() => signOut()}
-                  className="hidden sm:flex border-white/40 text-white hover:bg-white/10"
+                  className="hidden sm:flex border-white/40 text-white bg-transparent hover:bg-white/10"
                 >
                   Sign Out
                 </Button>

@@ -96,6 +96,25 @@ function Auth({ redirectAfterAuth }: AuthProps = {}) {
     }
   };
 
+  const handleGoogleLogin = async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      // Triggers Google OAuth via Convex Auth (ensure Google provider is configured)
+      await signIn("google");
+      const redirect = redirectAfterAuth || "/";
+      navigate(redirect);
+    } catch (error) {
+      console.error("Google login error:", error);
+      setError(
+        error instanceof Error
+          ? error.message
+          : "Failed to sign in with Google. Please try again."
+      );
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
 
@@ -170,10 +189,19 @@ function Auth({ redirectAfterAuth }: AuthProps = {}) {
                       type="button"
                       variant="outline"
                       className="w-full mt-4"
+                      onClick={handleGoogleLogin}
+                      disabled={isLoading}
+                    >
+                      Continue with Google
+                    </Button>
+
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="w-full mt-3"
                       onClick={handleGuestLogin}
                       disabled={isLoading}
                     >
-                      <UserX className="mr-2 h-4 w-4" />
                       Continue as Guest
                     </Button>
                   </div>
