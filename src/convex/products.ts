@@ -54,3 +54,22 @@ export const createProduct = mutation({
     });
   },
 });
+
+export const cleanupWatchesKeepGuess = mutation({
+  args: {},
+  handler: async (ctx) => {
+    const watches = await ctx.db
+      .query("products")
+      .withIndex("by_category", (q) => q.eq("category", "watches"))
+      .collect();
+
+    let removed = 0;
+    for (const p of watches) {
+      if (p.name.toLowerCase() !== "guess watch") {
+        await ctx.db.delete(p._id);
+        removed++;
+      }
+    }
+    return { removed };
+  },
+});
