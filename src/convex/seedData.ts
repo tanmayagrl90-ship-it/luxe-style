@@ -124,29 +124,31 @@ export const addCoachBelt = mutation({
       .withIndex("by_category", (q) => q.eq("category", "belts"))
       .collect();
 
+    // Update: match the new requested name
     const already = existing.find(
-      (p) => p.name.toLowerCase() === "coach premium belt"
+      (p) => p.name.toLowerCase() === "coach belt"
     );
     if (already) {
-      return { message: "Coach premium belt already exists", id: already._id };
+      return { message: "Coach belt already exists", id: already._id };
     }
 
+    // Insert with user-provided images and pricing
     const id = await ctx.db.insert("products", {
-      name: "Coach premium belt",
+      name: "Coach belt",
       description:
-        "Coach premium belt available in Black and Grey. Premium finish with elegant hardware.",
-      price: 899, // discounted price
-      originalPrice: 1699,
+        "Coach belt with premium finish. Available in two colorways (see images).",
+      price: 849, // discounted price
+      originalPrice: 2000,
       category: "belts",
       images: [
-        "https://harmless-tapir-303.convex.cloud/api/storage/5588437d-4ac9-493d-a17e-ae4fa4a86af8",
-        "https://harmless-tapir-303.convex.cloud/api/storage/d48c4a6e-a9f3-4aff-98d5-df3a78ebcda1",
+        "https://harmless-tapir-303.convex.cloud/api/storage/50b4ee66-b27c-42a1-861f-302e2cff61a2",
+        "https://harmless-tapir-303.convex.cloud/api/storage/4355bc65-5844-43f6-af98-54aa3b51d6b8",
       ],
       featured: true,
       inStock: true,
     });
 
-    return { message: "Inserted Coach premium belt", id };
+    return { message: "Inserted Coach belt", id };
   },
 });
 
