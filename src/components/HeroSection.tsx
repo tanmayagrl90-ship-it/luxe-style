@@ -90,10 +90,6 @@ export default function HeroSection() {
               <span>Free Shipping</span>
             </div>
             <div className="flex items-center space-x-2">
-              <div className="w-2 h-2 bg-blue-500 rounded-full" />
-              <span>30-Day Returns</span>
-            </div>
-            <div className="flex items-center space-x-2">
               <div className="w-2 h-2 bg-purple-500 rounded-full" />
               <span>Premium Quality</span>
             </div>
