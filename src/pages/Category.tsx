@@ -78,7 +78,6 @@ export default function CategoryPage() {
                     >
                       <div
                         className="relative aspect-square overflow-hidden rounded-2xl ring-1 ring-white/10"
-                        onClick={(e) => e.stopPropagation()}
                       >
                         {product.images && product.images.length > 0 ? (
                           <img
@@ -101,7 +100,7 @@ export default function CategoryPage() {
                         ) : null}
                       </div>
 
-                      <div className="px-1 sm:px-0 pt-3" onClick={(e) => e.stopPropagation()}>
+                      <div className="px-1 sm:px-0 pt-3">
                         {/* Name */}
                         <h3 className="font-extrabold tracking-tight text-white text-base md:text-lg mb-1 line-clamp-2">
                           {product.name}
