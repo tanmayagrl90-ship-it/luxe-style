@@ -1,3 +1,7 @@
+import { Button } from "@/components/ui/button";
+import { motion } from "framer-motion";
+import { ArrowRight } from "lucide-react";
+
 export default function HeroSection() {
   const bg =
     "https://harmless-tapir-303.convex.cloud/api/storage/6915b338-b492-4de8-84e3-0f78fb0674fd";
@@ -13,8 +17,6 @@ export default function HeroSection() {
       />
       {/* Subtle dark overlay for contrast */}
       <div className="absolute inset-0 bg-black/40" />
-
-      {/* Removed centered overlay content for a clean, full-bleed hero */}
     </section>
   );
 }
