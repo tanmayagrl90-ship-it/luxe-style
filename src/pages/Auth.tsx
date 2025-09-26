@@ -195,6 +195,8 @@ function Auth({ redirectAfterAuth }: AuthProps = {}) {
                       Continue with Google
                     </Button>
 
+                    {/* Removed: Continue as Guest button */}
+                    {/* 
                     <Button
                       type="button"
                       variant="outline"
@@ -204,6 +206,7 @@ function Auth({ redirectAfterAuth }: AuthProps = {}) {
                     >
                       Continue as Guest
                     </Button>
+                    */}
                   </div>
                 </CardContent>
               </form>
