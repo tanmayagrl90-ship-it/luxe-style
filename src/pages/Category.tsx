@@ -121,9 +121,8 @@ export default function CategoryPage() {
                         {/* Order on WhatsApp - direct open with product details */}
                         <div className="mt-3">
                           <Button
-                            variant="outline"
                             size="sm"
-                            className="rounded-full border-white/30 text-white hover:bg-white/10"
+                            className="rounded-full bg-[#25D366] text-white hover:bg-[#20bd5b]"
                             onClick={(e) => {
                               e.stopPropagation();
                               const link = `${window.location.origin}/product/${product._id}`;
