@@ -201,32 +201,25 @@ export default function Navbar() {
                         return;
                       }
 
-                      // Build a clean, tabular-style message for WhatsApp
+                      // Build a simple, non-tabular message for WhatsApp (names only, no image URLs)
                       const lines: Array<string> = [];
                       lines.push("I want to order:");
                       lines.push("");
-                      lines.push("Item | MRP | Price | Qty | Subtotal");
-                      lines.push("--- | --- | --- | --- | ---");
 
                       let grandTotal = 0;
                       for (const item of cartItems) {
                         const name = item.product.name;
-                        const mrp = item.product.originalPrice
-                          ? `₹${item.product.originalPrice.toLocaleString()}`
-                          : "-";
+                        const mrpPart = item.product.originalPrice
+                          ? ` | MRP ₹${item.product.originalPrice.toLocaleString()}`
+                          : "";
                         const price = `₹${item.product.price.toLocaleString()}`;
                         const qty = item.quantity ?? 1;
                         const subtotalNum = (item.product.price ?? 0) * qty;
-                        const subtotal = `₹${subtotalNum.toLocaleString()}`;
                         grandTotal += subtotalNum;
 
-                        lines.push(`${name} | ${mrp} | ${price} | ${qty} | ${subtotal}`);
-
-                        // Attach first image URL line if present
-                        const img = item.product.images?.[0];
-                        if (img) {
-                          lines.push(`Image: ${img}`);
-                        }
+                        lines.push(
+                          `- ${name} | Qty: ${qty} | Price: ${price}${mrpPart}`
+                        );
                       }
 
                       lines.push("");
