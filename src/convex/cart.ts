@@ -71,3 +71,39 @@ export const getCartItems = query({
     return result;
   },
 });
+
+export const setCartItemQuantity = mutation({
+  args: {
+    userId: v.id("users"),
+    productId: v.id("products"),
+    quantity: v.number(),
+  },
+  handler: async (ctx, args) => {
+    const existing = await ctx.db
+      .query("cart")
+      .withIndex("by_user_and_product", (q) =>
+        q.eq("userId", args.userId).eq("productId", args.productId),
+      )
+      .unique();
+
+    // If quantity <= 0, delete existing row (if any)
+    if (args.quantity <= 0) {
+      if (existing) {
+        await ctx.db.delete(existing._id);
+      }
+      return null;
+    }
+
+    if (existing) {
+      await ctx.db.patch(existing._id, { quantity: args.quantity });
+      return existing._id;
+    }
+
+    // If not existing and quantity > 0, insert a new row (no color by default)
+    return await ctx.db.insert("cart", {
+      userId: args.userId,
+      productId: args.productId,
+      quantity: args.quantity,
+    });
+  },
+});

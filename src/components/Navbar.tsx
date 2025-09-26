@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { api } from "@/convex/_generated/api";
-import { useQuery } from "convex/react";
+import { useQuery, useMutation } from "convex/react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 
 export default function Navbar() {
@@ -39,6 +39,9 @@ export default function Navbar() {
 
   // Cart items for drawer
   const cartItems = useQuery(api.cart.getCartItems, { userId: user?._id ?? null });
+
+  // Add mutation for updating cart quantities
+  const setCartItemQuantity = useMutation(api.cart.setCartItemQuantity);
 
   // Estimated total for display in the cart panel
   const estimatedTotal =
@@ -221,8 +224,38 @@ export default function Navbar() {
                         </div>
                         <div className="min-w-0 flex-1">
                           <p className="font-semibold truncate">{item.product.name}</p>
-                          <p className="text-sm text-gray-600">Qty: {item.quantity}</p>
-                          <p className="text-sm font-semibold">₹{(item.product.price * item.quantity).toLocaleString()}</p>
+                          <div className="mt-1 inline-flex items-center gap-2 rounded-full border border-gray-300 px-2 py-1">
+                            <button
+                              className="h-6 w-6 grid place-items-center rounded-full hover:bg-gray-200"
+                              aria-label="Decrease quantity"
+                              onClick={async () => {
+                                if (!user?._id) return;
+                                await setCartItemQuantity({
+                                  userId: user._id as any,
+                                  productId: item.productId as any,
+                                  quantity: Math.max(0, (item.quantity ?? 1) - 1),
+                                });
+                              }}
+                            >
+                              −
+                            </button>
+                            <span className="min-w-6 text-center text-sm">{item.quantity}</span>
+                            <button
+                              className="h-6 w-6 grid place-items-center rounded-full hover:bg-gray-200"
+                              aria-label="Increase quantity"
+                              onClick={async () => {
+                                if (!user?._id) return;
+                                await setCartItemQuantity({
+                                  userId: user._id as any,
+                                  productId: item.productId as any,
+                                  quantity: (item.quantity ?? 1) + 1,
+                                });
+                              }}
+                            >
+                              +
+                            </button>
+                          </div>
+                          <p className="text-sm font-semibold mt-1">₹{(item.product.price * item.quantity).toLocaleString()}</p>
                           {(item as any).color ? (
                             <p className="text-xs text-gray-600">Color: {`${String((item as any).color)[0].toUpperCase()}${String((item as any).color).slice(1)}`}</p>
                           ) : null}
