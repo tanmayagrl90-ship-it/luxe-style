@@ -26,6 +26,8 @@ function RouteSyncer() {
       { type: "iframe-route-change", path: location.pathname },
       "*",
     );
+    // Ensure we always start at the top on route changes
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
   }, [location.pathname]);
 
   useEffect(() => {
