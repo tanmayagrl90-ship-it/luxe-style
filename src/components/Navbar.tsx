@@ -3,7 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/hooks/use-auth";
 import { ShoppingBag, User, Search, Menu } from "lucide-react";
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { api } from "@/convex/_generated/api";
 import { useQuery } from "convex/react";
@@ -14,6 +14,16 @@ export default function Navbar() {
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  // Add: mounted flag to avoid portal DOM errors during route transitions
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+    return () => {
+      // Ensure drawer is closed on unmount to avoid portal reconciliation issues
+      setIsCartOpen(false);
+      setIsMenuOpen(false);
+    };
+  }, []);
 
   // Add live cart count
   const cartCount = useQuery(api.cart.getCartCount, {
@@ -145,107 +155,109 @@ export default function Navbar() {
       </div>
 
       {/* Cart Drawer */}
-      <Drawer open={isCartOpen} onOpenChange={setIsCartOpen}>
-        <DrawerContent className="ml-auto w-full sm:max-w-md border-l border-white/10 bg-gray-100">
-          <DrawerHeader className="flex items-center justify-between">
-            <DrawerTitle className="text-lg font-semibold">Your Cart</DrawerTitle>
-            <DrawerClose asChild>
-              <button aria-label="Close cart" className="p-2 rounded-md hover:bg-black/5">✕</button>
-            </DrawerClose>
-          </DrawerHeader>
+      {mounted && (
+        <Drawer open={isCartOpen} onOpenChange={setIsCartOpen}>
+          <DrawerContent className="ml-auto w-full sm:max-w-md border-l border-white/10 bg-gray-100">
+            <DrawerHeader className="flex items-center justify-between">
+              <DrawerTitle className="text-lg font-semibold">Your Cart</DrawerTitle>
+              <DrawerClose asChild>
+                <button aria-label="Close cart" className="p-2 rounded-md hover:bg-black/5">✕</button>
+              </DrawerClose>
+            </DrawerHeader>
 
-          <div className="px-6 pb-6">
-            {!cartItems || cartItems.length === 0 ? (
-              <div className="min-h-[70vh] flex flex-col items-center justify-center text-center">
-                <h3 className="text-2xl font-extrabold mb-6 text-gray-900">Your cart is empty</h3>
-                <Button
-                  className="rounded-full h-12 px-8 bg-black text-white hover:bg-black/90"
-                  onClick={() => setIsCartOpen(false)}
-                >
-                  Continue shopping
-                </Button>
-                <p className="text-sm text-gray-600 mt-10">
-                  Have an account?{" "}
-                  <a href="/auth" className="underline font-medium text-gray-800">
-                    Log in
-                  </a>{" "}
-                  to check out faster.
-                </p>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                <ul className="space-y-3">
-                  {cartItems.map((item) => (
-                    <li key={item._id} className="flex gap-3 border border-gray-200 rounded-md p-3">
-                      <div className="h-16 w-16 rounded-md overflow-hidden bg-gray-100 flex-shrink-0">
-                        {item.product.images?.[0] ? (
-                          <img src={item.product.images[0]} alt={item.product.name} className="h-full w-full object-cover" />
-                        ) : null}
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <p className="font-medium truncate">{item.product.name}</p>
-                        <p className="text-sm text-gray-600">Qty: {item.quantity}</p>
-                        <p className="text-sm font-semibold">₹{(item.product.price * item.quantity).toLocaleString()}</p>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-
-                <div className="pt-2 border-t">
+            <div className="px-6 pb-6">
+              {!cartItems || cartItems.length === 0 ? (
+                <div className="min-h-[70vh] flex flex-col items-center justify-center text-center">
+                  <h3 className="text-2xl font-extrabold mb-6 text-gray-900">Your cart is empty</h3>
                   <Button
-                    className="w-full rounded-full bg-black text-white hover:bg-black/90"
-                    onClick={() => {
-                      // If no items, just open WhatsApp chat
-                      if (!cartItems || cartItems.length === 0) {
-                        window.location.href = "https://wa.me/9871629699";
-                        return;
-                      }
-
-                      // Build a simple, non-tabular message for WhatsApp (names only, no image URLs)
-                      const lines: Array<string> = [];
-                      lines.push("I want to order:");
-                      lines.push("");
-
-                      let grandTotal = 0;
-                      for (const item of cartItems) {
-                        const name = item.product.name;
-                        const mrpPart = item.product.originalPrice
-                          ? ` | MRP ₹${item.product.originalPrice.toLocaleString()}`
-                          : "";
-                        const price = `₹${item.product.price.toLocaleString()}`;
-                        const qty = item.quantity ?? 1;
-                        const subtotalNum = (item.product.price ?? 0) * qty;
-                        grandTotal += subtotalNum;
-
-                        lines.push(
-                          `- ${name} | Qty: ${qty} | Price: ${price}${mrpPart}`
-                        );
-                        // Include color if present (e.g., Coach belt variant)
-                        if ((item as any).color) {
-                          const c = String((item as any).color);
-                          const cap = c.charAt(0).toUpperCase() + c.slice(1);
-                          lines.push(`  Color: ${cap}`);
-                        }
-                        const productLink = `${window.location.origin}/product/${item.product._id}`;
-                        lines.push(`  Link: ${productLink}`);
-                      }
-
-                      lines.push("");
-                      lines.push(`Grand Total: ₹${grandTotal.toLocaleString()}`);
-
-                      const message = lines.join("\n");
-                      const url = `https://wa.me/9871629699?text=${encodeURIComponent(message)}`;
-                      window.location.href = url;
-                    }}
+                    className="rounded-full h-12 px-8 bg-black text-white hover:bg-black/90"
+                    onClick={() => setIsCartOpen(false)}
                   >
-                    Checkout
+                    Continue shopping
                   </Button>
+                  <p className="text-sm text-gray-600 mt-10">
+                    Have an account?{" "}
+                    <a href="/auth" className="underline font-medium text-gray-800">
+                      Log in
+                    </a>{" "}
+                    to check out faster.
+                  </p>
                 </div>
-              </div>
-            )}
-          </div>
-        </DrawerContent>
-      </Drawer>
+              ) : (
+                <div className="space-y-4">
+                  <ul className="space-y-3">
+                    {cartItems.map((item) => (
+                      <li key={item._id} className="flex gap-3 border border-gray-200 rounded-md p-3">
+                        <div className="h-16 w-16 rounded-md overflow-hidden bg-gray-100 flex-shrink-0">
+                          {item.product.images?.[0] ? (
+                            <img src={item.product.images[0]} alt={item.product.name} className="h-full w-full object-cover" />
+                          ) : null}
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="font-medium truncate">{item.product.name}</p>
+                          <p className="text-sm text-gray-600">Qty: {item.quantity}</p>
+                          <p className="text-sm font-semibold">₹{(item.product.price * item.quantity).toLocaleString()}</p>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+
+                  <div className="pt-2 border-t">
+                    <Button
+                      className="w-full rounded-full bg-black text-white hover:bg-black/90"
+                      onClick={() => {
+                        // If no items, just open WhatsApp chat
+                        if (!cartItems || cartItems.length === 0) {
+                          window.location.href = "https://wa.me/9871629699";
+                          return;
+                        }
+
+                        // Build a simple, non-tabular message for WhatsApp (names only, no image URLs)
+                        const lines: Array<string> = [];
+                        lines.push("I want to order:");
+                        lines.push("");
+
+                        let grandTotal = 0;
+                        for (const item of cartItems) {
+                          const name = item.product.name;
+                          const mrpPart = item.product.originalPrice
+                            ? ` | MRP ₹${item.product.originalPrice.toLocaleString()}`
+                            : "";
+                          const price = `₹${item.product.price.toLocaleString()}`;
+                          const qty = item.quantity ?? 1;
+                          const subtotalNum = (item.product.price ?? 0) * qty;
+                          grandTotal += subtotalNum;
+
+                          lines.push(
+                            `- ${name} | Qty: ${qty} | Price: ${price}${mrpPart}`
+                          );
+                          // Include color if present (e.g., Coach belt variant)
+                          if ((item as any).color) {
+                            const c = String((item as any).color);
+                            const cap = c.charAt(0).toUpperCase() + c.slice(1);
+                            lines.push(`  Color: ${cap}`);
+                          }
+                          const productLink = `${window.location.origin}/product/${item.product._id}`;
+                          lines.push(`  Link: ${productLink}`);
+                        }
+
+                        lines.push("");
+                        lines.push(`Grand Total: ₹${grandTotal.toLocaleString()}`);
+
+                        const message = lines.join("\n");
+                        const url = `https://wa.me/9871629699?text=${encodeURIComponent(message)}`;
+                        window.location.href = url;
+                      }}
+                    >
+                      Checkout
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </DrawerContent>
+        </Drawer>
+      )}
     </motion.nav>
   );
 }
