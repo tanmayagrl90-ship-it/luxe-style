@@ -195,7 +195,8 @@ export default function Navbar() {
                   <Button
                     className="w-full rounded-full bg-black text-white hover:bg-black/90"
                     onClick={() => {
-                      window.open("https://wa.me/9871629699", "_blank");
+                      // Redirect in same tab using proper international format (without '+')
+                      window.location.href = "https://wa.me/919871629699";
                     }}
                   >
                     Checkout
