@@ -192,7 +192,12 @@ export default function Navbar() {
                 </ul>
 
                 <div className="pt-2 border-t">
-                  <Button className="w-full rounded-full bg-black text-white hover:bg-black/90">
+                  <Button
+                    className="w-full rounded-full bg-black text-white hover:bg-black/90"
+                    onClick={() => {
+                      window.open("https://wa.me/9871629699", "_blank");
+                    }}
+                  >
                     Checkout
                   </Button>
                 </div>

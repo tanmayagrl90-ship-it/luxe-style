@@ -3,15 +3,12 @@
 import { convexAuth } from "@convex-dev/auth/server";
 import { Anonymous } from "@convex-dev/auth/providers/Anonymous";
 import { emailOtp } from "./auth/emailOtp";
-import { Google } from "@convex-dev/auth/providers/Google";
+/* Google provider temporarily disabled due to missing module */
 
 export const { auth, signIn, signOut, store, isAuthenticated } = convexAuth({
   providers: [
     emailOtp,
-    Google({
-      clientID: process.env.GOOGLE_CLIENT_ID as string,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
-    }),
+    // Google provider temporarily disabled while we resolve the import path/package version
     Anonymous,
   ],
 });
