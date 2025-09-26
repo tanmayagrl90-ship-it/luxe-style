@@ -57,7 +57,9 @@ export default function ProductPage() {
         userId: currentUserId,
         productId: id as any,
         quantity: qty,
-      });
+        // Pass color if the product supports colors
+        color: supportsColors ? color : undefined,
+      } as any);
       toast("Added to cart");
     } catch (e) {
       console.error(e);

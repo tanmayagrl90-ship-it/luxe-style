@@ -220,6 +220,12 @@ export default function Navbar() {
                         lines.push(
                           `- ${name} | Qty: ${qty} | Price: ${price}${mrpPart}`
                         );
+                        // Include color if present (e.g., Coach belt variant)
+                        if ((item as any).color) {
+                          const c = String((item as any).color);
+                          const cap = c.charAt(0).toUpperCase() + c.slice(1);
+                          lines.push(`  Color: ${cap}`);
+                        }
                         const productLink = `${window.location.origin}/product/${item.product._id}`;
                         lines.push(`  Link: ${productLink}`);
                       }

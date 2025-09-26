@@ -47,6 +47,7 @@ const schema = defineSchema(
       userId: v.id("users"),
       productId: v.id("products"),
       quantity: v.number(),
+      color: v.optional(v.string()),
     })
       .index("by_user", ["userId"])
       .index("by_user_and_product", ["userId", "productId"]),

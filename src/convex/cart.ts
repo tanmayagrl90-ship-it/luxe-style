@@ -6,6 +6,7 @@ export const addToCart = mutation({
     userId: v.id("users"),
     productId: v.id("products"),
     quantity: v.optional(v.number()),
+    color: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const qty = args.quantity ?? 1;
@@ -18,7 +19,10 @@ export const addToCart = mutation({
       .unique();
 
     if (existing) {
-      await ctx.db.patch(existing._id, { quantity: existing.quantity + qty });
+      await ctx.db.patch(existing._id, {
+        quantity: (existing.quantity ?? 0) + qty,
+        ...(args.color ? { color: args.color } : {}),
+      });
       return existing._id;
     }
 
@@ -26,6 +30,7 @@ export const addToCart = mutation({
       userId: args.userId,
       productId: args.productId,
       quantity: qty,
+      color: args.color,
     });
   },
 });
@@ -59,7 +64,8 @@ export const getCartItems = query({
         _id: item._id,
         quantity: item.quantity ?? 1,
         productId: item.productId,
-        product, // includes name, price, images, etc.
+        color: item.color,
+        product,
       });
     }
     return result;
