@@ -7,7 +7,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { api } from "@/convex/_generated/api";
 import { useQuery } from "convex/react";
-import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerClose } from "@/components/ui/drawer";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 export default function Navbar() {
   const { isAuthenticated, user, signOut } = useAuth();
@@ -154,20 +154,28 @@ export default function Navbar() {
         )}
       </div>
 
-      {/* Cart Drawer */}
+      {/* Cart Popup (Dialog) */}
       {mounted && (
-        <Drawer open={isCartOpen} onOpenChange={setIsCartOpen}>
-          <DrawerContent className="ml-auto w-full sm:max-w-md border-l border-white/10 bg-gray-100">
-            <DrawerHeader className="flex items-center justify-between">
-              <DrawerTitle className="text-lg font-semibold">Your Cart</DrawerTitle>
-              <DrawerClose asChild>
-                <button aria-label="Close cart" className="p-2 rounded-md hover:bg-black/5">✕</button>
-              </DrawerClose>
-            </DrawerHeader>
-
-            <div className="px-6 pb-6">
+        <Dialog open={isCartOpen} onOpenChange={setIsCartOpen}>
+          <DialogContent className="sm:max-w-lg rounded-2xl p-0 overflow-hidden bg-gray-100 text-gray-900">
+            <DialogHeader className="px-6 pt-5">
+              <div className="flex items-center justify-between">
+                <DialogTitle className="text-2xl font-extrabold">Your cart</DialogTitle>
+                <button
+                  aria-label="Close cart"
+                  className="p-2 rounded-md hover:bg-black/5"
+                  onClick={() => setIsCartOpen(false)}
+                >
+                  ✕
+                </button>
+              </div>
+            </DialogHeader>
+            <div className="px-6">
+              <div className="border-t border-gray-300/60" />
+            </div>
+            <div className="px-6 pb-6 pt-4">
               {!cartItems || cartItems.length === 0 ? (
-                <div className="min-h-[70vh] flex flex-col items-center justify-center text-center">
+                <div className="min-h-[40vh] flex flex-col items-center justify-center text-center">
                   <h3 className="text-2xl font-extrabold mb-6 text-gray-900">Your cart is empty</h3>
                   <Button
                     className="rounded-full h-12 px-8 bg-black text-white hover:bg-black/90"
@@ -194,9 +202,12 @@ export default function Navbar() {
                           ) : null}
                         </div>
                         <div className="min-w-0 flex-1">
-                          <p className="font-medium truncate">{item.product.name}</p>
+                          <p className="font-semibold truncate">{item.product.name}</p>
                           <p className="text-sm text-gray-600">Qty: {item.quantity}</p>
                           <p className="text-sm font-semibold">₹{(item.product.price * item.quantity).toLocaleString()}</p>
+                          {(item as any).color ? (
+                            <p className="text-xs text-gray-600">Color: {`${String((item as any).color)[0].toUpperCase()}${String((item as any).color).slice(1)}`}</p>
+                          ) : null}
                         </div>
                       </li>
                     ))}
@@ -206,17 +217,13 @@ export default function Navbar() {
                     <Button
                       className="w-full rounded-full bg-black text-white hover:bg-black/90"
                       onClick={() => {
-                        // If no items, just open WhatsApp chat
                         if (!cartItems || cartItems.length === 0) {
                           window.location.href = "https://wa.me/9871629699";
                           return;
                         }
-
-                        // Build a simple, non-tabular message for WhatsApp (names only, no image URLs)
                         const lines: Array<string> = [];
                         lines.push("I want to order:");
                         lines.push("");
-
                         let grandTotal = 0;
                         for (const item of cartItems) {
                           const name = item.product.name;
@@ -227,11 +234,7 @@ export default function Navbar() {
                           const qty = item.quantity ?? 1;
                           const subtotalNum = (item.product.price ?? 0) * qty;
                           grandTotal += subtotalNum;
-
-                          lines.push(
-                            `- ${name} | Qty: ${qty} | Price: ${price}${mrpPart}`
-                          );
-                          // Include color if present (e.g., Coach belt variant)
+                          lines.push(`- ${name} | Qty: ${qty} | Price: ${price}${mrpPart}`);
                           if ((item as any).color) {
                             const c = String((item as any).color);
                             const cap = c.charAt(0).toUpperCase() + c.slice(1);
@@ -240,10 +243,8 @@ export default function Navbar() {
                           const productLink = `${window.location.origin}/product/${item.product._id}`;
                           lines.push(`  Link: ${productLink}`);
                         }
-
                         lines.push("");
                         lines.push(`Grand Total: ₹${grandTotal.toLocaleString()}`);
-
                         const message = lines.join("\n");
                         const url = `https://wa.me/9871629699?text=${encodeURIComponent(message)}`;
                         window.location.href = url;
@@ -255,8 +256,8 @@ export default function Navbar() {
                 </div>
               )}
             </div>
-          </DrawerContent>
-        </Drawer>
+          </DialogContent>
+        </Dialog>
       )}
     </motion.nav>
   );
