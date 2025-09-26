@@ -118,8 +118,8 @@ export default function CategoryPage() {
                           </span>
                         </div>
 
-                        {/* Order on WhatsApp - direct open with product details */}
-                        <div className="mt-3">
+                        {/* Order on WhatsApp + Add to Cart */}
+                        <div className="mt-3 flex gap-2">
                           <Button
                             size="sm"
                             className="rounded-full bg-[#25D366] text-white hover:bg-[#20bd5b]"
@@ -133,6 +133,18 @@ export default function CategoryPage() {
                           >
                             <MessageCircle className="h-4 w-4 mr-2" />
                             Order on WhatsApp
+                          </Button>
+
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="rounded-full border-white/30 text-white hover:bg-white/10"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleAddToCart(product._id as any);
+                            }}
+                          >
+                            Add to Cart
                           </Button>
                         </div>
                       </div>
