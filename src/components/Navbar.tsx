@@ -186,13 +186,6 @@ export default function Navbar() {
             <SheetHeader className="px-6 pt-5">
               <div className="flex items-center justify-between">
                 <SheetTitle className="text-2xl font-extrabold">Your cart</SheetTitle>
-                <button
-                  aria-label="Close cart"
-                  className="p-2 rounded-md hover:bg-black/5"
-                  onClick={() => setIsCartOpen(false)}
-                >
-                  ✕
-                </button>
               </div>
             </SheetHeader>
             <div className="px-6">
