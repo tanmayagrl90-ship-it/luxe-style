@@ -55,6 +55,31 @@ export const createProduct = mutation({
   },
 });
 
+export const updateProduct = mutation({
+  args: {
+    id: v.id("products"),
+    name: v.optional(v.string()),
+    description: v.optional(v.string()),
+    price: v.optional(v.number()),
+    originalPrice: v.optional(v.number()),
+    category: v.optional(v.string()),
+    images: v.optional(v.array(v.string())),
+    featured: v.optional(v.boolean()),
+    inStock: v.optional(v.boolean()),
+  },
+  handler: async (ctx, args) => {
+    const { id, ...updates } = args;
+    // Remove undefined keys so we only patch provided fields
+    const toPatch: Record<string, unknown> = {};
+    for (const [k, v] of Object.entries(updates)) {
+      if (v !== undefined) toPatch[k] = v;
+    }
+    if (Object.keys(toPatch).length === 0) return id;
+    await ctx.db.patch(id, toPatch);
+    return id;
+  },
+});
+
 export const cleanupWatchesKeepGuess = mutation({
   args: {},
   handler: async (ctx) => {

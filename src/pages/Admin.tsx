@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useAuth } from "@/hooks/use-auth";
 import { api } from "@/convex/_generated/api";
 import { useMutation, useQuery } from "convex/react";
@@ -34,6 +35,7 @@ export default function Admin() {
   const { isLoading, isAuthenticated, user } = useAuth();
   const createProduct = useMutation(api.products.createProduct);
   const products = useQuery(api.products.getAllProducts);
+  const updateProduct = useMutation(api.products.updateProduct);
 
   // Add: strict admin access (by email and/or role)
   const allowedEmails = new Set<string>(["vidhigadgets@gmail.com"]);
@@ -168,6 +170,85 @@ export default function Admin() {
     } catch (err) {
       console.error(err);
       toast("Failed to add product. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // Edit dialog state
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [editId, setEditId] = useState<string | null>(null);
+  const [editForm, setEditForm] = useState<{
+    name: string;
+    description: string;
+    price: string;
+    originalPrice: string;
+    category: "goggles" | "watches" | "belts";
+    images: string; // comma separated
+    featured: boolean;
+    inStock: boolean;
+  }>({
+    name: "",
+    description: "",
+    price: "",
+    originalPrice: "",
+    category: "goggles",
+    images: "",
+    featured: false,
+    inStock: true,
+  });
+
+  const openEdit = (p: any) => {
+    setEditId(p._id as string);
+    setEditForm({
+      name: p.name ?? "",
+      description: p.description ?? "",
+      price: String(p.price ?? ""),
+      originalPrice: p.originalPrice ? String(p.originalPrice) : "",
+      category: (p.category as "goggles" | "watches" | "belts") ?? "goggles",
+      images: Array.isArray(p.images) ? p.images.join(", ") : "",
+      featured: !!p.featured,
+      inStock: !!p.inStock,
+    });
+    setIsEditOpen(true);
+  };
+
+  const submitEdit = async () => {
+    if (!editId) return;
+    const priceNum = Number(editForm.price);
+    if (Number.isNaN(priceNum) || priceNum <= 0) {
+      toast("Please enter a valid price.");
+      return;
+    }
+    const originalPriceNum = editForm.originalPrice ? Number(editForm.originalPrice) : undefined;
+    if (editForm.originalPrice && (Number.isNaN(originalPriceNum) || (originalPriceNum as number) <= 0)) {
+      toast("Original price must be a valid number greater than 0.");
+      return;
+    }
+    const imagesArray = editForm.images
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean);
+
+    try {
+      setIsSubmitting(true);
+      await updateProduct({
+        id: editId as any,
+        name: editForm.name.trim(),
+        description: editForm.description.trim(),
+        price: priceNum,
+        originalPrice: originalPriceNum,
+        category: editForm.category,
+        images: imagesArray,
+        featured: editForm.featured,
+        inStock: editForm.inStock,
+      } as any);
+      toast("Product updated.");
+      setIsEditOpen(false);
+      setEditId(null);
+    } catch (e) {
+      console.error(e);
+      toast("Failed to update product.");
     } finally {
       setIsSubmitting(false);
     }
@@ -378,7 +459,12 @@ export default function Admin() {
                             {p.originalPrice ? ` (₹${p.originalPrice.toLocaleString()})` : ""}
                           </p>
                         </div>
-                        <div className="text-xs text-gray-500">{p.inStock ? "In Stock" : "Out of Stock"}</div>
+                        <div className="flex items-center gap-2">
+                          <div className="text-xs text-gray-500">{p.inStock ? "In Stock" : "Out of Stock"}</div>
+                          <Button variant="outline" size="sm" onClick={() => openEdit(p)}>
+                            Edit
+                          </Button>
+                        </div>
                       </div>
                     ))}
                 </div>
@@ -387,6 +473,92 @@ export default function Admin() {
           </Card>
         </div>
       </div>
+
+      {/* Edit Dialog */}
+      <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Edit Product</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="e_name">Name</Label>
+              <Input
+                id="e_name"
+                value={editForm.name}
+                onChange={(e) => setEditForm((f) => ({ ...f, name: e.target.value }))}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="e_desc">Description</Label>
+              <Input
+                id="e_desc"
+                value={editForm.description}
+                onChange={(e) => setEditForm((f) => ({ ...f, description: e.target.value }))}
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="e_price">Price (₹)</Label>
+                <Input
+                  id="e_price"
+                  type="number"
+                  min={0}
+                  value={editForm.price}
+                  onChange={(e) => setEditForm((f) => ({ ...f, price: e.target.value }))}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="e_oprice">Original Price (₹)</Label>
+                <Input
+                  id="e_oprice"
+                  type="number"
+                  min={0}
+                  value={editForm.originalPrice}
+                  onChange={(e) => setEditForm((f) => ({ ...f, originalPrice: e.target.value }))}
+                />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="e_images">Image URLs (comma separated)</Label>
+              <Input
+                id="e_images"
+                value={editForm.images}
+                onChange={(e) => setEditForm((f) => ({ ...f, images: e.target.value }))}
+                placeholder="https://..., https://..."
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="flex items-center justify-between rounded-md border border-gray-200 p-3">
+                <div>
+                  <Label className="cursor-pointer">Featured</Label>
+                </div>
+                <Switch
+                  checked={editForm.featured}
+                  onCheckedChange={(v) => setEditForm((f) => ({ ...f, featured: v }))}
+                />
+              </div>
+              <div className="flex items-center justify-between rounded-md border border-gray-200 p-3">
+                <div>
+                  <Label className="cursor-pointer">In Stock</Label>
+                </div>
+                <Switch
+                  checked={editForm.inStock}
+                  onCheckedChange={(v) => setEditForm((f) => ({ ...f, inStock: v }))}
+                />
+              </div>
+            </div>
+            <div className="flex justify-end gap-2 pt-2">
+              <Button variant="outline" onClick={() => setIsEditOpen(false)}>
+                Cancel
+              </Button>
+              <Button onClick={submitEdit} disabled={isSubmitting}>
+                {isSubmitting ? "Saving..." : "Save changes"}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </motion.div>
   );
 }
