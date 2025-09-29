@@ -64,7 +64,7 @@ export default function Admin() {
   // Add: Convex storage upload action
   const generateUploadUrl = useAction((api as any).storage.generateUploadUrl);
 
-  // Add: helper to upload an array of image files/blobs
+  // Update: helper to upload an array of image files/blobs — ensure correct Convex base URL
   const uploadImageFiles = async (files: Array<File>) => {
     if (!files || files.length === 0) return;
     const newUrls: Array<string> = [];
@@ -77,15 +77,18 @@ export default function Admin() {
       });
       if (!res.ok) throw new Error("Upload failed");
       const json = (await res.json()) as { storageId: string };
-      // Build public URL from the origin of the generated upload URL
-      const origin = new URL(postUrl).origin;
-      const publicUrl = `${origin}/api/storage/${json.storageId}`;
+      // Prefer configured Convex URL; fallback to the postUrl origin
+      const convexBase =
+        (import.meta.env.VITE_CONVEX_URL as string | undefined) && String(import.meta.env.VITE_CONVEX_URL).trim().length > 0
+          ? String(import.meta.env.VITE_CONVEX_URL).replace(/\/+$/, "")
+          : new URL(postUrl).origin;
+      const publicUrl = `${convexBase}/api/storage/${json.storageId}`;
       newUrls.push(publicUrl);
     }
     setUploadedUrls((prev) => [...prev, ...newUrls]);
   };
 
-  // NEW: helper for edit dialog uploads — also derive from postUrl
+  // NEW: helper for edit dialog uploads — ensure correct Convex base URL
   const uploadImageFilesForEdit = async (files: Array<File>) => {
     if (!files || files.length === 0) return;
     const newUrls: Array<string> = [];
@@ -98,8 +101,11 @@ export default function Admin() {
       });
       if (!res.ok) throw new Error("Upload failed");
       const json = (await res.json()) as { storageId: string };
-      const origin = new URL(postUrl).origin;
-      const publicUrl = `${origin}/api/storage/${json.storageId}`;
+      const convexBase =
+        (import.meta.env.VITE_CONVEX_URL as string | undefined) && String(import.meta.env.VITE_CONVEX_URL).trim().length > 0
+          ? String(import.meta.env.VITE_CONVEX_URL).replace(/\/+$/, "")
+          : new URL(postUrl).origin;
+      const publicUrl = `${convexBase}/api/storage/${json.storageId}`;
       newUrls.push(publicUrl);
     }
     setEditUploadedUrls((prev) => [...prev, ...newUrls]);
