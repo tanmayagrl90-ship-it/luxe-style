@@ -85,6 +85,16 @@ export default function CategoryPage() {
                             alt={product.name}
                             className="absolute inset-0 w-full h-full object-cover"
                             loading="lazy"
+                            onError={(e) => {
+                              // Fallback to next available image or placeholder if the current one fails
+                              const imgs: Array<string> = Array.isArray(product.images) ? product.images : [];
+                              const current = e.currentTarget.getAttribute("src") || "";
+                              const idx = Math.max(0, imgs.findIndex((u) => u === current));
+                              const next = imgs[idx + 1] || "/api/placeholder/400/400";
+                              if (current !== next) {
+                                e.currentTarget.src = next;
+                              }
+                            }}
                           />
                         ) : (
                           <div className="absolute inset-0 bg-gray-200 flex items-center justify-center">
