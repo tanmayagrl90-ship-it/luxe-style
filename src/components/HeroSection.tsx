@@ -21,7 +21,7 @@ export default function HeroSection() {
       {/* Subtle dark overlay for contrast */}
       <div className="absolute inset-0 bg-black/40" />
       {/* Added: Center-bottom pill buttons to navigate to Goggles and Watches */}
-      <div className="absolute inset-0 flex items-end justify-center pb-10 pointer-events-none">
+      <div className="absolute inset-0 flex items-end justify-center pb-20 sm:pb-24 pointer-events-none">
         <div className="flex gap-3 sm:gap-4">
           <a
             href="/category/goggles"
