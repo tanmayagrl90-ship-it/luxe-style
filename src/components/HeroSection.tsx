@@ -20,6 +20,23 @@ export default function HeroSection() {
       />
       {/* Subtle dark overlay for contrast */}
       <div className="absolute inset-0 bg-black/40" />
+      {/* Added: Center-bottom pill buttons to navigate to Goggles and Watches */}
+      <div className="absolute inset-0 flex items-end justify-center pb-10 pointer-events-none">
+        <div className="flex gap-3 sm:gap-4">
+          <a
+            href="/category/goggles"
+            className="pointer-events-auto rounded-full bg-black/80 text-white px-5 py-2.5 sm:px-6 sm:py-3 text-sm font-semibold ring-1 ring-white/20 hover:bg-black"
+          >
+            Goggles
+          </a>
+          <a
+            href="/category/watches"
+            className="pointer-events-auto rounded-full bg-black/80 text-white px-5 py-2.5 sm:px-6 sm:py-3 text-sm font-semibold ring-1 ring-white/20 hover:bg-black"
+          >
+            Watches
+          </a>
+        </div>
+      </div>
     </section>
   );
 }
