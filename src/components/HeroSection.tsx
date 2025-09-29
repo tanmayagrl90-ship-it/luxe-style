@@ -13,9 +13,10 @@ export default function HeroSection() {
         className="absolute inset-0 h-full w-full object-cover"
         loading="eager"
         initial={{ scale: 1 }}
-        animate={{ scale: [1, 1.08, 1] }}
-        transition={{ duration: 14, ease: "easeInOut", repeat: Infinity }}
-        style={{ transformOrigin: "50% 50%" }} // center focus
+        // Increase zoom amount and speed to focus tighter on the center "LUXE" area
+        animate={{ scale: [1, 1.18, 1] }}
+        transition={{ duration: 9, ease: "easeInOut", repeat: Infinity }}
+        style={{ transformOrigin: "50% 50%" }} // centered focus
       />
       {/* Subtle dark overlay for contrast */}
       <div className="absolute inset-0 bg-black/40" />
