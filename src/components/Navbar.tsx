@@ -266,7 +266,7 @@ export default function Navbar() {
       <div className="w-full bg-black text-white">
         <div className="border-t border-white/10" />
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="h-7 flex items-center justify-center" aria-live="polite" role="status">
+          <div className="h-6 flex items-center justify-center" aria-live="polite" role="status">
             <AnnouncementRow />
           </div>
         </div>
