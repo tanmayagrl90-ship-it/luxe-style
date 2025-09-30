@@ -21,7 +21,8 @@ function AnnouncementRow() {
     "flex items-center gap-2 px-2 sm:px-3 whitespace-nowrap"; // reduced gap/px to bring dot closer
 
   return (
-    <div className="flex items-center justify-center text-xs sm:text-sm tracking-wide">
+    // Change font size to be smaller across breakpoints
+    <div className="flex items-center justify-center text-[10px] sm:text-xs tracking-wide">
       <div className="flex items-center overflow-hidden">
         {/* Each segment starts with the dot immediately before 'Use' */}
         <div className={segment}>
