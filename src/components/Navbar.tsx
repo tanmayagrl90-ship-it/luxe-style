@@ -299,78 +299,79 @@ export default function Navbar() {
                     ))}
                   </ul>
 
-                  {/* ADD: Promo code section (visible only when 2+ items) */}
-                  {cartItemCount >= 2 && (
-                    <div className="mt-2 rounded-md border border-gray-300 p-3 space-y-2">
-                      <p className="text-sm font-semibold">Have a code?</p>
-                      <div className="flex gap-2">
-                        <Input
-                          value={promoCode}
-                          onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
-                          placeholder="Enter code"
-                          className="bg-white"
-                        />
-                        {appliedDiscount > 0 ? (
-                          <Button
-                            variant="outline"
-                            onClick={() => {
+                  {/* Promo code section: always visible; enforce eligibility inline */}
+                  <div className="mt-2 rounded-md border border-gray-300 p-3 space-y-2">
+                    <p className="text-sm font-semibold">Have a code?</p>
+                    <div className="flex gap-2">
+                      <Input
+                        value={promoCode}
+                        onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
+                        placeholder="Enter code"
+                        className="bg-white"
+                      />
+                      {appliedDiscount > 0 ? (
+                        <Button
+                          variant="outline"
+                          onClick={() => {
+                            setAppliedDiscount(0);
+                            setPromoCode("");
+                          }}
+                        >
+                          Remove
+                        </Button>
+                      ) : (
+                        <Button
+                          onClick={() => {
+                            // If fewer than 2 items, show inline not applicable message (no alert)
+                            if (cartItemCount < 2) {
+                              // Force a small UI tick to show helper text below
                               setAppliedDiscount(0);
-                              setPromoCode("");
-                            }}
-                          >
-                            Remove
-                          </Button>
-                        ) : (
-                          <Button
-                            onClick={() => {
-                              // Guard: not applicable if less than 2 items
-                              if (cartItemCount < 2) {
-                                alert("Not applicable now (add at least 2 products).");
-                                return;
-                              }
-                              if (promoCode.trim() === "LUXE150") {
-                                setAppliedDiscount(150);
-                              } else {
-                                alert("Invalid code.");
-                              }
-                            }}
-                            className="bg-black text-white hover:bg-black/90"
-                          >
-                            Apply
-                          </Button>
-                        )}
-                      </div>
-                      {/* Inline status/helper messages */}
-                      {cartItemCount < 2 && appliedDiscount === 0 ? (
-                        <p className="text-xs text-gray-600">
-                          Not applicable now — add at least 2 products to use LUXE150.
-                        </p>
-                      ) : null}
-                      {appliedDiscount > 0 && (
-                        <p className="text-xs text-green-700">
-                          Code applied: LUXE150 — ₹150 off
-                        </p>
+                              return;
+                            }
+                            if (promoCode.trim() === "LUXE150") {
+                              setAppliedDiscount(150);
+                            } else {
+                              // Trigger inline "Invalid code." helper below
+                              setAppliedDiscount(0);
+                            }
+                          }}
+                          className="bg-black text-white hover:bg-black/90"
+                        >
+                          Apply
+                        </Button>
                       )}
                     </div>
-                  )}
+                    {/* Inline helper messages */}
+                    {cartItemCount < 2 && appliedDiscount === 0 ? (
+                      <p className="text-xs text-gray-600">
+                        Not applicable now — add at least 2 products to use LUXE150.
+                      </p>
+                    ) : null}
+                    {cartItemCount >= 2 && appliedDiscount === 0 && promoCode && promoCode !== "LUXE150" ? (
+                      <p className="text-xs text-red-600">
+                        Invalid code.
+                      </p>
+                    ) : null}
+                    {appliedDiscount > 0 && (
+                      <p className="text-xs text-green-700">
+                        Code applied: LUXE150 — ₹150 off
+                      </p>
+                    )}
+                  </div>
 
                   <div className="pt-2 border-t border-gray-300/60" />
 
-                  {/* Existing subtotal (renamed visually to show both if discounted) */}
+                  {/* Totals section */}
                   <div className="flex items-center justify-between text-gray-900">
                     <p className="font-extrabold">{appliedDiscount > 0 ? "Subtotal" : "Estimated total"}</p>
                     <p className="font-extrabold">₹{estimatedTotal.toLocaleString()}</p>
                   </div>
-
-                  {/* ADD: discount row */}
                   {appliedDiscount > 0 && (
                     <div className="flex items-center justify-between text-gray-900">
                       <p className="font-semibold text-green-700">Discount (LUXE150)</p>
                       <p className="font-semibold text-green-700">-₹{appliedDiscount.toLocaleString()}</p>
                     </div>
                   )}
-
-                  {/* Final total after discount */}
                   {appliedDiscount > 0 && (
                     <div className="flex items-center justify-between text-gray-900">
                       <p className="font-extrabold">Estimated total</p>
