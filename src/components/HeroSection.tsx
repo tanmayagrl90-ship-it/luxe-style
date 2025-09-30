@@ -7,12 +7,12 @@ export default function HeroSection() {
   return (
     <>
       {/* Pull hero further up so it kisses the announcement bar border with no gap */}
-      <section className="relative min-h-[88vh] w-full overflow-hidden bg-black -mt-[3px]">
+      <section className="relative min-h-[88vh] w-full overflow-hidden bg-black -mt-[4px]">
         {/* Background image with looping center zoom */}
         <motion.img
           src={bg}
           alt="LUXE flagship visual"
-          className="absolute inset-0 h-full w-full object-cover -mt-[3px]"
+          className="absolute inset-0 h-full w-full object-cover -mt-[4px]"
           loading="eager"
           initial={{ scale: 1 }}
           animate={{ scale: [1, 1.18, 1] }}
@@ -20,7 +20,7 @@ export default function HeroSection() {
           style={{ transformOrigin: "50% 50%" }}
         />
         {/* Subtle dark overlay for contrast — ensure it reaches exactly up to the announcement bar */}
-        <div className="absolute inset-0 bg-black/40 -mt-[3px]" />
+        <div className="absolute inset-0 bg-black/40 -mt-[4px]" />
         {/* Added: Center-bottom pill buttons to navigate to Goggles and Watches */}
         <div className="absolute inset-0 flex items-end justify-center pb-28 sm:pb-32 pointer-events-none">
           <div className="flex gap-3 sm:gap-4">
