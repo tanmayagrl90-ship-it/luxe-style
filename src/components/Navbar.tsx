@@ -28,7 +28,8 @@ function AnnouncementRow() {
         className="flex items-center"
         style={{
           // Smooth, continuous marquee effect
-          animation: "luxe-marquee 18s linear infinite",
+          // Increase speed slightly by reducing duration from 18s -> 14s
+          animation: "luxe-marquee 14s linear infinite",
           willChange: "transform",
         }}
       >
