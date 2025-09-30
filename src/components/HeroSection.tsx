@@ -22,7 +22,7 @@ export default function HeroSection() {
         />
         {/* Subtle dark overlay for contrast — ensure it reaches exactly up to the announcement bar */}
         {/* Move overlay slightly further up so it visually kisses the announcement bar line */}
-        <div className="absolute inset-0 bg-black/40 -mt-[2px]" />
+        <div className="absolute inset-0 bg-black/40 -mt-[3px]" />
         {/* Added: Center-bottom pill buttons to navigate to Goggles and Watches */}
         {/* Move the pill buttons a bit higher */}
         <div className="absolute inset-0 flex items-end justify-center pb-24 sm:pb-28 pointer-events-none">
