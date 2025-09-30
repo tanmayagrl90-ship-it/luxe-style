@@ -6,37 +6,43 @@ export default function HeroSection() {
 
   return (
     <>
-      {/* Pull hero fully up to kiss the announcement bar with zero gap */}
-      <section className="relative min-h-[88vh] w-full overflow-hidden bg-black -mt-[4px]">
-        {/* Background image with looping center zoom */}
-        <motion.img
-          src={bg}
-          alt="LUXE flagship visual"
-          className="absolute inset-0 h-full w-full object-cover -mt-[4px]"
-          loading="eager"
-          initial={{ scale: 1 }}
-          animate={{ scale: [1, 1.18, 1] }}
-          transition={{ duration: 9, ease: "easeInOut", repeat: Infinity }}
-          style={{ transformOrigin: "50% 50%" }}
-        />
-        {/* Make overlay flush — no extra spacing */}
-        <div className="absolute inset-0 bg-black/40 -mt-[4px]" />
-        {/* Added: Center-bottom pill buttons to navigate to Goggles and Watches */}
-        {/* Raise buttons further for mobile-first visibility */}
-        <div className="absolute inset-0 flex items-end justify-center pb-36 sm:pb-40 pointer-events-none">
-          <div className="flex gap-3 sm:gap-4">
-            <a
-              href="/category/goggles"
-              className="pointer-events-auto rounded-full bg-black/80 text-white px-5 py-2.5 sm:px-6 sm:py-3 text-sm font-semibold ring-1 ring-white/20 hover:bg-black"
-            >
-              Goggles
-            </a>
-            <a
-              href="/category/watches"
-              className="pointer-events-auto rounded-full bg-black/80 text-white px-5 py-2.5 sm:px-6 sm:py-3 text-sm font-semibold ring-1 ring-white/20 hover:bg-black"
-            >
-              Watches
-            </a>
+      {/* Crop visually by constraining viewport height and focus area */}
+      <section
+        className="relative w-full overflow-hidden bg-black"
+      >
+        {/* Set explicit heights for crop window */}
+        <div className="relative h-[78vh] sm:h-[86vh] md:h-[88vh] lg:h-[88vh]">
+          <motion.img
+            src={bg}
+            alt="LUXE flagship visual"
+            className="absolute inset-0 h-full w-full object-cover"
+            loading="eager"
+            // Slight zoom to allow clean top/bottom crop
+            initial={{ scale: 1.06 }}
+            animate={{ scale: [1.06, 1.14, 1.06] }}
+            transition={{ duration: 9, ease: "easeInOut", repeat: Infinity }}
+            // Focus around the logo area; tweak if you prefer slightly higher/lower
+            style={{ transformOrigin: "50% 38%", objectPosition: "50% 38%" }}
+          />
+          {/* Overlay kept for contrast, no extra spacing */}
+          <div className="absolute inset-0 bg-black/40" />
+
+          {/* Buttons container unchanged functionally; lifted a bit for mobile */}
+          <div className="absolute inset-0 flex items-end justify-center pb-40 sm:pb-44 pointer-events-none">
+            <div className="flex gap-3 sm:gap-4">
+              <a
+                href="/category/goggles"
+                className="pointer-events-auto rounded-full bg-black/80 text-white px-5 py-2.5 sm:px-6 sm:py-3 text-sm font-semibold ring-1 ring-white/20 hover:bg-black"
+              >
+                Goggles
+              </a>
+              <a
+                href="/category/watches"
+                className="pointer-events-auto rounded-full bg-black/80 text-white px-5 py-2.5 sm:px-6 sm:py-3 text-sm font-semibold ring-1 ring-white/20 hover:bg-black"
+              >
+                Watches
+              </a>
+            </div>
           </div>
         </div>
       </section>
