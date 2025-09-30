@@ -17,34 +17,32 @@ const ANNOUNCEMENT_TEXT = "Use LUXE150 to get discount";
 
 // Helper: build repeating marquee-like row with centered white dot separators
 function AnnouncementRow() {
-  const itemClass =
-    "flex items-center gap-3 px-4 whitespace-nowrap";
-  const dot =
-    <span className="inline-block h-1 w-1 rounded-full bg-white/80" aria-hidden="true" />;
+  const segment =
+    "flex items-center gap-2 px-2 sm:px-3 whitespace-nowrap"; // reduced gap/px to bring dot closer
 
   return (
     <div className="flex items-center justify-center text-xs sm:text-sm tracking-wide">
       <div className="flex items-center overflow-hidden">
-        {/* Repeat sequence with separators to emulate spaced dots like the reference */}
-        <div className={itemClass}>
-          <span>{ANNOUNCEMENT_TEXT}</span>
-          {dot}
+        {/* Each segment starts with the dot immediately before 'Use' */}
+        <div className={segment}>
+          <span className="inline-block h-1 w-1 rounded-full bg-white/80" aria-hidden="true" />
+          <span>Use LUXE150 to get discount</span>
         </div>
-        <div className={itemClass}>
-          <span>{ANNOUNCEMENT_TEXT}</span>
-          {dot}
+        <div className={segment}>
+          <span className="inline-block h-1 w-1 rounded-full bg-white/80" aria-hidden="true" />
+          <span>Use LUXE150 to get discount</span>
         </div>
-        <div className={itemClass}>
-          <span>{ANNOUNCEMENT_TEXT}</span>
-          {dot}
+        <div className={segment}>
+          <span className="inline-block h-1 w-1 rounded-full bg-white/80" aria-hidden="true" />
+          <span>Use LUXE150 to get discount</span>
         </div>
-        <div className={itemClass}>
-          <span>{ANNOUNCEMENT_TEXT}</span>
-          {dot}
+        <div className={segment}>
+          <span className="inline-block h-1 w-1 rounded-full bg-white/80" aria-hidden="true" />
+          <span>Use LUXE150 to get discount</span>
         </div>
-        <div className={itemClass}>
-          <span>{ANNOUNCEMENT_TEXT}</span>
-          {dot}
+        <div className={segment}>
+          <span className="inline-block h-1 w-1 rounded-full bg-white/80" aria-hidden="true" />
+          <span>Use LUXE150 to get discount</span>
         </div>
       </div>
     </div>
