@@ -22,29 +22,72 @@ function AnnouncementRow() {
     "flex items-center gap-4 px-4 sm:px-6 whitespace-nowrap"; // UPDATED: larger gap/px for more separation
 
   return (
-    <div className="flex items-center justify-center text-[10px] sm:text-xs tracking-wide">
-      <div className="flex items-center overflow-hidden">
-        <div className={segment}>
-          <span className="inline-block h-1 w-1 rounded-full bg-white/80" aria-hidden="true" />
-          <span>Use LUXE150 to get discount</span>
+    <div className="relative w-full overflow-hidden">
+      {/* Scrolling track: moves right -> left continuously */}
+      <div
+        className="flex items-center"
+        style={{
+          // Smooth, continuous marquee effect
+          animation: "luxe-marquee 18s linear infinite",
+          willChange: "transform",
+        }}
+      >
+        {/* Duplicate enough segments so the loop looks continuous */}
+        <div className="flex items-center">
+          <div className={segment}>
+            <span className="inline-block h-1 w-1 rounded-full bg-white/80" aria-hidden="true" />
+            <span>Use LUXE150 to get discount</span>
+          </div>
+          <div className={segment}>
+            <span className="inline-block h-1 w-1 rounded-full bg-white/80" aria-hidden="true" />
+            <span>Use LUXE150 to get discount</span>
+          </div>
+          <div className={segment}>
+            <span className="inline-block h-1 w-1 rounded-full bg-white/80" aria-hidden="true" />
+            <span>Use LUXE150 to get discount</span>
+          </div>
+          <div className={segment}>
+            <span className="inline-block h-1 w-1 rounded-full bg-white/80" aria-hidden="true" />
+            <span>Use LUXE150 to get discount</span>
+          </div>
+          <div className={segment}>
+            <span className="inline-block h-1 w-1 rounded-full bg-white/80" aria-hidden="true" />
+            <span>Use LUXE150 to get discount</span>
+          </div>
         </div>
-        <div className={segment}>
-          <span className="inline-block h-1 w-1 rounded-full bg-white/80" aria-hidden="true" />
-          <span>Use LUXE150 to get discount</span>
-        </div>
-        <div className={segment}>
-          <span className="inline-block h-1 w-1 rounded-full bg-white/80" aria-hidden="true" />
-          <span>Use LUXE150 to get discount</span>
-        </div>
-        <div className={segment}>
-          <span className="inline-block h-1 w-1 rounded-full bg-white/80" aria-hidden="true" />
-          <span>Use LUXE150 to get discount</span>
-        </div>
-        <div className={segment}>
-          <span className="inline-block h-1 w-1 rounded-full bg-white/80" aria-hidden="true" />
-          <span>Use LUXE150 to get discount</span>
+
+        {/* Mirror the same row so there is no gap when looping */}
+        <div className="flex items-center" aria-hidden="true">
+          <div className={segment}>
+            <span className="inline-block h-1 w-1 rounded-full bg-white/80" aria-hidden="true" />
+            <span>Use LUXE150 to get discount</span>
+          </div>
+          <div className={segment}>
+            <span className="inline-block h-1 w-1 rounded-full bg-white/80" aria-hidden="true" />
+            <span>Use LUXE150 to get discount</span>
+          </div>
+          <div className={segment}>
+            <span className="inline-block h-1 w-1 rounded-full bg-white/80" aria-hidden="true" />
+            <span>Use LUXE150 to get discount</span>
+          </div>
+          <div className={segment}>
+            <span className="inline-block h-1 w-1 rounded-full bg-white/80" aria-hidden="true" />
+            <span>Use LUXE150 to get discount</span>
+          </div>
+          <div className={segment}>
+            <span className="inline-block h-1 w-1 rounded-full bg-white/80" aria-hidden="true" />
+            <span>Use LUXE150 to get discount</span>
+          </div>
         </div>
       </div>
+
+      {/* Inject keyframes once per mount using a style tag */}
+      <style>{`
+        @keyframes luxe-marquee {
+          0% { transform: translateX(0%); }
+          100% { transform: translateX(-50%); }
+        }
+      `}</style>
     </div>
   );
 }
