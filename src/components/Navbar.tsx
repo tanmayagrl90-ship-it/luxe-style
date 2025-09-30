@@ -43,7 +43,6 @@ export default function Navbar() {
   // ADD: promo code state and derived helpers
   const [promoCode, setPromoCode] = useState("");
   const [appliedDiscount, setAppliedDiscount] = useState<number>(0);
-  /* moved below after cartItems definition */
 
   useEffect(() => {
     setMounted(true);
@@ -63,6 +62,14 @@ export default function Navbar() {
   // Cart items for drawer
   const cartItems = useQuery(api.cart.getCartItems, { userId: user?._id ?? null });
   const cartItemCount = (cartItems ?? []).reduce((sum, item) => sum + (item.quantity ?? 0), 0);
+
+  // Add: auto-remove promo if cart becomes ineligible (< 2 items)
+  useEffect(() => {
+    if (cartItemCount < 2 && appliedDiscount > 0) {
+      setAppliedDiscount(0);
+      setPromoCode("");
+    }
+  }, [cartItemCount, appliedDiscount]);
 
   // Add mutation for updating cart quantities
   const setCartItemQuantity = useMutation(api.cart.setCartItemQuantity);
