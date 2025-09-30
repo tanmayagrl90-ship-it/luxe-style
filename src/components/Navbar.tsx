@@ -15,6 +15,42 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 // Add: thin announcement bar content text
 const ANNOUNCEMENT_TEXT = "Use LUXE150 to get discount";
 
+// Helper: build repeating marquee-like row with centered white dot separators
+function AnnouncementRow() {
+  const itemClass =
+    "flex items-center gap-3 px-4 whitespace-nowrap";
+  const dot =
+    <span className="inline-block h-1 w-1 rounded-full bg-white/80" aria-hidden="true" />;
+
+  return (
+    <div className="flex items-center justify-center text-xs sm:text-sm tracking-wide">
+      <div className="flex items-center overflow-hidden">
+        {/* Repeat sequence with separators to emulate spaced dots like the reference */}
+        <div className={itemClass}>
+          <span>{ANNOUNCEMENT_TEXT}</span>
+          {dot}
+        </div>
+        <div className={itemClass}>
+          <span>{ANNOUNCEMENT_TEXT}</span>
+          {dot}
+        </div>
+        <div className={itemClass}>
+          <span>{ANNOUNCEMENT_TEXT}</span>
+          {dot}
+        </div>
+        <div className={itemClass}>
+          <span>{ANNOUNCEMENT_TEXT}</span>
+          {dot}
+        </div>
+        <div className={itemClass}>
+          <span>{ANNOUNCEMENT_TEXT}</span>
+          {dot}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function Navbar() {
   const { isAuthenticated, user, signOut } = useAuth();
   const navigate = useNavigate();
@@ -95,15 +131,15 @@ export default function Navbar() {
       animate={{ y: 0 }}
       className="sticky top-0 left-0 right-0 z-50 bg-black text-white border-b border-white/10"
     >
-      {/* Announcement bar (thin strip) */}
+      {/* Announcement bar (thin strip) with repeating message and centered white dot separators */}
       <div className="w-full bg-black text-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div
-            className="h-8 flex items-center justify-center text-xs sm:text-sm tracking-wide"
+            className="h-8 flex items-center justify-center"
             aria-live="polite"
             role="status"
           >
-            {ANNOUNCEMENT_TEXT}
+            <AnnouncementRow />
           </div>
         </div>
         <div className="border-t border-white/10" />
