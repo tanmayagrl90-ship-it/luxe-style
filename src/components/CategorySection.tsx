@@ -76,10 +76,6 @@ export default function CategorySection() {
                     className="absolute inset-0 h-full w-full object-cover"
                     loading="lazy"
                   />
-                  <div className="absolute inset-0 bg-black/40" />
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="text-white font-semibold text-lg">{category.name}</span>
-                  </div>
                   <motion.div
                     whileHover={{ scale: 1.05 }}
                     transition={{ duration: 0.3 }}
