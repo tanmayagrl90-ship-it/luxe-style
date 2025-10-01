@@ -61,6 +61,9 @@ export default function Admin() {
   // NEW: uploaded image URLs used while editing
   const [editUploadedUrls, setEditUploadedUrls] = useState<string[]>([]);
 
+  // NEW: category filter for existing products
+  const [selectedCategory, setSelectedCategory] = useState<"all" | "goggles" | "watches" | "belts">("all");
+
   // Add: Convex storage upload action
   const generateUploadUrl = useAction((api as any).storage.generateUploadUrl);
   // Add: Convex storage URL resolver action (returns a canonical public URL)
@@ -231,7 +234,7 @@ export default function Admin() {
     }
   }, [isLoading, isAuthenticated, user, isAuthorized, navigate]);
 
-  const submitting = useMemo(() => false, []); // keep UI simple; Button will be disabled during async op via local state below
+  const submitting = useMemo(() => false, []);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (key: keyof NewProduct, value: string | boolean) => {
@@ -310,7 +313,7 @@ export default function Admin() {
     price: string;
     originalPrice: string;
     category: "goggles" | "watches" | "belts";
-    images: string; // comma separated
+    images: string;
     featured: boolean;
     inStock: boolean;
   }>({
@@ -397,6 +400,13 @@ export default function Admin() {
       </div>
     );
   }
+
+  // Filter products based on selected category
+  const filteredProducts = products
+    ? selectedCategory === "all"
+      ? products
+      : products.filter((p) => p.category === selectedCategory)
+    : [];
 
   return (
     <motion.div
@@ -586,13 +596,34 @@ export default function Admin() {
               <CardDescription>Recently added items</CardDescription>
             </CardHeader>
             <CardContent>
+              {/* NEW: Category filter dropdown */}
+              <div className="mb-4">
+                <Label htmlFor="category-filter">Filter by Category</Label>
+                <Select
+                  value={selectedCategory}
+                  onValueChange={(v) => setSelectedCategory(v as typeof selectedCategory)}
+                >
+                  <SelectTrigger id="category-filter">
+                    <SelectValue placeholder="Select category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Categories</SelectItem>
+                    <SelectItem value="goggles">Goggles</SelectItem>
+                    <SelectItem value="watches">Watches</SelectItem>
+                    <SelectItem value="belts">Belts</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
               {!products ? (
                 <p className="text-sm text-gray-500">Loading...</p>
-              ) : products.length === 0 ? (
-                <p className="text-sm text-gray-500">No products yet.</p>
+              ) : filteredProducts.length === 0 ? (
+                <p className="text-sm text-gray-500">
+                  {selectedCategory === "all" ? "No products yet." : `No ${selectedCategory} found.`}
+                </p>
               ) : (
                 <div className="space-y-3">
-                  {products
+                  {filteredProducts
                     .slice()
                     .reverse()
                     .slice(0, 12)
