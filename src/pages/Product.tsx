@@ -8,9 +8,11 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/hooks/use-auth";
 import { useState, useEffect } from "react";
-import { Minus, Plus, MessageCircle } from "lucide-react";
+import { Minus, Plus, MessageCircle, Heart } from "lucide-react";
 import { toast } from "sonner";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import ProductZoom from "@/components/ProductZoom";
+import RecentlyViewed from "@/components/RecentlyViewed";
 
 const prettyName: Record<string, string> = {
   goggles: "Goggles",
@@ -24,6 +26,14 @@ export default function ProductPage() {
   const product = useQuery(api.products.getProductById, { id: id as any });
   const { isAuthenticated, user, signIn } = useAuth();
   const addToCart = useMutation(api.cart.addToCart);
+  const trackView = useMutation(api.recentlyViewed.trackView);
+  const addToWishlist = useMutation(api.wishlist.addToWishlist);
+  const removeFromWishlist = useMutation(api.wishlist.removeFromWishlist);
+  const isInWishlist = useQuery(api.wishlist.isInWishlist, {
+    userId: user?._id ?? null,
+    productId: id as any,
+  });
+  
   const [qty, setQty] = useState(1);
   const supportsColors =
     (product?.name ?? "").toLowerCase() === "coach belt" ||
@@ -39,6 +49,34 @@ export default function ProductPage() {
       setActiveIndex(0);
     }
   }, [product?._id, product?.images?.length, supportsColors, color]);
+
+  useEffect(() => {
+    if (product && user?._id) {
+      trackView({ userId: user._id, productId: id as any });
+    }
+  }, [product?._id, user?._id]);
+
+  const handleWishlistToggle = async () => {
+    try {
+      let currentUserId = user?._id;
+      if (!isAuthenticated || !currentUserId) {
+        await signIn("anonymous");
+        toast("Signed in as guest. Tap the heart again.");
+        return;
+      }
+
+      if (isInWishlist) {
+        await removeFromWishlist({ userId: currentUserId, productId: id as any });
+        toast("Removed from wishlist");
+      } else {
+        await addToWishlist({ userId: currentUserId, productId: id as any });
+        toast("Added to wishlist");
+      }
+    } catch (e) {
+      console.error(e);
+      toast("Failed to update wishlist");
+    }
+  };
 
   const handleAddToCart = async () => {
     try {
@@ -96,13 +134,16 @@ export default function ProductPage() {
           <Card className="bg-black border-white/10 overflow-hidden rounded-2xl">
             <div className="relative aspect-square">
               {image ? (
-                <img
-                  src={image}
-                  alt={product.name}
-                  className="absolute inset-0 w-full h-full object-cover rounded-2xl transition-opacity duration-300"
-                  loading="eager"
-                  fetchPriority="high"
-                />
+                <>
+                  <img
+                    src={image}
+                    alt={product.name}
+                    className="absolute inset-0 w-full h-full object-cover rounded-2xl transition-opacity duration-300"
+                    loading="eager"
+                    fetchPriority="high"
+                  />
+                  <ProductZoom images={images} productName={product.name} initialIndex={activeIndex} />
+                </>
               ) : (
                 <div className="absolute inset-0 bg-white/5 rounded-2xl flex items-center justify-center">
                   <span className="text-white/70">
@@ -140,9 +181,25 @@ export default function ProductPage() {
           </Card>
 
           <div>
-            <p className="uppercase tracking-wide text-sm text-white/60 mb-2">
-              {prettyName[product.category] ?? product.category}
-            </p>
+            <div className="flex items-start justify-between">
+              <p className="uppercase tracking-wide text-sm text-white/60 mb-2">
+                {prettyName[product.category] ?? product.category}
+              </p>
+              <Button
+                variant="ghost"
+                size="icon"
+                className={`rounded-full transition-colors duration-200 ${
+                  isInWishlist
+                    ? "text-red-500 hover:text-red-600"
+                    : "text-white/60 hover:text-white"
+                }`}
+                onClick={handleWishlistToggle}
+                aria-label={isInWishlist ? "Remove from wishlist" : "Add to wishlist"}
+              >
+                <Heart className={`h-6 w-6 ${isInWishlist ? "fill-current" : ""}`} />
+              </Button>
+            </div>
+            
             <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight">{product.name}</h1>
 
             <div className="mt-4 flex items-center gap-3">
@@ -234,6 +291,8 @@ export default function ProductPage() {
             </p>
           </div>
         </div>
+        
+        <RecentlyViewed />
       </main>
       <Footer />
     </div>

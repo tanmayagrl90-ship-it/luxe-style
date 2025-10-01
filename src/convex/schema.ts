@@ -21,7 +21,7 @@ const schema = defineSchema(
     // default auth tables using convex auth.
     ...authTables, // do not remove or modify
 
-    // the users table is the default users table that is brought in by the authTables
+    // the users table is the default users table that is the brought in by authTables
     users: defineTable({
       name: v.optional(v.string()), // name of the user. do not remove
       image: v.optional(v.string()), // image of the user. do not remove
@@ -48,6 +48,21 @@ const schema = defineSchema(
       productId: v.id("products"),
       quantity: v.number(),
       color: v.optional(v.string()),
+    })
+      .index("by_user", ["userId"])
+      .index("by_user_and_product", ["userId", "productId"]),
+
+    wishlist: defineTable({
+      userId: v.id("users"),
+      productId: v.id("products"),
+    })
+      .index("by_user", ["userId"])
+      .index("by_user_and_product", ["userId", "productId"]),
+
+    recentlyViewed: defineTable({
+      userId: v.id("users"),
+      productId: v.id("products"),
+      viewedAt: v.number(),
     })
       .index("by_user", ["userId"])
       .index("by_user_and_product", ["userId", "productId"]),
