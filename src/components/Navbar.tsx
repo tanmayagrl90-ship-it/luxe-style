@@ -179,11 +179,12 @@ export default function Navbar() {
           <Button
             variant="ghost"
             size="icon"
-            className="h-12 w-12 border border-white/50 hover:bg-white/10 rounded-md"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            // Ensure highest stacking so clicks aren't blocked
+            className="relative z-[60] h-12 w-12 border border-white/50 hover:bg-white/10 rounded-md"
+            onClick={() => setIsMenuOpen((v) => !v)}
             aria-label="Open menu"
             aria-expanded={isMenuOpen}
-            aria-controls="luxe-nav-overlay"
+            aria-controls="luxe-mobile-menu"
           >
             <Menu className="h-6 w-6 text-white" />
           </Button>
@@ -259,11 +260,10 @@ export default function Navbar() {
             )}
           </div>
         </div>
-        {/* Remove extra bottom spacing from navbar content */}
         <div className="h-0" />
       </div>
 
-      {/* Announcement bar BELOW navbar with no extra margins/padding to avoid gaps */}
+      {/* Announcement bar BELOW navbar */}
       <div className="w-full bg-black text-white relative">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="h-6 flex items-center justify-center" aria-live="polite" role="status">
@@ -271,6 +271,62 @@ export default function Navbar() {
           </div>
         </div>
       </div>
+
+      {/* Mobile menu overlay + panel (categories only) */}
+      {isMenuOpen && (
+        <div
+          id="luxe-mobile-menu"
+          className="fixed inset-0 z-[55] lg:hidden"
+          aria-modal="true"
+          role="dialog"
+          onClick={() => setIsMenuOpen(false)}
+        >
+          {/* Backdrop */}
+          <div className="absolute inset-0 bg-black/50" />
+
+          {/* Panel */}
+          <div
+            className="absolute left-0 top-0 h-full w-72 max-w-[85vw] bg-black border-r border-white/10 p-4 flex flex-col gap-2"
+            // prevent closing when clicking inside the panel
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-lg font-semibold tracking-wide">Menu</span>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="border border-white/20 hover:bg-white/10"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Close
+              </Button>
+            </div>
+
+            {/* Category links only (as specified) */}
+            <a
+              href="/category/goggles"
+              className="block rounded-md px-3 py-2 hover:bg-white/10"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Goggles
+            </a>
+            <a
+              href="/category/watches"
+              className="block rounded-md px-3 py-2 hover:bg-white/10"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Watches
+            </a>
+            <a
+              href="/category/belts"
+              className="block rounded-md px-3 py-2 hover:bg-white/10"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Belts
+            </a>
+          </div>
+        </div>
+      )}
 
       {/* Cart Slide-over (Sheet) */}
       {mounted && (
