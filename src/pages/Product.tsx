@@ -151,7 +151,7 @@ export default function ProductPage() {
       <main className="pt-20 pb-20 md:pb-0">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 grid lg:grid-cols-2 gap-10">
           <Card className="bg-black border-white/10 overflow-hidden rounded-2xl">
-            <div className="relative aspect-square">
+            <div className="relative aspect-square group">
               {image ? (
                 <>
                   <img
@@ -162,6 +162,37 @@ export default function ProductPage() {
                     fetchPriority="high"
                   />
                   <ProductZoom images={images} productName={product.name} initialIndex={activeIndex} />
+                  
+                  {/* Navigation overlays - only show if multiple images */}
+                  {images.length > 1 && (
+                    <>
+                      {/* Left side - Previous image */}
+                      <button
+                        onClick={() => setActiveIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1))}
+                        className="absolute left-0 top-0 bottom-0 w-1/3 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10"
+                        aria-label="Previous image"
+                      >
+                        <div className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/60 backdrop-blur-sm rounded-full p-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                          <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                          </svg>
+                        </div>
+                      </button>
+                      
+                      {/* Right side - Next image */}
+                      <button
+                        onClick={() => setActiveIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1))}
+                        className="absolute right-0 top-0 bottom-0 w-1/3 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10"
+                        aria-label="Next image"
+                      >
+                        <div className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/60 backdrop-blur-sm rounded-full p-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                          <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                          </svg>
+                        </div>
+                      </button>
+                    </>
+                  )}
                 </>
               ) : (
                 <div className="absolute inset-0 bg-white/5 rounded-2xl flex items-center justify-center">
