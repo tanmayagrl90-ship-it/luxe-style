@@ -290,40 +290,54 @@ export default function Navbar() {
 
           {/* Panel */}
           <div
-            className="absolute left-0 top-0 h-full w-72 max-w-[85vw] bg-gray-50 border-r border-gray-200 p-4 flex flex-col pointer-events-auto"
+            className="absolute left-0 top-0 h-full w-72 max-w-[85vw] bg-gray-50 border-r border-gray-200 p-6 flex flex-col pointer-events-auto"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-lg font-semibold tracking-wide text-gray-900">Menu</span>
+            <div className="flex items-center justify-between mb-8">
+              <span className="text-sm font-normal tracking-wide text-gray-500">MENU</span>
               <Button
                 variant="ghost"
-                size="sm"
-                className="border border-gray-300 hover:bg-gray-100 text-gray-900"
+                size="icon"
+                className="h-8 w-8 hover:bg-gray-100 text-gray-900"
                 onClick={() => setIsMenuOpen(false)}
+                aria-label="Close menu"
               >
-                Close
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
               </Button>
             </div>
 
             {/* Category links only */}
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-1">
               <a
                 href="/category/goggles"
-                className="block rounded-md px-3 py-2 hover:bg-gray-100 text-gray-900 font-medium"
+                className="block px-0 py-3 text-gray-900 text-lg font-normal hover:text-gray-600 transition-colors duration-200"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Goggles
               </a>
               <a
                 href="/category/watches"
-                className="block rounded-md px-3 py-2 hover:bg-gray-100 text-gray-900 font-medium"
+                className="block px-0 py-3 text-gray-900 text-lg font-normal hover:text-gray-600 transition-colors duration-200"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Watches
               </a>
               <a
                 href="/category/belts"
-                className="block rounded-md px-3 py-2 hover:bg-gray-100 text-gray-900 font-medium"
+                className="block px-0 py-3 text-gray-900 text-lg font-normal hover:text-gray-600 transition-colors duration-200"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Belts
@@ -331,7 +345,7 @@ export default function Navbar() {
             </div>
 
             {/* Instagram link at bottom */}
-            <div className="mt-auto pt-4 border-t border-gray-200">
+            <div className="mt-auto pt-6 border-t border-gray-200">
               <a
                 href="https://www.instagram.com/luxe.premium.in"
                 target="_blank"
