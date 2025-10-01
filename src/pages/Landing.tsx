@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
+import WhatsAppNewArrivals from "@/components/WhatsAppNewArrivals";
 import CategorySection from "@/components/CategorySection";
 import Footer from "@/components/Footer";
 
@@ -15,6 +16,7 @@ export default function Landing() {
       <Navbar />
       <main className="pt-4">
         <HeroSection />
+        <WhatsAppNewArrivals />
         <CategorySection />
       </main>
       <Footer />
