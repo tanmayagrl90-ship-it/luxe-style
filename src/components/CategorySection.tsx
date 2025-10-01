@@ -11,8 +11,7 @@ const categories = [
     description: "Luxury eyewear for the modern trendsetter",
     images: [
       "https://harmless-tapir-303.convex.cloud/api/storage/1a7551ea-0394-4354-b7ed-fc2497132148",
-      "https://harmless-tapir-303.convex.cloud/api/storage/adc0df0b-62a0-4fdb-87fd-507cb9c5ab6a",
-      "https://harmless-tapir-303.convex.cloud/api/storage/9a4ba976-cc68-4bea-9765-52ae7d573872"
+      "https://harmless-tapir-303.convex.cloud/api/storage/adc0df0b-62a0-4fdb-87fd-507cb9c5ab6a"
     ],
     href: "/category/goggles",
     color: "from-blue-500 to-purple-600"
@@ -65,7 +64,7 @@ export default function CategorySection() {
     if (!imagesLoaded) return;
     
     const interval = setInterval(() => {
-      setCurrentImageIndex((prev) => (prev + 1) % 3);
+      setCurrentImageIndex((prev) => (prev + 1) % 2);
     }, 2000);
 
     return () => clearInterval(interval);
