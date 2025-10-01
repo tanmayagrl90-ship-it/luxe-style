@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 
 export default function HeroSection() {
   const bg =
-    "https://harmless-tapir-303.convex.cloud/api/storage/6dd763ed-a147-4253-b2a2-8a51eabd4e01";
+    "https://harmless-tapir-303.convex.cloud/api/storage/9c7a0c50-e4a8-4cc2-b631-f5a35f277a9a";
 
   return (
     <section className="relative w-full overflow-hidden bg-black">
