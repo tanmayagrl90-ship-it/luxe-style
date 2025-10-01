@@ -180,13 +180,17 @@ export default function Navbar() {
             variant="ghost"
             size="icon"
             // Ensure highest stacking so clicks aren't blocked
-            className="relative z-[60] h-12 w-12 border border-white/50 hover:bg-white/10 rounded-md"
-            onClick={() => setIsMenuOpen((v) => !v)}
+            className="relative z-[70] h-12 w-12 border border-white/50 hover:bg-white/10 rounded-md pointer-events-auto"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setIsMenuOpen((v) => !v);
+            }}
             aria-label="Open menu"
             aria-expanded={isMenuOpen}
             aria-controls="luxe-mobile-menu"
           >
-            <Menu className="h-6 w-6 text-white" />
+            <Menu className="h-6 w-6 text-white pointer-events-none" />
           </Button>
 
           <motion.div
@@ -276,18 +280,17 @@ export default function Navbar() {
       {isMenuOpen && (
         <div
           id="luxe-mobile-menu"
-          className="fixed inset-0 z-[55] lg:hidden"
+          className="fixed inset-0 z-[65] lg:hidden"
           aria-modal="true"
           role="dialog"
           onClick={() => setIsMenuOpen(false)}
         >
           {/* Backdrop */}
-          <div className="absolute inset-0 bg-black/50" />
+          <div className="absolute inset-0 bg-black/50 pointer-events-auto" />
 
           {/* Panel */}
           <div
-            className="absolute left-0 top-0 h-full w-72 max-w-[85vw] bg-black border-r border-white/10 p-4 flex flex-col gap-2"
-            // prevent closing when clicking inside the panel
+            className="absolute left-0 top-0 h-full w-72 max-w-[85vw] bg-black border-r border-white/10 p-4 flex flex-col gap-2 pointer-events-auto"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between mb-2">
@@ -302,7 +305,7 @@ export default function Navbar() {
               </Button>
             </div>
 
-            {/* Category links only (as specified) */}
+            {/* Category links only */}
             <a
               href="/category/goggles"
               className="block rounded-md px-3 py-2 hover:bg-white/10"
