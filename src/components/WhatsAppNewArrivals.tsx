@@ -41,7 +41,7 @@ export default function WhatsAppNewArrivals() {
                   <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
                     <Button
                       onClick={handleWhatsAppClick}
-                      className="h-14 px-8 rounded-full bg-[#25D366] text-white hover:bg-[#20bd5b] transition-colors duration-200 text-lg font-medium"
+                      className="h-14 px-8 rounded-full bg-[#25D366] text-white hover:bg-[#20bd5b] transition-colors duration-200 text-lg font-medium shadow-lg"
                     >
                       <MessageCircle className="h-5 w-5 mr-2" />
                       View New Arrivals
@@ -50,7 +50,7 @@ export default function WhatsAppNewArrivals() {
                     <Button
                       variant="outline"
                       onClick={handleWhatsAppClick}
-                      className="h-14 px-8 rounded-full border-white/20 text-white hover:bg-white/10 transition-colors duration-200 text-lg"
+                      className="h-14 px-8 rounded-full border-2 border-white/40 bg-transparent text-white hover:bg-white/20 hover:border-white/60 transition-all duration-200 text-lg font-medium"
                     >
                       Chat on WhatsApp
                     </Button>
