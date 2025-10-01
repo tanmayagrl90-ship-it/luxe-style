@@ -19,6 +19,7 @@ export default function Footer() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
+            transition={{ duration: 0.4 }}
             className="text-center max-w-2xl mx-auto"
           >
             <h3 className="text-3xl font-bold mb-4">Stay in Style</h3>
@@ -30,7 +31,7 @@ export default function Footer() {
                 placeholder="Enter your email"
                 className="bg-gray-800 border-gray-700 text-white placeholder-gray-400"
               />
-              <Button className="bg-white text-gray-900 hover:bg-gray-100">
+              <Button className="bg-white text-gray-900 hover:bg-gray-100 transition-colors duration-200">
                 Subscribe
               </Button>
             </div>
@@ -45,6 +46,7 @@ export default function Footer() {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
+              transition={{ duration: 0.4 }}
             >
               <h2 className="text-2xl font-bold mb-4">LUXE</h2>
               <p className="text-gray-400 mb-6 max-w-md">
@@ -52,13 +54,13 @@ export default function Footer() {
                 of high-quality goggles, watches, and belts.
               </p>
               <div className="flex space-x-4">
-                <Button variant="ghost" size="icon" className="text-gray-400 hover:text-white">
+                <Button variant="ghost" size="icon" className="text-gray-400 hover:text-white transition-colors duration-200">
                   <Instagram className="h-5 w-5" />
                 </Button>
-                <Button variant="ghost" size="icon" className="text-gray-400 hover:text-white">
+                <Button variant="ghost" size="icon" className="text-gray-400 hover:text-white transition-colors duration-200">
                   <Twitter className="h-5 w-5" />
                 </Button>
-                <Button variant="ghost" size="icon" className="text-gray-400 hover:text-white">
+                <Button variant="ghost" size="icon" className="text-gray-400 hover:text-white transition-colors duration-200">
                   <Facebook className="h-5 w-5" />
                 </Button>
               </div>
@@ -72,7 +74,7 @@ export default function Footer() {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: index * 0.1 }}
+              transition={{ delay: index * 0.06, duration: 0.4 }}
             >
               <h4 className="font-semibold mb-4">{title}</h4>
               <ul className="space-y-2">
@@ -80,7 +82,7 @@ export default function Footer() {
                   <li key={link}>
                     <a
                       href="#"
-                      className="text-gray-400 hover:text-white transition-colors"
+                      className="text-gray-400 hover:text-white transition-colors duration-200"
                     >
                       {link}
                     </a>
@@ -115,13 +117,13 @@ export default function Footer() {
             © 2024 LUXE. All rights reserved.
           </p>
           <div className="flex space-x-6 mt-4 md:mt-0">
-            <a href="#" className="text-gray-400 hover:text-white text-sm transition-colors">
+            <a href="#" className="text-gray-400 hover:text-white text-sm transition-colors duration-200">
               Privacy Policy
             </a>
-            <a href="#" className="text-gray-400 hover:text-white text-sm transition-colors">
+            <a href="#" className="text-gray-400 hover:text-white text-sm transition-colors duration-200">
               Terms of Service
             </a>
-            <a href="#" className="text-gray-400 hover:text-white text-sm transition-colors">
+            <a href="#" className="text-gray-400 hover:text-white text-sm transition-colors duration-200">
               Cookie Policy
             </a>
           </div>

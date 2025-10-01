@@ -37,6 +37,7 @@ export default function CategorySection() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
+          transition={{ duration: 0.4 }}
           className="text-center mb-16"
         >
           <h2 className="text-4xl lg:text-5xl font-bold tracking-tight text-white mb-4">
@@ -54,7 +55,7 @@ export default function CategorySection() {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: index * 0.1 }}
+              transition={{ delay: index * 0.08, duration: 0.4 }}
             >
               <Card
                 className="group cursor-pointer overflow-hidden ring-1 ring-white/10 hover:ring-white/20 bg-transparent transition-all duration-300"
@@ -74,7 +75,7 @@ export default function CategorySection() {
                     <span className="text-white font-semibold text-lg">{category.name}</span>
                   </div>
                   <motion.div
-                    whileHover={{ scale: 1.1 }}
+                    whileHover={{ scale: 1.05 }}
                     transition={{ duration: 0.3 }}
                     className="absolute inset-0"
                   />
@@ -89,7 +90,7 @@ export default function CategorySection() {
                   </p>
                   <Button
                     variant="ghost"
-                    className="p-0 h-auto text-white hover:text-white/80 group-hover:translate-x-1 transition-transform"
+                    className="p-0 h-auto text-white hover:text-white/80 group-hover:translate-x-1 transition-transform duration-200"
                     onClick={(e) => {
                       e.stopPropagation();
                       navigate(category.href);

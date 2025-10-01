@@ -124,6 +124,21 @@
   [role="button"]:not([disabled]) {
     cursor: pointer;
   }
+  
+  /* Performance optimizations */
+  img {
+    content-visibility: auto;
+  }
+  
+  /* Smooth scrolling */
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  /* GPU acceleration for animations */
+  [class*="motion-"] {
+    will-change: transform, opacity;
+  }
 }
 
 /* Custom scrollbar */

@@ -25,20 +25,15 @@ export default function ProductPage() {
   const { isAuthenticated, user, signIn } = useAuth();
   const addToCart = useMutation(api.cart.addToCart);
   const [qty, setQty] = useState(1);
-  // Add color state only for the Coach belt
   const supportsColors =
     (product?.name ?? "").toLowerCase() === "coach belt" ||
     (product?.name ?? "").toLowerCase() === "coach premium belt";
   const [color, setColor] = useState<"black" | "white">("black");
-
-  // Add: active image index for gallery
   const [activeIndex, setActiveIndex] = useState(0);
 
-  // When product loads or color changes (Coach belt), sync the active image
   useEffect(() => {
     if (!product?.images?.length) return;
     if (supportsColors) {
-      // Map: black -> index 0, white -> index 1 (fallback to available)
       setActiveIndex(color === "black" ? 0 : Math.min(1, product.images.length - 1));
     } else {
       setActiveIndex(0);
@@ -57,7 +52,6 @@ export default function ProductPage() {
         userId: currentUserId,
         productId: id as any,
         quantity: qty,
-        // Pass color if the product supports colors
         color: supportsColors ? color : undefined,
       } as any);
       toast("Added to cart");
@@ -69,18 +63,18 @@ export default function ProductPage() {
 
   if (product === undefined) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <span className="text-sm text-gray-500">Loading...</span>
+      <div className="min-h-screen flex items-center justify-center bg-black">
+        <span className="text-sm text-gray-400">Loading...</span>
       </div>
     );
   }
   if (product === null) {
     return (
-      <div className="min-h-screen">
+      <div className="min-h-screen bg-black">
         <Navbar />
         <main className="pt-20">
           <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-            <p className="text-gray-600">Product not found.</p>
+            <p className="text-gray-400">Product not found.</p>
             <Button className="mt-4" variant="outline" onClick={() => navigate(-1)}>
               Go Back
             </Button>
@@ -91,7 +85,6 @@ export default function ProductPage() {
     );
   }
 
-  // Choose image from active index; fallback to first if out of range
   const images = product.images ?? [];
   const image = images[activeIndex] ?? images[0];
 
@@ -100,15 +93,15 @@ export default function ProductPage() {
       <Navbar />
       <main className="pt-20">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 grid lg:grid-cols-2 gap-10">
-          {/* Left: Big Image + Thumbnails */}
           <Card className="bg-black border-white/10 overflow-hidden rounded-2xl">
             <div className="relative aspect-square">
               {image ? (
                 <img
                   src={image}
                   alt={product.name}
-                  className="absolute inset-0 w-full h-full object-cover rounded-2xl"
-                  loading="lazy"
+                  className="absolute inset-0 w-full h-full object-cover rounded-2xl transition-opacity duration-300"
+                  loading="eager"
+                  fetchPriority="high"
                 />
               ) : (
                 <div className="absolute inset-0 bg-white/5 rounded-2xl flex items-center justify-center">
@@ -119,7 +112,6 @@ export default function ProductPage() {
               )}
             </div>
 
-            {/* Thumbnails */}
             {images.length > 1 && (
               <div className="p-4">
                 <div className="flex gap-3 overflow-x-auto">
@@ -127,7 +119,7 @@ export default function ProductPage() {
                     <button
                       key={src + idx}
                       onClick={() => setActiveIndex(idx)}
-                      className={`relative h-18 w-18 sm:h-20 sm:w-20 rounded-xl overflow-hidden flex-shrink-0 ring-1 transition-all ${
+                      className={`relative h-18 w-18 sm:h-20 sm:w-20 rounded-xl overflow-hidden flex-shrink-0 ring-1 transition-all duration-200 ${
                         activeIndex === idx
                           ? "ring-white"
                           : "ring-white/20 hover:ring-white/40"
@@ -147,7 +139,6 @@ export default function ProductPage() {
             )}
           </Card>
 
-          {/* Right: Details */}
           <div>
             <p className="uppercase tracking-wide text-sm text-white/60 mb-2">
               {prettyName[product.category] ?? product.category}
@@ -168,12 +159,10 @@ export default function ProductPage() {
               )}
             </div>
 
-            {/* Shipping notice */}
             <p className="mt-2 text-sm text-white/70">
               <span className="underline">Shipping</span> calculated at checkout.
             </p>
 
-            {/* Color (Coach belt only) - dropdown like reference "Size" selector */}
             {supportsColors && (
               <div className="mt-6">
                 <p className="text-sm text-white/70 mb-2">Color</p>
@@ -181,7 +170,7 @@ export default function ProductPage() {
                   value={color}
                   onValueChange={(v) => setColor((v as "black" | "white"))}
                 >
-                  <SelectTrigger className="h-12 rounded-full border-white/20 bg-transparent text-white">
+                  <SelectTrigger className="h-12 rounded-full border-white/20 bg-transparent text-white transition-colors duration-200">
                     <SelectValue placeholder="Select color" />
                   </SelectTrigger>
                   <SelectContent>
@@ -192,14 +181,13 @@ export default function ProductPage() {
               </div>
             )}
 
-            {/* Quantity */}
             <div className="mt-6">
               <p className="text-sm text-white/70 mb-2">Quantity</p>
               <div className="inline-flex items-center gap-2 rounded-full border border-white/20 px-3 py-2">
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-8 w-8 hover:bg-white/10"
+                  className="h-8 w-8 hover:bg-white/10 transition-colors duration-200"
                   onClick={() => setQty((q) => Math.max(1, q - 1))}
                 >
                   <Minus className="h-4 w-4" />
@@ -208,7 +196,7 @@ export default function ProductPage() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-8 w-8 hover:bg-white/10"
+                  className="h-8 w-8 hover:bg-white/10 transition-colors duration-200"
                   onClick={() => setQty((q) => Math.min(10, q + 1))}
                 >
                   <Plus className="h-4 w-4" />
@@ -216,16 +204,15 @@ export default function ProductPage() {
               </div>
             </div>
 
-            {/* Actions */}
             <div className="mt-6 space-y-3">
               <Button
                 onClick={handleAddToCart}
-                className="w-full h-12 rounded-full bg-white text-black hover:bg-white/90"
+                className="w-full h-12 rounded-full bg-white text-black hover:bg-white/90 transition-colors duration-200"
               >
                 Add to cart
               </Button>
               <Button
-                className="w-full h-12 rounded-full bg-[#25D366] text-white hover:bg-[#20bd5b]"
+                className="w-full h-12 rounded-full bg-[#25D366] text-white hover:bg-[#20bd5b] transition-colors duration-200"
                 onClick={() => {
                   const link = `${window.location.origin}/product/${product._id}`;
                   const message = `Hi! I'm interested in "${product.name}" (${prettyName[product.category] ?? product.category}). Price: ₹${product.price.toLocaleString()}${product.originalPrice ? ` (MRP ₹${product.originalPrice.toLocaleString()})` : ""}.${supportsColors ? ` Color: ${color[0].toUpperCase() + color.slice(1)}.` : ""} Link: ${link}`;
@@ -238,7 +225,6 @@ export default function ProductPage() {
               </Button>
             </div>
 
-            {/* Stock */}
             <p className="mt-4 text-sm">
               {product.inStock ? (
                 <span className="text-green-400">In stock</span>
