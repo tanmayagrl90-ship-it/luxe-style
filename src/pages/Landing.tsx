@@ -16,8 +16,8 @@ export default function Landing() {
       <Navbar />
       <main className="pt-4">
         <HeroSection />
-        <WhatsAppNewArrivals />
         <CategorySection />
+        <WhatsAppNewArrivals />
       </main>
       <Footer />
     </motion.div>
