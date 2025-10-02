@@ -50,7 +50,7 @@ export default function Footer() {
             className="flex flex-wrap justify-center gap-6 sm:gap-8 text-sm sm:text-base"
           >
             <a
-              href="#"
+              href="/about"
               className="text-white hover:text-gray-300 transition-colors duration-200 underline font-normal"
             >
               About Us

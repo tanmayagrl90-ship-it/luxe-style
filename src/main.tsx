@@ -14,6 +14,7 @@ import Admin from "@/pages/Admin.tsx";
 import CategoryPage from "@/pages/Category.tsx";
 import ProductPage from "@/pages/Product.tsx";
 import Contact from "@/pages/Contact.tsx";
+import AboutUs from "@/pages/AboutUs.tsx";
 import "./types/global.d.ts";
 
 const convex = new ConvexReactClient(import.meta.env.VITE_CONVEX_URL as string);
@@ -60,6 +61,7 @@ createRoot(document.getElementById("root")!).render(
             <Route path="/category/:category" element={<CategoryPage />} />
             <Route path="/product/:id" element={<ProductPage />} />
             <Route path="/contact" element={<Contact />} />
+            <Route path="/about" element={<AboutUs />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
