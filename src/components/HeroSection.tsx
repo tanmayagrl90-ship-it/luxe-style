@@ -5,12 +5,12 @@ export default function HeroSection() {
     "https://harmless-tapir-303.convex.cloud/api/storage/9c7a0c50-e4a8-4cc2-b631-f5a35f277a9a";
 
   return (
-    <section className="relative w-full overflow-hidden bg-black touch-none">
+    <section className="relative w-full overflow-hidden bg-black">
       <div className="relative h-[70vh] sm:h-[78vh] md:h-[86vh] lg:h-[88vh]">
         <motion.img
           src={bg}
           alt="LUXE flagship visual"
-          className="absolute inset-0 h-full w-full object-cover"
+          className="absolute inset-0 h-full w-full object-cover touch-none"
           loading="eager"
           fetchPriority="high"
           initial={{ scale: 1.06 }}
