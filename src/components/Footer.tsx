@@ -56,7 +56,7 @@ export default function Footer() {
               About Us
             </a>
             <a
-              href="#"
+              href="/track-order"
               className="text-white hover:text-gray-300 transition-colors duration-200 underline font-normal"
             >
               Track Order
