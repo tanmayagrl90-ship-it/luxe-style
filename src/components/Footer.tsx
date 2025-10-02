@@ -16,7 +16,7 @@ export default function Footer() {
             transition={{ duration: 0.4 }}
             className="text-center max-w-xl mx-auto"
           >
-            <h3 className="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-8 sm:mb-10 tracking-tight">
+            <h3 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-8 sm:mb-10">
               Subscribe to our emails
             </h3>
             <div className="relative max-w-md mx-auto">
@@ -41,7 +41,7 @@ export default function Footer() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.4, delay: 0.1 }}
-            className="flex flex-wrap justify-center gap-6 sm:gap-8 text-sm sm:text-base font-medium"
+            className="flex flex-wrap justify-center gap-6 sm:gap-8 text-sm sm:text-base"
           >
             <a
               href="#"
@@ -88,10 +88,10 @@ export default function Footer() {
             transition={{ duration: 0.4, delay: 0.3 }}
             className="text-center space-y-4"
           >
-            <p className="text-gray-400 text-xs sm:text-sm font-normal">
+            <p className="text-gray-400 text-xs sm:text-sm">
               © 2025, LUXE
             </p>
-            <div className="flex flex-wrap justify-center gap-3 sm:gap-4 text-xs sm:text-sm font-normal">
+            <div className="flex flex-wrap justify-center gap-3 sm:gap-4 text-xs sm:text-sm">
               <a href="#" className="text-gray-400 hover:text-white transition-colors duration-200">
                 Refund policy
               </a>
