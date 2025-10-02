@@ -68,11 +68,11 @@ export default function Footer() {
             className="flex justify-center"
           >
             <a
-              href="https://www.instagram.com/luxe.premium.in"
+              href="https://www.instagram.com/luxe.premium.in/"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-gray-300 hover:text-white transition-colors duration-200"
-              aria-label="Instagram"
+              className="text-gray-300 hover:text-white transition-colors duration-200 inline-block"
+              aria-label="Visit our Instagram page"
             >
               <Instagram className="h-6 w-6" />
             </a>
