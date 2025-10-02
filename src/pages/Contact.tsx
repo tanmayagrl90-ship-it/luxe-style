@@ -18,11 +18,11 @@ export default function Contact() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-center mb-6 sm:mb-8 text-black">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-center mb-4 sm:mb-6 text-black">
               Contact information
             </h1>
 
-            <div className="space-y-4 text-sm sm:text-base text-neutral-700 leading-relaxed">
+            <div className="space-y-3 text-xs sm:text-sm text-neutral-700 leading-relaxed">
               <p>Dear valued customers,</p>
 
               <p>
@@ -36,19 +36,19 @@ export default function Contact() {
                 WhatsApp or email using the contact details below:
               </p>
 
-              <div className="py-4">
-                <p className="font-semibold text-black">WhatsApp: +91 9871629699</p>
-                <p className="font-semibold text-black">Email: luxe.premium.in@gmail.com</p>
+              <div className="py-2">
+                <p className="font-semibold text-black text-xs sm:text-sm">WhatsApp: +91 9871629699</p>
+                <p className="font-semibold text-black text-xs sm:text-sm">Email: luxe.premium.in@gmail.com</p>
               </div>
 
               <p>
                 Your satisfaction is our priority, and we look forward to serving you!
               </p>
 
-              <div className="pt-6">
-                <p>Warm regards,</p>
-                <p className="font-semibold text-black">Tanmay Agrawal</p>
-                <p className="text-neutral-700">Owner, LUXE</p>
+              <div className="pt-4">
+                <p className="text-xs sm:text-sm">Warm regards,</p>
+                <p className="font-semibold text-black text-xs sm:text-sm">Tanmay Agrawal</p>
+                <p className="text-neutral-700 text-xs sm:text-sm">Owner, LUXE</p>
               </div>
             </div>
           </motion.div>
