@@ -18,11 +18,11 @@ export default function Contact() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <h1 className="text-3xl sm:text-4xl font-extrabold text-center mb-6 text-black">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-center mb-4 sm:mb-6 text-black">
               Contact information
             </h1>
 
-            <div className="space-y-4 text-sm text-neutral-700 leading-relaxed">
+            <div className="space-y-3 text-xs sm:text-sm text-neutral-700 leading-relaxed">
               <p>Dear valued customers,</p>
 
               <p>
