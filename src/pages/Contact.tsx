@@ -12,17 +12,17 @@ export default function Contact() {
     >
       <Navbar />
       <main className="pt-24">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 md:py-24">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 md:py-12">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-center mb-12 sm:mb-16 text-black">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-center mb-6 sm:mb-8 text-black">
               Contact information
             </h1>
 
-            <div className="space-y-6 text-base sm:text-lg text-neutral-700 leading-relaxed">
+            <div className="space-y-4 text-sm sm:text-base text-neutral-700 leading-relaxed">
               <p>Dear valued customers,</p>
 
               <p>
