@@ -8,47 +8,51 @@ export default function Contact() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="min-h-screen bg-neutral-200 text-neutral-900"
+      className="min-h-screen bg-[#f2f2f2] text-[#111111]"
+      style={{ fontFamily: "'Helvetica Neue', Arial, sans-serif" }}
     >
       <Navbar />
       <main className="pt-24">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 md:py-12">
+        <div className="max-w-[800px] mx-auto px-6 py-12">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-center mb-4 sm:mb-6 text-black">
+            <h1 
+              className="font-bold text-center mb-5 text-[#111111]"
+              style={{ fontSize: '32px', lineHeight: '1.2' }}
+            >
               Contact information
             </h1>
 
-            <div className="space-y-3 text-xs sm:text-sm text-neutral-700 leading-relaxed font-['Noyh_Bold']">
-              <p>Dear valued customers,</p>
+            <div className="text-left" style={{ fontSize: '17px', lineHeight: '1.6' }}>
+              <p className="mb-4">Dear valued customers,</p>
 
-              <p>
+              <p className="mb-4">
                 I'm Tanmay Agrawal, the proud owner of LUXE, where we're dedicated to
                 providing you with the finest quality products. Whether you're seeking style,
                 comfort, or durability, we've got you covered.
               </p>
 
-              <p>
+              <p className="mb-4">
                 For any inquiries, orders, or assistance, feel free to reach out to us via
                 WhatsApp or email using the contact details below:
               </p>
 
-              <div className="py-2">
-                <p className="font-semibold text-black">WhatsApp: +91 9871629699</p>
-                <p className="font-semibold text-black">Email: luxe.premium.in@gmail.com</p>
+              <div className="mb-4">
+                <p>WhatsApp: +91 9871629699</p>
+                <p>Email: luxe.premium.in@gmail.com</p>
               </div>
 
-              <p>
+              <p className="mb-4">
                 Your satisfaction is our priority, and we look forward to serving you!
               </p>
 
-              <div className="pt-4">
+              <div style={{ marginTop: '15px' }}>
                 <p>Warm regards,</p>
-                <p className="font-semibold text-black">Tanmay Agrawal</p>
-                <p className="text-neutral-700">Owner, LUXE</p>
+                <p>Tanmay Agrawal</p>
+                <p>Owner, LUXE</p>
               </div>
             </div>
           </motion.div>
