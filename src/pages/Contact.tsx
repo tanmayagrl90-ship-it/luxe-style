@@ -26,7 +26,7 @@ export default function Contact() {
               Contact information
             </h1>
 
-            <div className="text-left" style={{ fontSize: '17px', lineHeight: '1.6' }}>
+            <div className="text-left" style={{ fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif', fontSize: '17px', lineHeight: '1.6' }}>
               <p className="mb-4">Dear valued customers,</p>
 
               <p className="mb-4">
