@@ -16,7 +16,7 @@ export default function Footer() {
             transition={{ duration: 0.4 }}
             className="text-center max-w-xl mx-auto"
           >
-            <h3 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-8 sm:mb-10">
+            <h3 className="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-8 sm:mb-10">
               Subscribe to our emails
             </h3>
             <div className="relative max-w-md mx-auto">
@@ -45,13 +45,13 @@ export default function Footer() {
           >
             <a
               href="#"
-              className="text-gray-300 hover:text-white transition-colors duration-200"
+              className="text-gray-300 hover:text-white transition-colors duration-200 font-medium"
             >
               About Us
             </a>
             <a
               href="#"
-              className="text-gray-300 hover:text-white transition-colors duration-200"
+              className="text-gray-300 hover:text-white transition-colors duration-200 font-medium"
             >
               Track Order
             </a>
@@ -88,27 +88,27 @@ export default function Footer() {
             transition={{ duration: 0.4, delay: 0.3 }}
             className="text-center space-y-4"
           >
-            <p className="text-gray-400 text-xs sm:text-sm">
+            <p className="text-gray-400 text-xs sm:text-sm font-normal">
               © 2025, LUXE
             </p>
             <div className="flex flex-wrap justify-center gap-3 sm:gap-4 text-xs sm:text-sm">
-              <a href="#" className="text-gray-400 hover:text-white transition-colors duration-200">
+              <a href="#" className="text-gray-400 hover:text-white transition-colors duration-200 font-normal">
                 Refund policy
               </a>
               <span className="text-gray-600">·</span>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors duration-200">
+              <a href="#" className="text-gray-400 hover:text-white transition-colors duration-200 font-normal">
                 Privacy policy
               </a>
               <span className="text-gray-600">·</span>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors duration-200">
+              <a href="#" className="text-gray-400 hover:text-white transition-colors duration-200 font-normal">
                 Terms of service
               </a>
               <span className="text-gray-600">·</span>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors duration-200">
+              <a href="#" className="text-gray-400 hover:text-white transition-colors duration-200 font-normal">
                 Shipping policy
               </a>
               <span className="text-gray-600">·</span>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors duration-200">
+              <a href="#" className="text-gray-400 hover:text-white transition-colors duration-200 font-normal">
                 Contact information
               </a>
             </div>
