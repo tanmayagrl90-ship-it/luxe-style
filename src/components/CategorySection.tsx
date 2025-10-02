@@ -8,7 +8,7 @@ import { useState, useEffect } from "react";
 const categories = [
   {
     name: "Premium Goggles",
-    description: "Luxury eyewear for the modern trendsetter",
+    description: "Fashion Eyewear for Every Mood",
     images: [
       "https://harmless-tapir-303.convex.cloud/api/storage/1a7551ea-0394-4354-b7ed-fc2497132148",
       "https://harmless-tapir-303.convex.cloud/api/storage/adc0df0b-62a0-4fdb-87fd-507cb9c5ab6a",
@@ -19,7 +19,7 @@ const categories = [
   },
   {
     name: "Designer Watches",
-    description: "Timepieces that define sophistication",
+    description: "Luxury-Inspired Watches, Everyday Wear",
     images: [
       "https://harmless-tapir-303.convex.cloud/api/storage/0df7a66e-c4cd-4165-8eb8-eb91d8b079b1",
       "https://harmless-tapir-303.convex.cloud/api/storage/882e40ac-661b-4f0a-87f2-48744b7ddf77"
@@ -29,7 +29,7 @@ const categories = [
   },
   {
     name: "Luxury Belts",
-    description: "Crafted accessories for the discerning individual",
+    description: "Essential Belts, Iconic Style Upgrade",
     images: [
       "https://harmless-tapir-303.convex.cloud/api/storage/5d06c704-4d0d-4c4b-bd9c-b4a42c7e2d96",
       "https://harmless-tapir-303.convex.cloud/api/storage/8b8a5a4e-e0dd-45b8-885f-dae0013cf643",
