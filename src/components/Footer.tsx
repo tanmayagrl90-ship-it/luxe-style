@@ -51,13 +51,13 @@ export default function Footer() {
           >
             <a
               href="#"
-              className="text-white hover:text-gray-300 transition-colors duration-200 underline"
+              className="text-white hover:text-gray-300 transition-colors duration-200 underline font-normal"
             >
               About Us
             </a>
             <a
               href="#"
-              className="text-white hover:text-gray-300 transition-colors duration-200 underline"
+              className="text-white hover:text-gray-300 transition-colors duration-200 underline font-normal"
             >
               Track Order
             </a>
