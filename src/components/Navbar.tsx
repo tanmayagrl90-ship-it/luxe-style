@@ -144,7 +144,7 @@ export default function Navbar() {
   // Cart items for drawer
   const cartItems = useQuery(
     api.cart.getCartItems,
-    isCartOpen ? { userId: user?._id ?? null } : undefined,
+    isCartOpen ? { userId: user?._id ?? null } : "skip",
   );
   const cartItemCount = (cartItems ?? []).reduce(
     (sum, item) => sum + (item.quantity ?? 0),
