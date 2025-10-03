@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ArrowRight } from "lucide-react";
 import { useState, useCallback } from "react";
-import { useAction } from "convex/react";
+import { useAction, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { toast } from "sonner";
 
@@ -10,6 +10,7 @@ export default function NewsletterForm() {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const sendWelcome = useAction(api.emails.sendWelcomeEmail);
+  const subscribe = useMutation(api.subscribers.subscribe);
 
   const onSubmit = useCallback(
     async (e?: React.FormEvent) => {
@@ -22,16 +23,19 @@ export default function NewsletterForm() {
       }
       try {
         setLoading(true);
+        // Save subscriber first (deduped)
+        await subscribe({ email: value });
+        // Send welcome email
         await sendWelcome({ to: value });
         toast("Thanks for subscribing! Welcome email sent.");
         setEmail("");
       } catch (err: any) {
-        toast(err?.message || "Failed to send welcome email. Please try again.");
+        toast(err?.message || "Failed to subscribe. Please try again.");
       } finally {
         setLoading(false);
       }
     },
-    [email, sendWelcome],
+    [email, sendWelcome, subscribe],
   );
 
   return (

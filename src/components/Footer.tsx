@@ -2,10 +2,22 @@ import { motion } from "framer-motion";
 import { Instagram } from "lucide-react";
 import { useLocation } from "react-router";
 import NewsletterForm from "./Footer.NewsletterForm";
+import { useAuth } from "@/hooks/use-auth";
+import { useAction } from "convex/react";
+import { api } from "@/convex/_generated/api";
 
 export default function Footer() {
   const location = useLocation();
   const isHomePage = location.pathname === "/";
+  const { isAuthenticated, user } = useAuth();
+  const allowedEmails = new Set<string>(["vidhigadgets@gmail.com"]);
+  const isAdmin =
+    !!isAuthenticated &&
+    !!user &&
+    (((user.role as string | undefined) === "admin") ||
+      (user.email ? allowedEmails.has(user.email) : false));
+
+  const sendAll = useAction(api.emails.sendNewsletterToAll);
 
   return (
     <footer className="bg-black text-white">
@@ -21,6 +33,25 @@ export default function Footer() {
               className="text-center max-w-xl mx-auto"
             >
               <NewsletterForm />
+              {isHomePage && isAdmin && (
+                <div className="mt-6 flex justify-center">
+                  <button
+                    onClick={async () => {
+                      try {
+                        await sendAll({});
+                        // Use window alert to keep dependencies minimal, or you can use Sonner if preferred here.
+                        alert("Sent email to all subscribers.");
+                      } catch (e: any) {
+                        alert(e?.message || "Failed to send to all subscribers.");
+                      }
+                    }}
+                    className="text-xs rounded-full px-4 py-2 bg-white/10 hover:bg-white/20 ring-1 ring-white/20 transition-colors"
+                    aria-label="Send email to all subscribers"
+                  >
+                    Send email to all subscribers
+                  </button>
+                </div>
+              )}
             </motion.div>
           </div>
         )}

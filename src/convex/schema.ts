@@ -1,6 +1,6 @@
 import { authTables } from "@convex-dev/auth/server";
 import { defineSchema, defineTable } from "convex/server";
-import { Infer, v } from "convex/values";
+import { v } from "convex/values";
 
 // default user roles. can add / remove based on the project as needed
 export const ROLES = {
@@ -14,7 +14,7 @@ export const roleValidator = v.union(
   v.literal(ROLES.USER),
   v.literal(ROLES.MEMBER),
 );
-export type Role = Infer<typeof roleValidator>;
+export type Role = (typeof roleValidator)["type"];
 
 const schema = defineSchema(
   {
@@ -84,6 +84,12 @@ const schema = defineSchema(
         country: v.string(),
       }),
     }).index("by_user", ["userId"]),
+
+    subscribers: defineTable({
+      email: v.string(),
+      subscribedAt: v.number(),
+    })
+      .index("by_email", ["email"]),
   },
   {
     schemaValidation: false,
