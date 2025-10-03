@@ -479,43 +479,46 @@ export default function Navbar() {
                   </ul>
 
                   {/* Promo code section: always visible; enforce eligibility inline */}
-                  <div className="mt-2 rounded-md border border-gray-300 p-3 space-y-2">
-                    <p className="text-sm font-semibold">Have a code?</p>
+                  <div className="mt-2 rounded-md border border-gray-300 p-2.5 space-y-1.5">
+                    <p className="text-xs font-semibold text-gray-700">Have a code?</p>
                     
                     {/* Show available codes as clickable chips when eligible */}
                     {cartItemCount >= 2 && appliedDiscount === 0 && (
-                      <div className="flex flex-wrap gap-2 mb-2">
+                      <div className="flex flex-wrap gap-1.5 mb-1">
                         <button
                           onClick={() => {
                             setPromoCode("LUXE150");
                             setAppliedDiscount(150);
                           }}
-                          className="px-3 py-1.5 text-sm font-medium bg-black text-white rounded-full hover:bg-black/90 transition-colors duration-200"
+                          className="px-2.5 py-1 text-xs font-bold bg-gradient-to-r from-black to-gray-800 text-white rounded-full hover:from-gray-800 hover:to-black shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-200 border border-white/20"
                         >
-                          LUXE150 - ₹150 OFF
+                          🎉 LUXE150 - ₹150 OFF
                         </button>
                       </div>
                     )}
                     
-                    <div className="flex gap-2">
+                    <div className="flex gap-1.5">
                       <Input
                         value={promoCode}
                         onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
                         placeholder="Enter code"
-                        className="bg-white"
+                        className="bg-white text-sm h-9"
                       />
                       {appliedDiscount > 0 ? (
                         <Button
                           variant="outline"
+                          size="sm"
                           onClick={() => {
                             setAppliedDiscount(0);
                             setPromoCode("");
                           }}
+                          className="h-9 text-xs"
                         >
                           Remove
                         </Button>
                       ) : (
                         <Button
+                          size="sm"
                           onClick={() => {
                             // If fewer than 2 items, show inline not applicable message (no alert)
                             if (cartItemCount < 2) {
@@ -530,7 +533,7 @@ export default function Navbar() {
                               setAppliedDiscount(0);
                             }
                           }}
-                          className="bg-black text-white hover:bg-black/90"
+                          className="bg-black text-white hover:bg-black/90 h-9 text-xs"
                         >
                           Apply
                         </Button>
@@ -548,8 +551,8 @@ export default function Navbar() {
                       </p>
                     ) : null}
                     {appliedDiscount > 0 && (
-                      <p className="text-xs text-green-700">
-                        Code applied: LUXE150 — ₹150 off
+                      <p className="text-xs text-green-700 font-semibold bg-green-50 px-2 py-1 rounded">
+                        ✓ Code applied: LUXE150 — ₹150 off
                       </p>
                     )}
                   </div>
