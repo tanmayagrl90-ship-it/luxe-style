@@ -1,8 +1,7 @@
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { motion } from "framer-motion";
-import { Instagram, ArrowRight } from "lucide-react";
+import { Instagram } from "lucide-react";
 import { useLocation } from "react-router";
+import NewsletterForm from "./Footer.NewsletterForm";
 
 export default function Footer() {
   const location = useLocation();
@@ -21,21 +20,7 @@ export default function Footer() {
               transition={{ duration: 0.4 }}
               className="text-center max-w-xl mx-auto"
             >
-              <h3 className="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-8 sm:mb-10">
-                Subscribe to our emails
-              </h3>
-              <div className="relative max-w-md mx-auto">
-                <Input
-                  placeholder="Email"
-                  className="h-12 sm:h-14 bg-transparent border border-white/30 rounded-full text-white placeholder-gray-400 pr-12 px-6 focus:border-white/50 transition-colors duration-200"
-                />
-                <Button 
-                  size="icon"
-                  className="absolute right-1 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full bg-white hover:bg-gray-200 text-black transition-colors duration-200"
-                >
-                  <ArrowRight className="h-5 w-5" />
-                </Button>
-              </div>
+              <NewsletterForm />
             </motion.div>
           </div>
         )}
