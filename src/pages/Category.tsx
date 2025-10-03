@@ -13,6 +13,7 @@ import { motion } from "framer-motion";
 import { MessageCircle, Heart } from "lucide-react";
 import { useParams } from "react-router";
 import { useNavigate } from "react-router";
+import { useState } from "react";
 
 const prettyName: Record<string, string> = {
   goggles: "Goggles",
@@ -30,12 +31,21 @@ export default function CategoryPage() {
   const wishlistItems = useQuery(api.wishlist.getWishlist, { userId: user?._id ?? null });
   const navigate = useNavigate();
 
+  // Add: per-product quantities (start from 0)
+  const [quantities, setQuantities] = useState<Record<string, number>>({});
+
   const wishlistProductIds = new Set(
     (wishlistItems ?? []).map((item) => item.productId)
   );
 
-  const handleAddToCart = async (productId: string) => {
+  const handleAddToCart = async (productId: string, quantity: number) => {
     try {
+      // Guard: do nothing if quantity is 0
+      if (!quantity || quantity <= 0) {
+        toast("Select quantity first");
+        return;
+      }
+
       let currentUserId = user?._id;
 
       if (!isAuthenticated || !currentUserId) {
@@ -55,7 +65,11 @@ export default function CategoryPage() {
         return;
       }
 
-      await addToCart({ userId: currentUserId as any, productId: productId as any, quantity: 1 });
+      await addToCart({
+        userId: currentUserId as any,
+        productId: productId as any,
+        quantity: quantity,
+      });
       toast("Added to cart");
     } catch (e) {
       console.error(e);
@@ -196,15 +210,57 @@ export default function CategoryPage() {
                           </div>
 
                           <div className="mt-3 flex gap-2">
+                            <div
+                              className="inline-flex items-center gap-2 rounded-full border border-white/20 px-2 py-1"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-7 w-7 hover:bg-white/10"
+                                aria-label="Decrease quantity"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setQuantities((q) => {
+                                    const prev = q[product._id] ?? 0;
+                                    const next = Math.max(0, prev - 1);
+                                    return { ...q, [product._id]: next };
+                                  });
+                                }}
+                              >
+                                <span className="text-sm">−</span>
+                              </Button>
+                              <span className="w-6 text-center text-sm">
+                                {(quantities[product._id] ?? 0)}
+                              </span>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-7 w-7 hover:bg-white/10"
+                                aria-label="Increase quantity"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setQuantities((q) => {
+                                    const prev = q[product._id] ?? 0;
+                                    const next = Math.min(10, prev + 1);
+                                    return { ...q, [product._id]: next };
+                                  });
+                                }}
+                              >
+                                <span className="text-sm">+</span>
+                              </Button>
+                            </div>
+
                             <Button
                               size="sm"
                               className="rounded-full bg-white text-black hover:bg-white/90"
+                              disabled={(quantities[product._id] ?? 0) <= 0}
                               onClick={async (e) => {
                                 e.stopPropagation();
                                 if (typeof window !== "undefined") {
                                   (window as any).__luxeUserId = user?._id;
                                 }
-                                await handleAddToCart(product._id as any);
+                                await handleAddToCart(product._id as any, quantities[product._id] ?? 0);
                               }}
                             >
                               Add to Cart
