@@ -481,6 +481,22 @@ export default function Navbar() {
                   {/* Promo code section: always visible; enforce eligibility inline */}
                   <div className="mt-2 rounded-md border border-gray-300 p-3 space-y-2">
                     <p className="text-sm font-semibold">Have a code?</p>
+                    
+                    {/* Show available codes as clickable chips when eligible */}
+                    {cartItemCount >= 2 && appliedDiscount === 0 && (
+                      <div className="flex flex-wrap gap-2 mb-2">
+                        <button
+                          onClick={() => {
+                            setPromoCode("LUXE150");
+                            setAppliedDiscount(150);
+                          }}
+                          className="px-3 py-1.5 text-sm font-medium bg-black text-white rounded-full hover:bg-black/90 transition-colors duration-200"
+                        >
+                          LUXE150 - ₹150 OFF
+                        </button>
+                      </div>
+                    )}
+                    
                     <div className="flex gap-2">
                       <Input
                         value={promoCode}
