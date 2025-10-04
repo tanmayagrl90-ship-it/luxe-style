@@ -163,11 +163,21 @@ export default function Navbar() {
   // Add mutation for updating cart quantities
   const setCartItemQuantity = useMutation(api.cart.setCartItemQuantity);
 
+  // Calculate packaging charges
+  const packagingCharges = (cartItems ?? []).reduce((sum, item) => {
+    const packaging = (item as any).packaging;
+    if (!packaging || packaging === "without") return sum;
+    if (packaging === "indian") return sum + 70;
+    if (packaging === "imported") return sum + 250;
+    return sum;
+  }, 0);
+
   // Estimated total for display in the cart panel
   const estimatedTotal =
     (cartItems ?? []).reduce((sum, item) => sum + (item.product.price ?? 0) * (item.quantity ?? 1), 0);
 
-  const discountedTotal = Math.max(0, estimatedTotal - appliedDiscount);
+  const subtotalWithPackaging = estimatedTotal + packagingCharges;
+  const discountedTotal = Math.max(0, subtotalWithPackaging - appliedDiscount);
 
   const categories = [
     { name: "Goggles", href: "/category/goggles" },
@@ -570,21 +580,25 @@ export default function Navbar() {
 
                   {/* Totals section */}
                   <div className="flex items-center justify-between text-gray-900">
-                    <p className="font-extrabold">{appliedDiscount > 0 ? "Subtotal" : "Estimated total"}</p>
-                    <p className="font-extrabold">₹{estimatedTotal.toLocaleString()}</p>
+                    <p className="font-semibold">Subtotal</p>
+                    <p className="font-semibold">₹{estimatedTotal.toLocaleString()}</p>
                   </div>
+                  {packagingCharges > 0 && (
+                    <div className="flex items-center justify-between text-gray-900">
+                      <p className="font-semibold">Packaging charges</p>
+                      <p className="font-semibold">₹{packagingCharges.toLocaleString()}</p>
+                    </div>
+                  )}
                   {appliedDiscount > 0 && (
                     <div className="flex items-center justify-between text-gray-900">
                       <p className="font-semibold text-green-700">Discount (LUXE150)</p>
                       <p className="font-semibold text-green-700">-₹{appliedDiscount.toLocaleString()}</p>
                     </div>
                   )}
-                  {appliedDiscount > 0 && (
-                    <div className="flex items-center justify-between text-gray-900">
-                      <p className="font-extrabold">Estimated total</p>
-                      <p className="font-extrabold">₹{discountedTotal.toLocaleString()}</p>
-                    </div>
-                  )}
+                  <div className="flex items-center justify-between text-gray-900">
+                    <p className="font-extrabold">Estimated total</p>
+                    <p className="font-extrabold">₹{discountedTotal.toLocaleString()}</p>
+                  </div>
 
                   <p className="text-xs text-gray-600">
                     Taxes, discounts and <span className="underline">shipping</span> calculated at checkout.
@@ -729,22 +743,28 @@ export default function Navbar() {
                   <div className="pt-2 border-t border-gray-300/60" />
                   {/* Show totals consistent with applied discount */}
                   <div className="flex items-center justify-between">
-                    <p className="font-extrabold">{appliedDiscount > 0 ? "Subtotal" : "Total"}</p>
-                    <p className="font-extrabold">₹{estimatedTotal.toLocaleString()}</p>
+                    <p className="font-semibold">Subtotal</p>
+                    <p className="font-semibold">₹{estimatedTotal.toLocaleString()}</p>
                   </div>
 
-                  {appliedDiscount > 0 && (
-                    <>
-                      <div className="flex items-center justify-between">
-                        <p className="font-semibold text-green-700">Discount (LUXE150)</p>
-                        <p className="font-semibold text-green-700">-₹{appliedDiscount.toLocaleString()}</p>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <p className="font-extrabold">Total</p>
-                        <p className="font-extrabold">₹{discountedTotal.toLocaleString()}</p>
-                      </div>
-                    </>
+                  {packagingCharges > 0 && (
+                    <div className="flex items-center justify-between">
+                      <p className="font-semibold">Packaging charges</p>
+                      <p className="font-semibold">₹{packagingCharges.toLocaleString()}</p>
+                    </div>
                   )}
+
+                  {appliedDiscount > 0 && (
+                    <div className="flex items-center justify-between">
+                      <p className="font-semibold text-green-700">Discount (LUXE150)</p>
+                      <p className="font-semibold text-green-700">-₹{appliedDiscount.toLocaleString()}</p>
+                    </div>
+                  )}
+                  
+                  <div className="flex items-center justify-between">
+                    <p className="font-extrabold">Total</p>
+                    <p className="font-extrabold">₹{discountedTotal.toLocaleString()}</p>
+                  </div>
 
                   <p className="text-xs text-gray-600">
                     Taxes, discounts and <span className="underline">shipping</span> calculated at checkout.
@@ -786,6 +806,8 @@ export default function Navbar() {
                         lines.push("");
 
                         let grandTotal = 0;
+                        let totalPackagingCharges = 0;
+                        
                         for (const item of cartItems) {
                           const name = item.product.name;
                           const qty = item.quantity ?? 1;
@@ -801,19 +823,29 @@ export default function Navbar() {
                           }
                           if ((item as any).packaging) {
                             const p = String((item as any).packaging);
-                            const packText = p === "indian" ? "Indian Box" : p === "imported" ? "Imported Box (Premium)" : "Without Box";
+                            const packText = p === "indian" ? "Indian Box (+₹70)" : p === "imported" ? "Imported Box (Premium) (+₹250)" : "Without Box";
                             lines.push(`  Packaging: ${packText}`);
+                            
+                            // Add packaging charges
+                            if (p === "indian") totalPackagingCharges += 70;
+                            else if (p === "imported") totalPackagingCharges += 250;
                           }
                           const productLink = `${window.location.origin}/product/${item.product._id}`;
                           lines.push(`  Link: ${productLink}`);
                         }
 
+                        // Add packaging charges if any
+                        if (totalPackagingCharges > 0) {
+                          lines.push("");
+                          lines.push(`Packaging charges: ₹${totalPackagingCharges.toLocaleString()}`);
+                        }
+
                         // Apply discount if any
-                        let finalTotal = grandTotal;
+                        let finalTotal = grandTotal + totalPackagingCharges;
                         if (appliedDiscount > 0) {
                           lines.push("");
                           lines.push(`Discount code applied: LUXE150 (₹${appliedDiscount.toLocaleString()} off)`);
-                          finalTotal = Math.max(0, grandTotal - appliedDiscount);
+                          finalTotal = Math.max(0, finalTotal - appliedDiscount);
                         }
 
                         lines.push("");
