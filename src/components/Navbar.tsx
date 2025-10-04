@@ -108,7 +108,7 @@ export default function Navbar() {
   const [isCartOpen, setIsCartOpen] = useState(false);
   // Add: mounted flag to avoid portal DOM errors during route transitions
   const [mounted, setMounted] = useState(false);
-  const [checkoutStep, setCheckoutStep] = useState<"review" | "details">("review");
+  const [checkoutStep, setCheckoutStep] = useState<"review" | "details" | "payment">("review");
   const [details, setDetails] = useState({
     email: "",
     firstName: "",
@@ -125,6 +125,7 @@ export default function Navbar() {
   // ADD: promo code state and derived helpers
   const [promoCode, setPromoCode] = useState("");
   const [appliedDiscount, setAppliedDiscount] = useState<number>(0);
+  const [qrCodeUrl, setQrCodeUrl] = useState<string>("");
 
   useEffect(() => {
     setMounted(true);
@@ -179,6 +180,22 @@ export default function Navbar() {
 
   const subtotalWithPackaging = estimatedTotal + packagingCharges;
   const discountedTotal = Math.max(0, subtotalWithPackaging - appliedDiscount);
+
+  // Generate UPI QR code URL with locked amount
+  const generateQRCode = () => {
+    const upiId = "vidhigadgets@paytm"; // Replace with your actual UPI ID
+    const payeeName = "LUXE";
+    const amount = discountedTotal.toFixed(2);
+    const transactionNote = `Order from ${details.firstName} ${details.lastName}`;
+    
+    // UPI Intent URL with locked amount (am parameter)
+    const upiUrl = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(payeeName)}&am=${amount}&cu=INR&tn=${encodeURIComponent(transactionNote)}`;
+    
+    // Generate QR code using a QR code API
+    const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(upiUrl)}`;
+    
+    setQrCodeUrl(qrApiUrl);
+  };
 
   const categories = [
     { name: "Goggles", href: "/category/goggles" },
@@ -402,7 +419,10 @@ export default function Navbar() {
           open={isCartOpen}
           onOpenChange={(open) => {
             setIsCartOpen(open);
-            if (!open) setCheckoutStep("review"); // Reset step when closing
+            if (!open) {
+              setCheckoutStep("review");
+              setQrCodeUrl("");
+            }
           }}
         >
           <SheetContent
@@ -412,7 +432,7 @@ export default function Navbar() {
             <SheetHeader className="px-6 pt-5">
               <div className="flex items-center justify-between">
                 <SheetTitle className="text-2xl font-extrabold">
-                  {checkoutStep === "review" ? "Your cart" : "Checkout details"}
+                  {checkoutStep === "review" ? "Your cart" : checkoutStep === "details" ? "Checkout details" : "Payment"}
                 </SheetTitle>
               </div>
             </SheetHeader>
@@ -614,7 +634,7 @@ export default function Navbar() {
                     </Button>
                   </div>
                 </div>
-              ) : (
+              ) : checkoutStep === "details" ? (
                 <div className="space-y-5">
                   <div>
                     <p className="text-sm font-semibold mb-2">Contact</p>
@@ -741,8 +761,66 @@ export default function Navbar() {
                     </div>
                   </div>
 
+                  <div className="flex gap-2 pt-1">
+                    <Button
+                      variant="outline"
+                      className="h-12 rounded-full"
+                      onClick={() => setCheckoutStep("review")}
+                    >
+                      Back
+                    </Button>
+                    <Button
+                      className="flex-1 h-12 rounded-full bg-black text-white hover:bg-black/90"
+                      onClick={() => {
+                        const required = [
+                          details.firstName,
+                          details.lastName,
+                          details.address1,
+                          details.city,
+                          details.state,
+                          details.pin,
+                          details.phone,
+                        ].every((v) => String(v || "").trim().length > 0);
+                        if (!required) {
+                          alert("Please fill all delivery details.");
+                          return;
+                        }
+                        generateQRCode();
+                        setCheckoutStep("payment");
+                      }}
+                    >
+                      Proceed to Payment
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-5">
+                  <div className="text-center">
+                    <h3 className="text-xl font-bold mb-2">Scan to Pay</h3>
+                    <p className="text-sm text-gray-600 mb-4">
+                      Amount: ₹{discountedTotal.toLocaleString()}
+                    </p>
+                    
+                    {qrCodeUrl && (
+                      <div className="bg-white p-4 rounded-lg inline-block shadow-md">
+                        <img 
+                          src={qrCodeUrl} 
+                          alt="UPI Payment QR Code" 
+                          className="w-64 h-64 mx-auto"
+                        />
+                      </div>
+                    )}
+                    
+                    <p className="text-xs text-gray-500 mt-3">
+                      Scan this QR code with any UPI app to pay ₹{discountedTotal.toLocaleString()}
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      The amount is locked and cannot be changed
+                    </p>
+                  </div>
+
                   <div className="pt-2 border-t border-gray-300/60" />
-                  {/* Show totals consistent with applied discount */}
+                  
                   <div className="flex items-center justify-between">
                     <p className="font-semibold">Subtotal</p>
                     <p className="font-semibold">₹{estimatedTotal.toLocaleString()}</p>
@@ -767,43 +845,26 @@ export default function Navbar() {
                     <p className="font-extrabold">₹{discountedTotal.toLocaleString()}</p>
                   </div>
 
-                  <p className="text-xs text-gray-600">
-                    Taxes, discounts and <span className="underline">shipping</span> calculated at checkout.
-                  </p>
-
                   <div className="flex gap-2 pt-1">
                     <Button
                       variant="outline"
                       className="h-12 rounded-full"
-                      onClick={() => setCheckoutStep("review")}
+                      onClick={() => setCheckoutStep("details")}
                     >
                       Back
                     </Button>
                     <Button
-                      className="flex-1 h-12 rounded-full bg-black text-white hover:bg-black/90"
+                      className="flex-1 h-12 rounded-full bg-[#25D366] text-white hover:bg-[#20bd5b]"
                       onClick={() => {
-                        // Basic validation for key fields
-                        const required = [
-                          details.firstName,
-                          details.lastName,
-                          details.address1,
-                          details.city,
-                          details.state,
-                          details.pin,
-                          details.phone,
-                        ].every((v) => String(v || "").trim().length > 0);
-                        if (!required) {
-                          alert("Please fill all delivery details.");
-                          return;
-                        }
                         if (!cartItems || cartItems.length === 0) {
                           window.location.href = "https://wa.me/9871629699";
                           return;
                         }
 
-                        // Build WhatsApp message in the requested order/wording
                         const lines: Array<string> = [];
-                        lines.push("I want to order:");
+                        lines.push("✅ PAYMENT COMPLETED");
+                        lines.push("");
+                        lines.push("Order Details:");
                         lines.push("");
 
                         let grandTotal = 0;
@@ -827,21 +888,18 @@ export default function Navbar() {
                             const packText = p === "indian" ? "Indian Box (+₹70)" : p === "imported" ? "Imported Box (Premium) (+₹250)" : "Without Box";
                             lines.push(`  Packaging: ${packText}`);
                             
-                            // Add packaging charges
-                            if (p === "indian") totalPackagingCharges += 70;
-                            else if (p === "imported") totalPackagingCharges += 250;
+                            if (p === "indian") totalPackagingCharges += 70 * qty;
+                            else if (p === "imported") totalPackagingCharges += 250 * qty;
                           }
                           const productLink = `${window.location.origin}/product/${item.product._id}`;
                           lines.push(`  Link: ${productLink}`);
                         }
 
-                        // Add packaging charges if any
                         if (totalPackagingCharges > 0) {
                           lines.push("");
                           lines.push(`Packaging charges: ₹${totalPackagingCharges.toLocaleString()}`);
                         }
 
-                        // Apply discount if any
                         let finalTotal = grandTotal + totalPackagingCharges;
                         if (appliedDiscount > 0) {
                           lines.push("");
@@ -850,25 +908,24 @@ export default function Navbar() {
                         }
 
                         lines.push("");
-                        lines.push("My address:");
+                        lines.push("Delivery Address:");
                         lines.push(`${details.firstName} ${details.lastName}`);
                         lines.push(`Contact number: ${details.phone}`);
                         lines.push(`${details.address1}`);
-                        // Include address2 only if provided
                         if (String(details.address2 || "").trim().length > 0) {
                           lines.push(`${details.address2}`);
                         }
                         lines.push(`${details.city}, ${details.state} - ${details.pin}`);
 
                         lines.push("");
-                        lines.push(`Grand Total: ₹${finalTotal.toLocaleString()}`);
+                        lines.push(`💰 Amount Paid: ₹${finalTotal.toLocaleString()}`);
 
                         const message = lines.join("\n");
                         const url = `https://wa.me/9871629699?text=${encodeURIComponent(message)}`;
                         window.location.href = url;
                       }}
                     >
-                      Save & WhatsApp
+                      Payment Done - Send Confirmation
                     </Button>
                   </div>
                 </div>
