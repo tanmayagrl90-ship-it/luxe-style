@@ -666,6 +666,58 @@ export default function Navbar() {
                     <p className="text-sm font-semibold">Delivery</p>
                     <div className="space-y-3">
                       <div className="space-y-1.5">
+                        <Label htmlFor="pin">PIN code</Label>
+                        <Input
+                          id="pin"
+                          inputMode="numeric"
+                          placeholder="Enter 6-digit PIN code"
+                          value={details.pin}
+                          onChange={async (e) => {
+                            const pincode = e.target.value.replace(/\D/g, "").slice(0, 6);
+                            setDetails((d) => ({ ...d, pin: pincode }));
+                            
+                            // Auto-fetch city when 6 digits are entered
+                            if (pincode.length === 6) {
+                              try {
+                                const response = await fetch(`https://api.postalpincode.in/pincode/${pincode}`);
+                                const data = await response.json();
+                                
+                                if (data && data[0] && data[0].Status === "Success" && data[0].PostOffice && data[0].PostOffice.length > 0) {
+                                  const postOffice = data[0].PostOffice[0];
+                                  const city = postOffice.District || postOffice.Name;
+                                  const state = postOffice.State;
+                                  
+                                  setDetails((d) => ({ ...d, city, state }));
+                                }
+                              } catch (error) {
+                                console.error("Error fetching pincode data:", error);
+                              }
+                            }
+                          }}
+                          className="bg-white"
+                        />
+                      </div>
+                      <div className="space-y-1.5">
+                        <Label htmlFor="city">City/Town</Label>
+                        <Input
+                          id="city"
+                          value={details.city}
+                          disabled
+                          className="bg-gray-100 text-gray-700 cursor-not-allowed"
+                          placeholder="Auto-filled from PIN code"
+                        />
+                      </div>
+                      <div className="space-y-1.5">
+                        <Label htmlFor="state">State</Label>
+                        <Input
+                          id="state"
+                          value={details.state}
+                          disabled
+                          className="bg-gray-100 text-gray-700 cursor-not-allowed"
+                          placeholder="Auto-filled from PIN code"
+                        />
+                      </div>
+                      <div className="space-y-1.5">
                         <Label htmlFor="address1">Address</Label>
                         <Input
                           id="address1"
@@ -684,68 +736,6 @@ export default function Navbar() {
                           onChange={(e) => setDetails((d) => ({ ...d, address2: e.target.value }))}
                           className="bg-white"
                         />
-                      </div>
-                      <div className="grid grid-cols-3 gap-3">
-                        <div className="space-y-1.5">
-                          <Label htmlFor="city">City</Label>
-                          <Input
-                            id="city"
-                            value={details.city}
-                            onChange={(e) => setDetails((d) => ({ ...d, city: e.target.value }))}
-                            className="bg-white"
-                          />
-                        </div>
-                        <div className="space-y-1.5">
-                          <Label htmlFor="state">State</Label>
-                          <Select
-                            value={details.state || ""}
-                            onValueChange={(v) => setDetails((d) => ({ ...d, state: v }))}
-                          >
-                            <SelectTrigger id="state" className="bg-white">
-                              <SelectValue placeholder="Select state" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="Andhra Pradesh">Andhra Pradesh</SelectItem>
-                              <SelectItem value="Arunachal Pradesh">Arunachal Pradesh</SelectItem>
-                              <SelectItem value="Assam">Assam</SelectItem>
-                              <SelectItem value="Bihar">Bihar</SelectItem>
-                              <SelectItem value="Chhattisgarh">Chhattisgarh</SelectItem>
-                              <SelectItem value="Goa">Goa</SelectItem>
-                              <SelectItem value="Gujarat">Gujarat</SelectItem>
-                              <SelectItem value="Haryana">Haryana</SelectItem>
-                              <SelectItem value="Himachal Pradesh">Himachal Pradesh</SelectItem>
-                              <SelectItem value="Jharkhand">Jharkhand</SelectItem>
-                              <SelectItem value="Karnataka">Karnataka</SelectItem>
-                              <SelectItem value="Kerala">Kerala</SelectItem>
-                              <SelectItem value="Madhya Pradesh">Madhya Pradesh</SelectItem>
-                              <SelectItem value="Maharashtra">Maharashtra</SelectItem>
-                              <SelectItem value="Manipur">Manipur</SelectItem>
-                              <SelectItem value="Meghalaya">Meghalaya</SelectItem>
-                              <SelectItem value="Mizoram">Mizoram</SelectItem>
-                              <SelectItem value="Nagaland">Nagaland</SelectItem>
-                              <SelectItem value="Odisha">Odisha</SelectItem>
-                              <SelectItem value="Punjab">Punjab</SelectItem>
-                              <SelectItem value="Rajasthan">Rajasthan</SelectItem>
-                              <SelectItem value="Sikkim">Sikkim</SelectItem>
-                              <SelectItem value="Tamil Nadu">Tamil Nadu</SelectItem>
-                              <SelectItem value="Telangana">Telangana</SelectItem>
-                              <SelectItem value="Tripura">Tripura</SelectItem>
-                              <SelectItem value="Uttar Pradesh">Uttar Pradesh</SelectItem>
-                              <SelectItem value="Uttarakhand">Uttarakhand</SelectItem>
-                              <SelectItem value="West Bengal">West Bengal</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
-                        <div className="space-y-1.5">
-                          <Label htmlFor="pin">PIN code</Label>
-                          <Input
-                            id="pin"
-                            inputMode="numeric"
-                            value={details.pin}
-                            onChange={(e) => setDetails((d) => ({ ...d, pin: e.target.value }))}
-                            className="bg-white"
-                          />
-                        </div>
                       </div>
                       <div className="space-y-1.5">
                         <Label htmlFor="phone">Phone</Label>
