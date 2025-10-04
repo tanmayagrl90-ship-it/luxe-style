@@ -163,12 +163,13 @@ export default function Navbar() {
   // Add mutation for updating cart quantities
   const setCartItemQuantity = useMutation(api.cart.setCartItemQuantity);
 
-  // Calculate packaging charges
+  // Calculate packaging charges (multiply by quantity for each item)
   const packagingCharges = (cartItems ?? []).reduce((sum, item) => {
     const packaging = (item as any).packaging;
+    const quantity = item.quantity ?? 1;
     if (!packaging || packaging === "without") return sum;
-    if (packaging === "indian") return sum + 70;
-    if (packaging === "imported") return sum + 250;
+    if (packaging === "indian") return sum + (70 * quantity);
+    if (packaging === "imported") return sum + (250 * quantity);
     return sum;
   }, 0);
 

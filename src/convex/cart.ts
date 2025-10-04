@@ -12,18 +12,24 @@ export const addToCart = mutation({
   handler: async (ctx, args) => {
     const qty = args.quantity ?? 1;
 
-    const existing = await ctx.db
+    // Find existing cart item with matching product, color, AND packaging
+    const allUserCartItems = await ctx.db
       .query("cart")
       .withIndex("by_user_and_product", (q) =>
         q.eq("userId", args.userId).eq("productId", args.productId),
       )
-      .unique();
+      .collect();
+
+    // Filter to find exact match including color and packaging
+    const existing = allUserCartItems.find(
+      (item) =>
+        (item.color ?? null) === (args.color ?? null) &&
+        (item.packaging ?? null) === (args.packaging ?? null)
+    );
 
     if (existing) {
       await ctx.db.patch(existing._id, {
         quantity: (existing.quantity ?? 0) + qty,
-        ...(args.color ? { color: args.color } : {}),
-        ...(args.packaging ? { packaging: args.packaging } : {}),
       });
       return existing._id;
     }
