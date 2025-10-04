@@ -326,9 +326,9 @@ export default function ProductPage() {
                     <SelectValue placeholder="Select packaging" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="indian">Indian Box</SelectItem>
-                    <SelectItem value="imported">Imported Box (Premium)</SelectItem>
-                    <SelectItem value="without">Without Box</SelectItem>
+                    <SelectItem value="without">Without Box <span className="text-xs text-gray-500">(₹0)</span></SelectItem>
+                    <SelectItem value="indian">Indian Box <span className="text-xs text-gray-500">(+₹70)</span></SelectItem>
+                    <SelectItem value="imported">Imported Box (Premium) <span className="text-xs text-gray-500">(+₹250)</span></SelectItem>
                   </SelectContent>
                 </Select>
               </div>
