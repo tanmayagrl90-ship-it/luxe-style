@@ -10,9 +10,10 @@ import { api } from "@/convex/_generated/api";
 import { toast } from "sonner";
 import { useQuery } from "convex/react";
 import { motion } from "framer-motion";
-import { MessageCircle, Heart } from "lucide-react";
+import { MessageCircle, Heart, ChevronLeft, ChevronRight } from "lucide-react";
 import { useParams } from "react-router";
 import { useNavigate } from "react-router";
+import { useState } from "react";
 
 const prettyName: Record<string, string> = {
   goggles: "Goggles",
@@ -30,9 +31,23 @@ export default function CategoryPage() {
   const wishlistItems = useQuery(api.wishlist.getWishlist, { userId: user?._id ?? null });
   const navigate = useNavigate();
 
+  // Track active image index for each product
+  const [activeImageIndices, setActiveImageIndices] = useState<Record<string, number>>({});
+
   const wishlistProductIds = new Set(
     (wishlistItems ?? []).map((item) => item.productId)
   );
+
+  const handleImageNavigation = (e: React.MouseEvent, productId: string, direction: 'prev' | 'next', totalImages: number) => {
+    e.stopPropagation();
+    setActiveImageIndices(prev => {
+      const currentIndex = prev[productId] ?? 0;
+      const newIndex = direction === 'next' 
+        ? (currentIndex + 1) % totalImages
+        : (currentIndex - 1 + totalImages) % totalImages;
+      return { ...prev, [productId]: newIndex };
+    });
+  };
 
   const handleAddToCart = async (productId: string) => {
     try {
@@ -123,6 +138,11 @@ export default function CategoryPage() {
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
                 {products.map((product, index) => {
                   const isInWishlist = wishlistProductIds.has(product._id);
+                  const images = product.images ?? [];
+                  const activeIndex = activeImageIndices[product._id] ?? 0;
+                  const currentImage = images[activeIndex] ?? images[0];
+                  const hasMultipleImages = images.length > 1;
+
                   return (
                     <motion.div
                       key={product._id}
@@ -136,23 +156,64 @@ export default function CategoryPage() {
                         onClick={() => navigate(`/product/${product._id}`)}
                       >
                         <div className="relative aspect-square overflow-hidden rounded-2xl ring-1 ring-white/10">
-                          {product.images && product.images.length > 0 ? (
-                            <img
-                              src={product.images[0]}
-                              alt={product.name}
-                              className="absolute inset-0 w-full h-full object-cover"
-                              loading={index < 3 ? "eager" : "lazy"}
-                              decoding="async"
-                              onError={(e) => {
-                                const imgs: Array<string> = Array.isArray(product.images) ? product.images : [];
-                                const current = e.currentTarget.getAttribute("src") || "";
-                                const idx = Math.max(0, imgs.findIndex((u) => u === current));
-                                const next = imgs[idx + 1] || "/api/placeholder/400/400";
-                                if (current !== next) {
-                                  e.currentTarget.src = next;
-                                }
-                              }}
-                            />
+                          {currentImage ? (
+                            <>
+                              <img
+                                src={currentImage}
+                                alt={product.name}
+                                className="absolute inset-0 w-full h-full object-cover transition-opacity duration-300"
+                                loading={index < 3 ? "eager" : "lazy"}
+                                decoding="async"
+                                onError={(e) => {
+                                  const imgs: Array<string> = Array.isArray(product.images) ? product.images : [];
+                                  const current = e.currentTarget.getAttribute("src") || "";
+                                  const idx = Math.max(0, imgs.findIndex((u) => u === current));
+                                  const next = imgs[idx + 1] || "/api/placeholder/400/400";
+                                  if (current !== next) {
+                                    e.currentTarget.src = next;
+                                  }
+                                }}
+                              />
+
+                              {/* Image navigation arrows - only show if multiple images */}
+                              {hasMultipleImages && (
+                                <>
+                                  <button
+                                    onClick={(e) => handleImageNavigation(e, product._id, 'prev', images.length)}
+                                    className="absolute left-2 top-1/2 -translate-y-1/2 z-20 bg-black/60 hover:bg-black/80 rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                                    aria-label="Previous image"
+                                  >
+                                    <ChevronLeft className="h-4 w-4 text-white" />
+                                  </button>
+                                  <button
+                                    onClick={(e) => handleImageNavigation(e, product._id, 'next', images.length)}
+                                    className="absolute right-2 top-1/2 -translate-y-1/2 z-20 bg-black/60 hover:bg-black/80 rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                                    aria-label="Next image"
+                                  >
+                                    <ChevronRight className="h-4 w-4 text-white" />
+                                  </button>
+
+                                  {/* Image indicator dots */}
+                                  <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-20 flex gap-1.5">
+                                    {images.map((_, idx) => (
+                                      <button
+                                        key={idx}
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          setActiveImageIndices(prev => ({ ...prev, [product._id]: idx }));
+                                        }}
+                                        className={`h-1.5 rounded-full transition-all duration-200 ${
+                                          idx === activeIndex 
+                                            ? 'w-6 bg-white' 
+                                            : 'w-1.5 bg-white/50 hover:bg-white/70'
+                                        }`}
+                                        aria-label={`View image ${idx + 1}`}
+                                      />
+                                    ))}
+                                  </div>
+                                </>
+                              )}
+                            </>
                           ) : (
                             <div className="absolute inset-0 bg-gray-200 flex items-center justify-center">
                               <span className="text-gray-700 font-medium">
