@@ -676,7 +676,7 @@ export default function Navbar() {
                             const pincode = e.target.value.replace(/\D/g, "").slice(0, 6);
                             setDetails((d) => ({ ...d, pin: pincode }));
                             
-                            // Auto-fetch city when 6 digits are entered
+                            // Auto-fetch city and state when 6 digits are entered
                             if (pincode.length === 6) {
                               try {
                                 const response = await fetch(`https://api.postalpincode.in/pincode/${pincode}`);
@@ -688,10 +688,17 @@ export default function Navbar() {
                                   const state = postOffice.State;
                                   
                                   setDetails((d) => ({ ...d, city, state }));
+                                } else {
+                                  // Clear city and state if PIN code is invalid
+                                  setDetails((d) => ({ ...d, city: "", state: "" }));
                                 }
                               } catch (error) {
                                 console.error("Error fetching pincode data:", error);
+                                setDetails((d) => ({ ...d, city: "", state: "" }));
                               }
+                            } else {
+                              // Clear city and state if PIN code is incomplete
+                              setDetails((d) => ({ ...d, city: "", state: "" }));
                             }
                           }}
                           className="bg-white"
