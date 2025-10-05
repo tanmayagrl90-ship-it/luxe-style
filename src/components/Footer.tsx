@@ -114,7 +114,7 @@ export default function Footer() {
               © 2025, LUXE
             </p>
             <div className="flex flex-wrap justify-center gap-3 sm:gap-4 text-xs sm:text-sm">
-              <a href="#" className="text-gray-400 hover:text-white transition-colors duration-200 font-normal">
+              <a href="/refund-policy" className="text-gray-400 hover:text-white transition-colors duration-200 font-normal">
                 Refund policy
               </a>
               <span className="text-gray-600">·</span>
