@@ -554,91 +554,48 @@ export default function Navbar() {
                         </div>
                       </div>
                     ) : (
-                      <div className="space-y-3">
+                      <div className="space-y-2.5">
                         {/* Divider with text */}
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-2">
                           <div className="flex-1 h-px bg-gray-300" />
-                          <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">Coupons & Offers</span>
+                          <span className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Coupons & Offers</span>
                           <div className="flex-1 h-px bg-gray-300" />
                         </div>
 
                         {/* Apply coupon button */}
                         <button
                           onClick={() => {
-                            // Toggle showing available coupons
                             const section = document.getElementById('available-coupons');
                             if (section) {
                               section.style.display = section.style.display === 'none' ? 'block' : 'none';
                             }
                           }}
-                          className="w-full p-3 bg-gradient-to-r from-gray-900 to-gray-800 border border-white/20 rounded-lg flex items-center justify-between hover:from-gray-800 hover:to-gray-700 transition-all duration-200 shadow-sm"
+                          className="w-full p-2.5 bg-white border border-gray-200 rounded-md flex items-center justify-between hover:bg-gray-50 transition-all duration-200"
                         >
-                          <div className="flex items-center gap-2.5">
-                            <div className="h-8 w-8 rounded-full bg-white/10 flex items-center justify-center">
-                              <svg className="h-4 w-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <div className="flex items-center gap-2">
+                            <div className="h-7 w-7 rounded-full bg-gray-100 flex items-center justify-center">
+                              <svg className="h-3.5 w-3.5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
                               </svg>
                             </div>
-                            <span className="text-sm font-medium text-white">Apply coupon</span>
+                            <span className="text-xs font-medium text-gray-900">Apply coupon</span>
                           </div>
-                          <svg className="h-4 w-4 text-white/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <svg className="h-3.5 w-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                           </svg>
                         </button>
 
                         {/* Available coupons - hidden by default */}
-                        <div id="available-coupons" style={{ display: 'none' }} className="space-y-2">
-                          {/* COMBO15 coupon card */}
-                          {cartItemCount >= 2 ? (
-                            <div className="p-3 bg-gradient-to-r from-black to-gray-800 rounded-lg shadow-md">
-                              <button
-                                onClick={() => {
-                                  setPromoCode("COMBO15");
-                                  setDiscountPercentage(15);
-                                  const discount = Math.round(subtotalWithPackaging * 0.15);
-                                  setAppliedDiscount(discount);
-                                  toast("Coupon applied successfully!");
-                                }}
-                                className="w-full flex items-center justify-between text-white"
-                              >
-                                <div className="flex items-center gap-3">
-                                  <div className="h-10 w-10 rounded-full bg-white/20 flex items-center justify-center">
-                                    <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
-                                    </svg>
-                                  </div>
-                                  <div className="text-left">
-                                    <p className="font-bold text-sm">COMBO15</p>
-                                    <p className="text-xs text-white/80">15% off on 2+ items</p>
-                                  </div>
-                                </div>
-                                <span className="text-xs font-medium px-3 py-1 bg-white/20 rounded-full">APPLY</span>
-                              </button>
-                            </div>
-                          ) : (
-                            <div className="p-3 bg-gray-100 border border-gray-200 rounded-lg">
-                              <div className="flex items-center gap-3 opacity-50">
-                                <div className="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center">
-                                  <svg className="h-5 w-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
-                                  </svg>
-                                </div>
-                                <div className="text-left">
-                                  <p className="font-bold text-sm text-gray-700">COMBO15</p>
-                                  <p className="text-xs text-gray-600">Add 2+ items to unlock</p>
-                                </div>
-                              </div>
-                            </div>
-                          )}
-
-                          {/* Manual code entry */}
-                          <div className="p-3 bg-white border border-gray-200 rounded-lg">
+                        <div id="available-coupons" style={{ display: 'none' }} className="space-y-2 pt-1">
+                          {/* Manual code entry at top */}
+                          <div className="p-2.5 bg-white border border-gray-200 rounded-md">
+                            <p className="text-[10px] font-medium text-gray-500 uppercase mb-2">Enter Code</p>
                             <div className="flex items-center gap-2">
                               <Input
                                 value={promoCode}
                                 onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
                                 placeholder="Enter coupon code"
-                                className="flex-1 h-10 border-gray-300 focus-visible:ring-teal-600"
+                                className="flex-1 h-8 text-xs border-gray-300 focus-visible:ring-gray-400"
                               />
                               <Button
                                 size="sm"
@@ -656,12 +613,65 @@ export default function Navbar() {
                                     toast("Invalid coupon code");
                                   }
                                 }}
-                                className="bg-teal-600 text-white hover:bg-teal-700 h-10 px-6"
+                                className="bg-gray-900 text-white hover:bg-gray-800 h-8 px-4 text-xs"
                               >
-                                Apply
+                                APPLY
                               </Button>
                             </div>
                           </div>
+
+                          {/* Divider */}
+                          <div className="flex items-center gap-2 py-1">
+                            <div className="flex-1 h-px bg-gray-200" />
+                            <span className="text-[9px] font-medium text-gray-400 uppercase">Other Offers</span>
+                            <div className="flex-1 h-px bg-gray-200" />
+                          </div>
+
+                          {/* COMBO15 coupon card */}
+                          {cartItemCount >= 2 ? (
+                            <div className="p-2.5 bg-white border border-gray-200 rounded-md">
+                              <div className="flex items-start gap-2.5">
+                                <div className="h-12 w-12 rounded bg-gradient-to-br from-gray-900 to-gray-700 flex flex-col items-center justify-center flex-shrink-0">
+                                  <span className="text-[10px] font-bold text-white leading-none">SAVE</span>
+                                  <span className="text-lg font-bold text-white leading-none mt-0.5">15%</span>
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <p className="text-xs font-semibold text-gray-900 mb-0.5">Get 15% OFF on 2+ items</p>
+                                  <p className="text-[10px] text-gray-600 mb-1.5">Save on combo purchases</p>
+                                  <div className="flex items-center justify-between">
+                                    <p className="text-[10px] font-medium text-gray-700">Code: <span className="font-bold">COMBO15</span></p>
+                                    <Button
+                                      size="sm"
+                                      onClick={() => {
+                                        setPromoCode("COMBO15");
+                                        setDiscountPercentage(15);
+                                        const discount = Math.round(subtotalWithPackaging * 0.15);
+                                        setAppliedDiscount(discount);
+                                        toast("Coupon applied successfully!");
+                                      }}
+                                      className="bg-gray-900 text-white hover:bg-gray-800 h-6 px-3 text-[10px] font-semibold"
+                                    >
+                                      APPLY
+                                    </Button>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="p-2.5 bg-gray-50 border border-gray-200 rounded-md opacity-60">
+                              <div className="flex items-start gap-2.5">
+                                <div className="h-12 w-12 rounded bg-gray-300 flex flex-col items-center justify-center flex-shrink-0">
+                                  <span className="text-[10px] font-bold text-gray-600 leading-none">SAVE</span>
+                                  <span className="text-lg font-bold text-gray-600 leading-none mt-0.5">15%</span>
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <p className="text-xs font-semibold text-gray-700 mb-0.5">Get 15% OFF on 2+ items</p>
+                                  <p className="text-[10px] text-gray-500 mb-1.5">Add 2+ items to unlock</p>
+                                  <p className="text-[10px] font-medium text-gray-600">Code: <span className="font-bold">COMBO15</span></p>
+                                </div>
+                              </div>
+                            </div>
+                          )}
                         </div>
                       </div>
                     )}
