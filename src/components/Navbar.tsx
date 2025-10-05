@@ -127,6 +127,7 @@ export default function Navbar() {
   const [promoCode, setPromoCode] = useState("");
   const [appliedDiscount, setAppliedDiscount] = useState<number>(0);
   const [discountPercentage, setDiscountPercentage] = useState<number>(0);
+  const [appliedCouponCode, setAppliedCouponCode] = useState<string>("");
   const [qrCodeUrl, setQrCodeUrl] = useState<string>("");
 
   useEffect(() => {
@@ -154,15 +155,16 @@ export default function Navbar() {
     0,
   );
 
-  // Add: auto-remove promo if cart becomes ineligible (< 2 items)
+  // Add: auto-remove promo if cart becomes ineligible (< 2 items for COMBO15)
   useEffect(() => {
     if (!isCartOpen || !cartItems) return;
-    if (cartItemCount < 2 && appliedDiscount > 0) {
+    if (cartItemCount < 2 && appliedCouponCode === "COMBO15") {
       setAppliedDiscount(0);
       setPromoCode("");
       setDiscountPercentage(0);
+      setAppliedCouponCode("");
     }
-  }, [isCartOpen, cartItems, cartItemCount, appliedDiscount]);
+  }, [isCartOpen, cartItems, cartItemCount, appliedCouponCode]);
 
   // Add mutation for updating cart quantities
   const setCartItemQuantity = useMutation(api.cart.setCartItemQuantity);
@@ -536,8 +538,12 @@ export default function Navbar() {
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
                             <div>
-                              <p className="text-sm font-semibold text-green-800">COMBO15 Applied</p>
-                              <p className="text-xs text-green-600">15% off - ₹{finalDiscount.toLocaleString()} saved</p>
+                              <p className="text-sm font-semibold text-green-800">{appliedCouponCode} Applied</p>
+                              <p className="text-xs text-green-600">
+                                {appliedCouponCode === "COMBO15" && `15% off - ₹${finalDiscount.toLocaleString()} saved`}
+                                {appliedCouponCode === "FIRSTLUXE" && `₹150 off - First order special`}
+                                {appliedCouponCode === "FREESHIP" && `Free delivery unlocked`}
+                              </p>
                             </div>
                           </div>
                           <Button
@@ -547,6 +553,7 @@ export default function Navbar() {
                               setAppliedDiscount(0);
                               setPromoCode("");
                               setDiscountPercentage(0);
+                              setAppliedCouponCode("");
                             }}
                             className="text-green-700 hover:text-green-800 hover:bg-green-100 h-8 px-2"
                           >
@@ -601,15 +608,31 @@ export default function Navbar() {
                               <Button
                                 size="sm"
                                 onClick={() => {
-                                  if (cartItemCount < 2) {
-                                    toast("Add at least 2 products to use COMBO15");
-                                    return;
-                                  }
-                                  if (promoCode.trim() === "COMBO15") {
+                                  const code = promoCode.trim().toUpperCase();
+                                  
+                                  if (code === "COMBO15") {
+                                    if (cartItemCount < 2) {
+                                      toast("Add at least 2 products to use COMBO15");
+                                      return;
+                                    }
                                     setDiscountPercentage(15);
                                     const discount = Math.round(subtotalWithPackaging * 0.15);
                                     setAppliedDiscount(discount);
+                                    setAppliedCouponCode("COMBO15");
                                     toast("Coupon applied successfully!");
+                                  } else if (code === "FIRSTLUXE") {
+                                    setAppliedDiscount(150);
+                                    setDiscountPercentage(0);
+                                    setAppliedCouponCode("FIRSTLUXE");
+                                    toast("First order discount applied!");
+                                  } else if (code === "FREESHIP") {
+                                    if (subtotalWithPackaging < 799) {
+                                      toast("Add items worth ₹799 or more to use FREESHIP");
+                                      return;
+                                    }
+                                    // Free shipping - we'll handle this as a note, no discount on product total
+                                    setAppliedCouponCode("FREESHIP");
+                                    toast("Free delivery unlocked!");
                                   } else {
                                     toast("Invalid coupon code");
                                   }
@@ -648,6 +671,7 @@ export default function Navbar() {
                                         setDiscountPercentage(15);
                                         const discount = Math.round(subtotalWithPackaging * 0.15);
                                         setAppliedDiscount(discount);
+                                        setAppliedCouponCode("COMBO15");
                                         toast("Coupon applied successfully!");
                                       }}
                                       className="bg-gray-900 text-white hover:bg-gray-800 h-7 px-4 text-xs font-semibold"
@@ -673,6 +697,82 @@ export default function Navbar() {
                               </div>
                             </div>
                           )}
+
+                          {/* FIRSTLUXE coupon card */}
+                          <div className="p-3 bg-white border border-gray-200 rounded-lg shadow-sm">
+                            <div className="flex items-start gap-3">
+                              <div className="h-14 w-14 rounded-lg bg-gradient-to-br from-blue-600 to-blue-800 flex flex-col items-center justify-center flex-shrink-0">
+                                <span className="text-[11px] font-bold text-white leading-none">SAVE</span>
+                                <span className="text-xl font-bold text-white leading-none mt-1">₹150</span>
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className="text-sm font-semibold text-gray-900 mb-1">First Order Special</p>
+                                <p className="text-xs text-gray-600 mb-2">₹150 off on your first purchase</p>
+                                <div className="flex items-center justify-between">
+                                  <p className="text-xs font-medium text-gray-700">Code: <span className="font-bold text-gray-900">FIRSTLUXE</span></p>
+                                  <Button
+                                    size="sm"
+                                    onClick={() => {
+                                      setPromoCode("FIRSTLUXE");
+                                      setAppliedDiscount(150);
+                                      setDiscountPercentage(0);
+                                      setAppliedCouponCode("FIRSTLUXE");
+                                      toast("First order discount applied!");
+                                    }}
+                                    className="bg-blue-600 text-white hover:bg-blue-700 h-7 px-4 text-xs font-semibold"
+                                  >
+                                    APPLY
+                                  </Button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* FREESHIP coupon card */}
+                          {subtotalWithPackaging >= 799 ? (
+                            <div className="p-3 bg-white border border-gray-200 rounded-lg shadow-sm">
+                              <div className="flex items-start gap-3">
+                                <div className="h-14 w-14 rounded-lg bg-gradient-to-br from-green-600 to-green-800 flex flex-col items-center justify-center flex-shrink-0">
+                                  <svg className="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+                                  </svg>
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <p className="text-sm font-semibold text-gray-900 mb-1">Free Delivery</p>
+                                  <p className="text-xs text-gray-600 mb-2">On orders above ₹799</p>
+                                  <div className="flex items-center justify-between">
+                                    <p className="text-xs font-medium text-gray-700">Code: <span className="font-bold text-gray-900">FREESHIP</span></p>
+                                    <Button
+                                      size="sm"
+                                      onClick={() => {
+                                        setPromoCode("FREESHIP");
+                                        setAppliedCouponCode("FREESHIP");
+                                        toast("Free delivery unlocked!");
+                                      }}
+                                      className="bg-green-600 text-white hover:bg-green-700 h-7 px-4 text-xs font-semibold"
+                                    >
+                                      APPLY
+                                    </Button>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="p-3 bg-gray-50 border border-gray-200 rounded-lg opacity-60">
+                              <div className="flex items-start gap-3">
+                                <div className="h-14 w-14 rounded-lg bg-gray-300 flex flex-col items-center justify-center flex-shrink-0">
+                                  <svg className="h-8 w-8 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+                                  </svg>
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <p className="text-sm font-semibold text-gray-700 mb-1">Free Delivery</p>
+                                  <p className="text-xs text-gray-500 mb-2">Add ₹{(799 - subtotalWithPackaging).toLocaleString()} more to unlock</p>
+                                  <p className="text-xs font-medium text-gray-600">Code: <span className="font-bold">FREESHIP</span></p>
+                                </div>
+                              </div>
+                            </div>
+                          )}
                         </div>
                       </div>
                     )}
@@ -693,8 +793,14 @@ export default function Navbar() {
                   )}
                   {finalDiscount > 0 && (
                     <div className="flex items-center justify-between text-gray-900">
-                      <p className="font-semibold text-green-700">Discount (COMBO15)</p>
+                      <p className="font-semibold text-green-700">Discount ({appliedCouponCode})</p>
                       <p className="font-semibold text-green-700">-₹{finalDiscount.toLocaleString()}</p>
+                    </div>
+                  )}
+                  {appliedCouponCode === "FREESHIP" && subtotalWithPackaging >= 799 && (
+                    <div className="flex items-center justify-between text-gray-900">
+                      <p className="font-semibold text-green-700">Free Delivery</p>
+                      <p className="font-semibold text-green-700">₹0</p>
                     </div>
                   )}
                   <div className="flex items-center justify-between text-gray-900">
@@ -924,8 +1030,14 @@ export default function Navbar() {
 
                   {finalDiscount > 0 && (
                     <div className="flex items-center justify-between">
-                      <p className="font-semibold text-green-700">Discount (COMBO15)</p>
+                      <p className="font-semibold text-green-700">Discount ({appliedCouponCode})</p>
                       <p className="font-semibold text-green-700">-₹{finalDiscount.toLocaleString()}</p>
+                    </div>
+                  )}
+                  {appliedCouponCode === "FREESHIP" && subtotalWithPackaging >= 799 && (
+                    <div className="flex items-center justify-between">
+                      <p className="font-semibold text-green-700">Free Delivery</p>
+                      <p className="font-semibold text-green-700">₹0</p>
                     </div>
                   )}
                   
@@ -1025,8 +1137,17 @@ export default function Navbar() {
                         let finalTotal = grandTotal + totalPackagingCharges;
                         if (finalDiscount > 0) {
                           lines.push("");
-                          lines.push(`Discount code applied: COMBO15 - 15% off (₹${finalDiscount.toLocaleString()} saved)`);
+                          if (appliedCouponCode === "COMBO15") {
+                            lines.push(`Discount code applied: COMBO15 - 15% off (₹${finalDiscount.toLocaleString()} saved)`);
+                          } else if (appliedCouponCode === "FIRSTLUXE") {
+                            lines.push(`Discount code applied: FIRSTLUXE - ₹150 off (First order special)`);
+                          }
                           finalTotal = Math.max(0, finalTotal - finalDiscount);
+                        }
+                        
+                        if (appliedCouponCode === "FREESHIP" && subtotalWithPackaging >= 799) {
+                          lines.push("");
+                          lines.push(`Free delivery applied: FREESHIP code`);
                         }
 
                         lines.push("");
