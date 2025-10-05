@@ -13,7 +13,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 // Add: thin announcement bar content text
-const ANNOUNCEMENT_TEXT = "Use LUXE150 to get discount";
+const ANNOUNCEMENT_TEXT = "Welcome to LUXE: Elevate Your Style with Today's Exclusive Deals!";
 
 // Helper: build repeating marquee-like row with centered white dot separators
 function AnnouncementRow() {
@@ -37,23 +37,23 @@ function AnnouncementRow() {
         <div className="flex items-center">
           <div className={segment}>
             <span className="inline-block h-1 w-1 rounded-full bg-white/80" aria-hidden="true" />
-            <span>Use LUXE150 to get discount</span>
+            <span>Welcome to LUXE: Elevate Your Style with Today's Exclusive Deals!</span>
           </div>
           <div className={segment}>
             <span className="inline-block h-1 w-1 rounded-full bg-white/80" aria-hidden="true" />
-            <span>Use LUXE150 to get discount</span>
+            <span>Welcome to LUXE: Elevate Your Style with Today's Exclusive Deals!</span>
           </div>
           <div className={segment}>
             <span className="inline-block h-1 w-1 rounded-full bg-white/80" aria-hidden="true" />
-            <span>Use LUXE150 to get discount</span>
+            <span>Welcome to LUXE: Elevate Your Style with Today's Exclusive Deals!</span>
           </div>
           <div className={segment}>
             <span className="inline-block h-1 w-1 rounded-full bg-white/80" aria-hidden="true" />
-            <span>Use LUXE150 to get discount</span>
+            <span>Welcome to LUXE: Elevate Your Style with Today's Exclusive Deals!</span>
           </div>
           <div className={segment}>
             <span className="inline-block h-1 w-1 rounded-full bg-white/80" aria-hidden="true" />
-            <span>Use LUXE150 to get discount</span>
+            <span>Welcome to LUXE: Elevate Your Style with Today's Exclusive Deals!</span>
           </div>
         </div>
 
@@ -61,23 +61,23 @@ function AnnouncementRow() {
         <div className="flex items-center" aria-hidden="true">
           <div className={segment}>
             <span className="inline-block h-1 w-1 rounded-full bg-white/80" aria-hidden="true" />
-            <span>Use LUXE150 to get discount</span>
+            <span>Welcome to LUXE: Elevate Your Style with Today's Exclusive Deals!</span>
           </div>
           <div className={segment}>
             <span className="inline-block h-1 w-1 rounded-full bg-white/80" aria-hidden="true" />
-            <span>Use LUXE150 to get discount</span>
+            <span>Welcome to LUXE: Elevate Your Style with Today's Exclusive Deals!</span>
           </div>
           <div className={segment}>
             <span className="inline-block h-1 w-1 rounded-full bg-white/80" aria-hidden="true" />
-            <span>Use LUXE150 to get discount</span>
+            <span>Welcome to LUXE: Elevate Your Style with Today's Exclusive Deals!</span>
           </div>
           <div className={segment}>
             <span className="inline-block h-1 w-1 rounded-full bg-white/80" aria-hidden="true" />
-            <span>Use LUXE150 to get discount</span>
+            <span>Welcome to LUXE: Elevate Your Style with Today's Exclusive Deals!</span>
           </div>
           <div className={segment}>
             <span className="inline-block h-1 w-1 rounded-full bg-white/80" aria-hidden="true" />
-            <span>Use LUXE150 to get discount</span>
+            <span>Welcome to LUXE: Elevate Your Style with Today's Exclusive Deals!</span>
           </div>
         </div>
       </div>
