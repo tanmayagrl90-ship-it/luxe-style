@@ -624,6 +624,15 @@ export default function Navbar() {
                   <p className="text-xs text-gray-600">
                     Taxes, discounts and <span className="underline">shipping</span> calculated at checkout.
                   </p>
+                  
+                  <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-md">
+                    <p className="text-xs text-gray-700">
+                      <span className="font-semibold">📦 Delivery:</span> 5-7 business days after order confirmation
+                    </p>
+                    <p className="text-xs text-gray-700 mt-1">
+                      <span className="font-semibold">✓ Availability:</span> Confirmed upon order placement
+                    </p>
+                  </div>
 
                   <div className="pt-2">
                     <Button
