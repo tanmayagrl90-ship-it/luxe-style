@@ -166,6 +166,7 @@ export default function Navbar() {
 
   // Add mutation for updating cart quantities
   const setCartItemQuantity = useMutation(api.cart.setCartItemQuantity);
+  const createOrder = useMutation(api.orders.createOrder);
 
   // Calculate packaging charges (multiply by quantity for each item)
   const packagingCharges = (cartItems ?? []).reduce((sum, item) => {
@@ -943,10 +944,43 @@ export default function Navbar() {
                     </Button>
                     <Button
                       className="flex-1 h-12 rounded-full bg-[#25D366] text-white hover:bg-[#20bd5b]"
-                      onClick={() => {
+                      onClick={async () => {
                         if (!cartItems || cartItems.length === 0) {
                           window.location.href = "https://wa.me/9871629699";
                           return;
+                        }
+
+                        // Save order to database before sending to WhatsApp
+                        if (user?._id) {
+                          try {
+                            const orderItems = cartItems.map(item => ({
+                              productId: item.productId,
+                              quantity: item.quantity ?? 1,
+                              price: item.product.price,
+                              color: (item as any).color,
+                              packaging: (item as any).packaging,
+                            }));
+
+                            await createOrder({
+                              userId: user._id as any,
+                              items: orderItems as any,
+                              total: discountedTotal,
+                              shippingAddress: {
+                                firstName: details.firstName,
+                                lastName: details.lastName,
+                                address1: details.address1,
+                                address2: details.address2,
+                                city: details.city,
+                                state: details.state,
+                                pin: details.pin,
+                                phone: details.phone,
+                              },
+                              paymentMethod: "UPI",
+                              discountApplied: finalDiscount,
+                            });
+                          } catch (error) {
+                            console.error('Failed to save order:', error);
+                          }
                         }
 
                         const lines: Array<string> = [];

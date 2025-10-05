@@ -70,12 +70,19 @@ export const getAllUsersWithActivity = query({
         // Get latest order for address
         const latestOrder = orders.sort((a, b) => b._creationTime - a._creationTime)[0];
 
+        // Get cart items to show active shoppers
+        const cartItems = await ctx.db
+          .query("cart")
+          .withIndex("by_user", (q) => q.eq("userId", user._id))
+          .collect();
+
         return {
           _id: user._id,
           email: user.email || "Guest User",
-          name: user.name || "N/A",
+          name: user.name || (latestOrder?.shippingAddress ? `${latestOrder.shippingAddress.firstName} ${latestOrder.shippingAddress.lastName}` : "N/A"),
           isAnonymous: user.isAnonymous || false,
           totalOrders: orders.length,
+          cartItemCount: cartItems.length,
           mostInterestedCategory,
           lastActive: recentlyViewed[0]?.viewedAt || user._creationTime,
           shippingAddress: latestOrder?.shippingAddress || null,

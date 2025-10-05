@@ -62,7 +62,21 @@ export default function AdminCustomers() {
 
   const formatAddress = (address: any) => {
     if (!address) return "No address on file";
-    return `${address.name}, ${address.address}, ${address.city}, ${address.postalCode}, ${address.country}`;
+    const parts = [];
+    if (address.firstName && address.lastName) {
+      parts.push(`${address.firstName} ${address.lastName}`);
+    } else if (address.name) {
+      parts.push(address.name);
+    }
+    if (address.address1) parts.push(address.address1);
+    if (address.address2) parts.push(address.address2);
+    if (address.address) parts.push(address.address);
+    if (address.city) parts.push(address.city);
+    if (address.state) parts.push(address.state);
+    if (address.pin) parts.push(address.pin);
+    if (address.postalCode) parts.push(address.postalCode);
+    if (address.phone) parts.push(`Ph: ${address.phone}`);
+    return parts.length > 0 ? parts.join(", ") : "No address on file";
   };
 
   return (
