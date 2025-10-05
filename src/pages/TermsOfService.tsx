@@ -59,6 +59,9 @@ export default function TermsOfService() {
                   charge the total amount due for your order, including any
                   applicable taxes and shipping fees.
                 </li>
+                <li>
+                  - <strong>Cash on Delivery (COD) is currently unavailable</strong> due to high Return to Origin (RTO) rates. We only accept online payments via UPI, cards, and other digital payment methods for faster and more secure transactions.
+                </li>
               </ul>
 
               <p className="mb-2 font-bold">Product Availability:</p>
