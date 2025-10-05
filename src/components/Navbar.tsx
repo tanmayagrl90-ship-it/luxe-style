@@ -588,14 +588,14 @@ export default function Navbar() {
                         {/* Available coupons - hidden by default */}
                         <div id="available-coupons" style={{ display: 'none' }} className="space-y-3 pt-2">
                           {/* Manual code entry at top */}
-                          <div className="p-3 bg-white border border-gray-200 rounded-lg">
-                            <p className="text-[11px] font-semibold text-gray-500 uppercase tracking-wide mb-2.5">Enter Code</p>
+                          <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg">
+                            <p className="text-xs font-medium text-gray-600 mb-2.5">Have a coupon code?</p>
                             <div className="flex items-center gap-2">
                               <Input
                                 value={promoCode}
                                 onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
-                                placeholder="Enter coupon code"
-                                className="flex-1 h-9 text-sm border-gray-300 focus-visible:ring-gray-400"
+                                placeholder="Enter code"
+                                className="flex-1 h-10 text-sm bg-white border-gray-300 focus-visible:ring-gray-400 placeholder:text-gray-400"
                               />
                               <Button
                                 size="sm"
@@ -613,9 +613,9 @@ export default function Navbar() {
                                     toast("Invalid coupon code");
                                   }
                                 }}
-                                className="bg-gray-900 text-white hover:bg-gray-800 h-9 px-5 text-xs font-semibold"
+                                className="bg-gray-800 text-white hover:bg-gray-700 h-10 px-6 text-sm font-medium transition-colors duration-200"
                               >
-                                APPLY
+                                Apply
                               </Button>
                             </div>
                           </div>
