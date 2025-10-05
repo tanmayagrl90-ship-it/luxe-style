@@ -525,11 +525,11 @@ export default function Navbar() {
                     ))}
                   </ul>
 
-                  {/* Promo code section - new design matching reference */}
-                  <div className="mt-2">
+                  {/* Promo code section - PharmEasy style */}
+                  <div className="mt-4">
                     {appliedDiscount > 0 ? (
-                      <div className="space-y-2">
-                        <div className="flex items-center justify-between p-3 bg-green-50 border border-green-200 rounded-lg">
+                      <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
+                        <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
                             <svg className="h-5 w-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -554,79 +554,115 @@ export default function Navbar() {
                         </div>
                       </div>
                     ) : (
-                      <div className="space-y-2">
-                        {/* Available coupons section */}
-                        {cartItemCount >= 2 && (
-                          <div className="p-3 bg-gradient-to-r from-black to-gray-800 rounded-lg shadow-md">
-                            <button
-                              onClick={() => {
-                                setPromoCode("COMBO15");
-                                setDiscountPercentage(15);
-                                const discount = Math.round(subtotalWithPackaging * 0.15);
-                                setAppliedDiscount(discount);
-                              }}
-                              className="w-full flex items-center justify-between text-white"
-                            >
-                              <div className="flex items-center gap-3">
-                                <div className="h-10 w-10 rounded-full bg-white/20 flex items-center justify-center">
-                                  <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
-                                  </svg>
-                                </div>
-                                <div className="text-left">
-                                  <p className="font-bold text-sm">COMBO15</p>
-                                  <p className="text-xs text-white/80">15% off on 2+ items</p>
-                                </div>
-                              </div>
-                              <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                              </svg>
-                            </button>
-                          </div>
-                        )}
-                        
-                        {/* Manual code entry */}
-                        <div className="p-3 bg-white border border-gray-200 rounded-lg">
-                          <div className="flex items-center gap-2">
-                            <div className="h-10 w-10 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0">
-                              <svg className="h-5 w-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                      <div className="space-y-3">
+                        {/* Divider with text */}
+                        <div className="flex items-center gap-3">
+                          <div className="flex-1 h-px bg-gray-300" />
+                          <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">Coupons & Offers</span>
+                          <div className="flex-1 h-px bg-gray-300" />
+                        </div>
+
+                        {/* Apply coupon button */}
+                        <button
+                          onClick={() => {
+                            // Toggle showing available coupons
+                            const section = document.getElementById('available-coupons');
+                            if (section) {
+                              section.style.display = section.style.display === 'none' ? 'block' : 'none';
+                            }
+                          }}
+                          className="w-full p-4 bg-white border border-gray-200 rounded-lg flex items-center justify-between hover:bg-gray-50 transition-colors duration-200"
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className="h-10 w-10 rounded-full bg-teal-600 flex items-center justify-center">
+                              <svg className="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
                               </svg>
                             </div>
-                            <Input
-                              value={promoCode}
-                              onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
-                              placeholder="Enter coupon code"
-                              className="flex-1 border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 text-sm"
-                            />
-                            <Button
-                              size="sm"
-                              onClick={() => {
-                                if (cartItemCount < 2) {
-                                  toast("Add at least 2 products to use COMBO15");
-                                  return;
-                                }
-                                if (promoCode.trim() === "COMBO15") {
+                            <span className="text-base font-medium text-gray-900">Apply coupon</span>
+                          </div>
+                          <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                          </svg>
+                        </button>
+
+                        {/* Available coupons - hidden by default */}
+                        <div id="available-coupons" style={{ display: 'none' }} className="space-y-2">
+                          {/* COMBO15 coupon card */}
+                          {cartItemCount >= 2 ? (
+                            <div className="p-3 bg-gradient-to-r from-black to-gray-800 rounded-lg shadow-md">
+                              <button
+                                onClick={() => {
+                                  setPromoCode("COMBO15");
                                   setDiscountPercentage(15);
                                   const discount = Math.round(subtotalWithPackaging * 0.15);
                                   setAppliedDiscount(discount);
                                   toast("Coupon applied successfully!");
-                                } else {
-                                  toast("Invalid coupon code");
-                                }
-                              }}
-                              className="bg-black text-white hover:bg-black/90 h-9 px-4"
-                            >
-                              Apply
-                            </Button>
+                                }}
+                                className="w-full flex items-center justify-between text-white"
+                              >
+                                <div className="flex items-center gap-3">
+                                  <div className="h-10 w-10 rounded-full bg-white/20 flex items-center justify-center">
+                                    <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                                    </svg>
+                                  </div>
+                                  <div className="text-left">
+                                    <p className="font-bold text-sm">COMBO15</p>
+                                    <p className="text-xs text-white/80">15% off on 2+ items</p>
+                                  </div>
+                                </div>
+                                <span className="text-xs font-medium px-3 py-1 bg-white/20 rounded-full">APPLY</span>
+                              </button>
+                            </div>
+                          ) : (
+                            <div className="p-3 bg-gray-100 border border-gray-200 rounded-lg">
+                              <div className="flex items-center gap-3 opacity-50">
+                                <div className="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center">
+                                  <svg className="h-5 w-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                                  </svg>
+                                </div>
+                                <div className="text-left">
+                                  <p className="font-bold text-sm text-gray-700">COMBO15</p>
+                                  <p className="text-xs text-gray-600">Add 2+ items to unlock</p>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Manual code entry */}
+                          <div className="p-3 bg-white border border-gray-200 rounded-lg">
+                            <div className="flex items-center gap-2">
+                              <Input
+                                value={promoCode}
+                                onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
+                                placeholder="Enter coupon code"
+                                className="flex-1 h-10 border-gray-300 focus-visible:ring-teal-600"
+                              />
+                              <Button
+                                size="sm"
+                                onClick={() => {
+                                  if (cartItemCount < 2) {
+                                    toast("Add at least 2 products to use COMBO15");
+                                    return;
+                                  }
+                                  if (promoCode.trim() === "COMBO15") {
+                                    setDiscountPercentage(15);
+                                    const discount = Math.round(subtotalWithPackaging * 0.15);
+                                    setAppliedDiscount(discount);
+                                    toast("Coupon applied successfully!");
+                                  } else {
+                                    toast("Invalid coupon code");
+                                  }
+                                }}
+                                className="bg-teal-600 text-white hover:bg-teal-700 h-10 px-6"
+                              >
+                                Apply
+                              </Button>
+                            </div>
                           </div>
                         </div>
-                        
-                        {cartItemCount < 2 && (
-                          <p className="text-xs text-gray-500 text-center">
-                            Add 2+ items to unlock COMBO15 discount
-                          </p>
-                        )}
                       </div>
                     )}
                   </div>
