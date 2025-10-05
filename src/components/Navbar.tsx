@@ -586,16 +586,16 @@ export default function Navbar() {
                         </button>
 
                         {/* Available coupons - hidden by default */}
-                        <div id="available-coupons" style={{ display: 'none' }} className="space-y-2 pt-1">
+                        <div id="available-coupons" style={{ display: 'none' }} className="space-y-3 pt-2">
                           {/* Manual code entry at top */}
-                          <div className="p-2.5 bg-white border border-gray-200 rounded-md">
-                            <p className="text-[10px] font-medium text-gray-500 uppercase mb-2">Enter Code</p>
+                          <div className="p-3 bg-white border border-gray-200 rounded-lg">
+                            <p className="text-[11px] font-semibold text-gray-500 uppercase tracking-wide mb-2.5">Enter Code</p>
                             <div className="flex items-center gap-2">
                               <Input
                                 value={promoCode}
                                 onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
                                 placeholder="Enter coupon code"
-                                className="flex-1 h-8 text-xs border-gray-300 focus-visible:ring-gray-400"
+                                className="flex-1 h-9 text-sm border-gray-300 focus-visible:ring-gray-400"
                               />
                               <Button
                                 size="sm"
@@ -613,7 +613,7 @@ export default function Navbar() {
                                     toast("Invalid coupon code");
                                   }
                                 }}
-                                className="bg-gray-900 text-white hover:bg-gray-800 h-8 px-4 text-xs"
+                                className="bg-gray-900 text-white hover:bg-gray-800 h-9 px-5 text-xs font-semibold"
                               >
                                 APPLY
                               </Button>
@@ -621,25 +621,25 @@ export default function Navbar() {
                           </div>
 
                           {/* Divider */}
-                          <div className="flex items-center gap-2 py-1">
-                            <div className="flex-1 h-px bg-gray-200" />
-                            <span className="text-[9px] font-medium text-gray-400 uppercase">Other Offers</span>
-                            <div className="flex-1 h-px bg-gray-200" />
+                          <div className="flex items-center gap-3 py-1">
+                            <div className="flex-1 h-px bg-gray-300" />
+                            <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Other Offers</span>
+                            <div className="flex-1 h-px bg-gray-300" />
                           </div>
 
                           {/* COMBO15 coupon card */}
                           {cartItemCount >= 2 ? (
-                            <div className="p-2.5 bg-white border border-gray-200 rounded-md">
-                              <div className="flex items-start gap-2.5">
-                                <div className="h-12 w-12 rounded bg-gradient-to-br from-gray-900 to-gray-700 flex flex-col items-center justify-center flex-shrink-0">
-                                  <span className="text-[10px] font-bold text-white leading-none">SAVE</span>
-                                  <span className="text-lg font-bold text-white leading-none mt-0.5">15%</span>
+                            <div className="p-3 bg-white border border-gray-200 rounded-lg shadow-sm">
+                              <div className="flex items-start gap-3">
+                                <div className="h-14 w-14 rounded-lg bg-gradient-to-br from-gray-900 to-gray-700 flex flex-col items-center justify-center flex-shrink-0">
+                                  <span className="text-[11px] font-bold text-white leading-none">SAVE</span>
+                                  <span className="text-xl font-bold text-white leading-none mt-1">15%</span>
                                 </div>
                                 <div className="flex-1 min-w-0">
-                                  <p className="text-xs font-semibold text-gray-900 mb-0.5">Get 15% OFF on 2+ items</p>
-                                  <p className="text-[10px] text-gray-600 mb-1.5">Save on combo purchases</p>
+                                  <p className="text-sm font-semibold text-gray-900 mb-1">Get 15% OFF on 2+ items</p>
+                                  <p className="text-xs text-gray-600 mb-2">Save on combo purchases</p>
                                   <div className="flex items-center justify-between">
-                                    <p className="text-[10px] font-medium text-gray-700">Code: <span className="font-bold">COMBO15</span></p>
+                                    <p className="text-xs font-medium text-gray-700">Code: <span className="font-bold text-gray-900">COMBO15</span></p>
                                     <Button
                                       size="sm"
                                       onClick={() => {
@@ -649,7 +649,7 @@ export default function Navbar() {
                                         setAppliedDiscount(discount);
                                         toast("Coupon applied successfully!");
                                       }}
-                                      className="bg-gray-900 text-white hover:bg-gray-800 h-6 px-3 text-[10px] font-semibold"
+                                      className="bg-gray-900 text-white hover:bg-gray-800 h-7 px-4 text-xs font-semibold"
                                     >
                                       APPLY
                                     </Button>
@@ -658,16 +658,16 @@ export default function Navbar() {
                               </div>
                             </div>
                           ) : (
-                            <div className="p-2.5 bg-gray-50 border border-gray-200 rounded-md opacity-60">
-                              <div className="flex items-start gap-2.5">
-                                <div className="h-12 w-12 rounded bg-gray-300 flex flex-col items-center justify-center flex-shrink-0">
-                                  <span className="text-[10px] font-bold text-gray-600 leading-none">SAVE</span>
-                                  <span className="text-lg font-bold text-gray-600 leading-none mt-0.5">15%</span>
+                            <div className="p-3 bg-gray-50 border border-gray-200 rounded-lg opacity-60">
+                              <div className="flex items-start gap-3">
+                                <div className="h-14 w-14 rounded-lg bg-gray-300 flex flex-col items-center justify-center flex-shrink-0">
+                                  <span className="text-[11px] font-bold text-gray-600 leading-none">SAVE</span>
+                                  <span className="text-xl font-bold text-gray-600 leading-none mt-1">15%</span>
                                 </div>
                                 <div className="flex-1 min-w-0">
-                                  <p className="text-xs font-semibold text-gray-700 mb-0.5">Get 15% OFF on 2+ items</p>
-                                  <p className="text-[10px] text-gray-500 mb-1.5">Add 2+ items to unlock</p>
-                                  <p className="text-[10px] font-medium text-gray-600">Code: <span className="font-bold">COMBO15</span></p>
+                                  <p className="text-sm font-semibold text-gray-700 mb-1">Get 15% OFF on 2+ items</p>
+                                  <p className="text-xs text-gray-500 mb-2">Add 2+ items to unlock</p>
+                                  <p className="text-xs font-medium text-gray-600">Code: <span className="font-bold">COMBO15</span></p>
                                 </div>
                               </div>
                             </div>
