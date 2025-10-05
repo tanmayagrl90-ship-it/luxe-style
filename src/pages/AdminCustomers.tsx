@@ -14,12 +14,21 @@ import {
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Search, User, MapPin, Eye, ShoppingBag } from "lucide-react";
+import { Search, User, MapPin, Eye, ShoppingBag, ChevronDown, ChevronUp } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 export default function AdminCustomers() {
   const { isAuthenticated, user } = useAuth();
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
+  const [expandedAddressId, setExpandedAddressId] = useState<string | null>(null);
 
   const allowedEmails = new Set<string>(["vidhigadgets@gmail.com"]);
   const isAuthorizedAdmin =
@@ -60,23 +69,54 @@ export default function AdminCustomers() {
     });
   };
 
-  const formatAddress = (address: any) => {
-    if (!address) return "No address on file";
+  const formatAddressShort = (address: any) => {
+    if (!address) return "No address";
     const parts = [];
-    if (address.firstName && address.lastName) {
-      parts.push(`${address.firstName} ${address.lastName}`);
-    } else if (address.name) {
-      parts.push(address.name);
-    }
-    if (address.address1) parts.push(address.address1);
-    if (address.address2) parts.push(address.address2);
-    if (address.address) parts.push(address.address);
     if (address.city) parts.push(address.city);
     if (address.state) parts.push(address.state);
     if (address.pin) parts.push(address.pin);
-    if (address.postalCode) parts.push(address.postalCode);
-    if (address.phone) parts.push(`Ph: ${address.phone}`);
-    return parts.length > 0 ? parts.join(", ") : "No address on file";
+    return parts.length > 0 ? parts.join(", ") : "No address";
+  };
+
+  const formatAddressFull = (address: any): string[] => {
+    if (!address) return ["No address on file"];
+    const lines: string[] = [];
+    
+    // Line 1: Name
+    if (address.firstName && address.lastName) {
+      lines.push(`${address.firstName} ${address.lastName}`);
+    } else if (address.name) {
+      lines.push(address.name);
+    }
+    
+    // Line 2: Street address
+    if (address.address1) {
+      lines.push(address.address1);
+    } else if (address.address) {
+      lines.push(address.address);
+    }
+    
+    // Line 3: Apartment/Suite (if exists)
+    if (address.address2) {
+      lines.push(address.address2);
+    }
+    
+    // Line 4: City, State, PIN
+    const cityStateParts: string[] = [];
+    if (address.city) cityStateParts.push(address.city);
+    if (address.state) cityStateParts.push(address.state);
+    if (address.pin) cityStateParts.push(address.pin);
+    else if (address.postalCode) cityStateParts.push(address.postalCode);
+    if (cityStateParts.length > 0) {
+      lines.push(cityStateParts.join(", "));
+    }
+    
+    // Line 5: Phone
+    if (address.phone) {
+      lines.push(`Phone: ${address.phone}`);
+    }
+    
+    return lines.length > 0 ? lines : ["No address on file"];
   };
 
   return (
@@ -134,12 +174,12 @@ export default function AdminCustomers() {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Customer</TableHead>
-                      <TableHead>Type</TableHead>
-                      <TableHead>Delivery Address</TableHead>
-                      <TableHead>Most Interested</TableHead>
-                      <TableHead className="text-center">Orders</TableHead>
-                      <TableHead>Last Active</TableHead>
+                      <TableHead className="w-[200px]">Customer</TableHead>
+                      <TableHead className="w-[100px]">Type</TableHead>
+                      <TableHead className="w-[250px]">Delivery Address</TableHead>
+                      <TableHead className="w-[150px]">Most Interested</TableHead>
+                      <TableHead className="text-center w-[80px]">Orders</TableHead>
+                      <TableHead className="w-[120px]">Last Active</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -164,17 +204,52 @@ export default function AdminCustomers() {
                           </Badge>
                         </TableCell>
                         <TableCell>
-                          <div className="flex items-start gap-2 max-w-xs">
-                            <MapPin className="h-4 w-4 text-gray-400 mt-0.5 flex-shrink-0" />
-                            <span className="text-sm text-gray-600">
-                              {formatAddress(userData.shippingAddress)}
-                            </span>
-                          </div>
+                          {userData.shippingAddress ? (
+                            <div className="flex items-start gap-2">
+                              <MapPin className="h-4 w-4 text-gray-400 mt-0.5 flex-shrink-0" />
+                              <div className="flex-1 min-w-0">
+                                <p className="text-sm text-gray-900 truncate">
+                                  {formatAddressShort(userData.shippingAddress)}
+                                </p>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="h-6 px-2 text-xs text-blue-600 hover:text-blue-800 hover:bg-blue-50 mt-1"
+                                  onClick={() => setExpandedAddressId(
+                                    expandedAddressId === userData._id ? null : userData._id
+                                  )}
+                                >
+                                  {expandedAddressId === userData._id ? (
+                                    <>
+                                      <ChevronUp className="h-3 w-3 mr-1" />
+                                      Hide
+                                    </>
+                                  ) : (
+                                    <>
+                                      <ChevronDown className="h-3 w-3 mr-1" />
+                                      View Full
+                                    </>
+                                  )}
+                                </Button>
+                                {expandedAddressId === userData._id && (
+                                  <div className="mt-2 p-3 bg-gray-50 rounded-md border border-gray-200">
+                                    {formatAddressFull(userData.shippingAddress).map((line, idx) => (
+                                      <p key={idx} className="text-sm text-gray-700">
+                                        {line}
+                                      </p>
+                                    ))}
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          ) : (
+                            <span className="text-sm text-gray-400">No address</span>
+                          )}
                         </TableCell>
                         <TableCell>
                           <div className="flex items-center gap-2">
                             <Eye className="h-4 w-4 text-gray-400" />
-                            <span className="font-medium capitalize">
+                            <span className="font-medium capitalize text-sm">
                               {userData.mostInterestedCategory}
                             </span>
                           </div>
