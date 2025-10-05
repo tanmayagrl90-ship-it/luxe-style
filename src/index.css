@@ -1,5 +1,5 @@
 /* FONT IMPORTS GO HERE */
-
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@100;200;300;400;500;600;700;800;900&family=Source+Code+Pro:wght@100;200;300;400;500;600;700;800;900&display=swap');
 
 /* DO NOT CHANGE */
 @import "tailwindcss";
@@ -122,15 +122,15 @@
   }
   body {
     @apply bg-background text-foreground;
-    font-family: Helvetica Neue, system-ui, sans-serif;
+    font-family: Open Sans, system-ui, sans-serif;
   }
   .font-sans {
-    font-family: Helvetica Neue, system-ui, sans-serif;
+    font-family: Open Sans, system-ui, sans-serif;
   }
   .font-serif {
-    font-family: Times New Roman, Georgia, serif;
+    font-family: Georgia, Georgia, serif;
   }
   .font-mono {
-    font-family: Menlo, "Courier New", monospace;
+    font-family: Source Code Pro, "Courier New", monospace;
   }
 }
