@@ -11,6 +11,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sh
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { toast } from "sonner";
 
 // Add: thin announcement bar content text
 const ANNOUNCEMENT_TEXT = "Welcome to LUXE: Elevate Your Style with Today's Exclusive Deals!";
@@ -524,89 +525,109 @@ export default function Navbar() {
                     ))}
                   </ul>
 
-                  {/* Promo code section: always visible; enforce eligibility inline */}
-                  <div className="mt-2 rounded-md border border-gray-300 p-2.5 space-y-1.5">
-                    <p className="text-xs font-semibold text-gray-700">Have a code?</p>
-                    
-                    {/* Show available codes as clickable chips when eligible */}
-                    {cartItemCount >= 2 && appliedDiscount === 0 && discountPercentage === 0 && (
-                      <div className="flex flex-wrap gap-1.5 mb-1">
-                        <button
-                          onClick={() => {
-                            setPromoCode("COMBO15");
-                            setDiscountPercentage(15);
-                            const discount = Math.round(subtotalWithPackaging * 0.15);
-                            setAppliedDiscount(discount);
-                          }}
-                          className="px-2.5 py-1 text-xs font-bold bg-gradient-to-r from-black to-gray-800 text-white rounded-full hover:from-gray-800 hover:to-black shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-200 border border-white/20"
-                        >
-                          🎉 COMBO15 - 15% OFF
-                        </button>
+                  {/* Promo code section - new design */}
+                  <div className="mt-2">
+                    {appliedDiscount > 0 ? (
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between p-3 bg-green-50 border border-green-200 rounded-lg">
+                          <div className="flex items-center gap-2">
+                            <svg className="h-5 w-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <div>
+                              <p className="text-sm font-semibold text-green-800">COMBO15 Applied</p>
+                              <p className="text-xs text-green-600">15% off - ₹{finalDiscount.toLocaleString()} saved</p>
+                            </div>
+                          </div>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => {
+                              setAppliedDiscount(0);
+                              setPromoCode("");
+                              setDiscountPercentage(0);
+                            }}
+                            className="text-green-700 hover:text-green-800 hover:bg-green-100 h-8 px-2"
+                          >
+                            Remove
+                          </Button>
+                        </div>
                       </div>
-                    )}
-                    
-                    <div className="flex gap-1.5">
-                      <Input
-                        value={promoCode}
-                        onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
-                        placeholder="Enter code"
-                        className="bg-white text-sm h-9"
-                      />
-                      {appliedDiscount > 0 ? (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => {
-                            setAppliedDiscount(0);
-                            setPromoCode("");
-                            setDiscountPercentage(0);
-                          }}
-                          className="h-9 text-xs"
-                        >
-                          Remove
-                        </Button>
-                      ) : (
-                        <Button
-                          size="sm"
-                          onClick={() => {
-                            // If fewer than 2 items, show inline not applicable message (no alert)
-                            if (cartItemCount < 2) {
-                              // Force a small UI tick to show helper text below
-                              setAppliedDiscount(0);
-                              setDiscountPercentage(0);
-                              return;
-                            }
-                            if (promoCode.trim() === "COMBO15") {
-                              setDiscountPercentage(15);
-                              const discount = Math.round(subtotalWithPackaging * 0.15);
-                              setAppliedDiscount(discount);
-                            } else {
-                              // Trigger inline "Invalid code." helper below
-                              setAppliedDiscount(0);
-                              setDiscountPercentage(0);
-                            }
-                          }}
-                          className="bg-black text-white hover:bg-black/90 h-9 text-xs"
-                        >
-                          Apply
-                        </Button>
-                      )}
-                    </div>
-                    {/* Inline helper messages */}
-                    {cartItemCount < 2 && appliedDiscount === 0 ? (
-                      <p className="text-xs text-gray-600">
-                        Not applicable now — add at least 2 products to use COMBO15.
-                      </p>
-                    ) : null}
-                    {cartItemCount >= 2 && appliedDiscount === 0 && promoCode && promoCode !== "COMBO15" ? (
-                      <p className="text-xs text-red-600">
-                        Invalid code.
-                      </p>
-                    ) : null}
-                    {appliedDiscount > 0 && (
-                      <p className="text-xs text-green-700 font-semibold bg-green-50 px-2 py-1 rounded">
-                        ✓ Code applied: COMBO15 — 15% off (₹{finalDiscount.toLocaleString()})
-                      </p>
+                    ) : (
+                      <div className="space-y-2">
+                        {/* Available coupons section */}
+                        {cartItemCount >= 2 && (
+                          <div className="p-3 bg-gradient-to-r from-black to-gray-800 rounded-lg">
+                            <button
+                              onClick={() => {
+                                setPromoCode("COMBO15");
+                                setDiscountPercentage(15);
+                                const discount = Math.round(subtotalWithPackaging * 0.15);
+                                setAppliedDiscount(discount);
+                              }}
+                              className="w-full flex items-center justify-between text-white"
+                            >
+                              <div className="flex items-center gap-3">
+                                <div className="h-10 w-10 rounded-full bg-white/20 flex items-center justify-center">
+                                  <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                                  </svg>
+                                </div>
+                                <div className="text-left">
+                                  <p className="font-bold text-sm">COMBO15</p>
+                                  <p className="text-xs text-white/80">15% off on 2+ items</p>
+                                </div>
+                              </div>
+                              <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                              </svg>
+                            </button>
+                          </div>
+                        )}
+                        
+                        {/* Manual code entry */}
+                        <div className="p-3 bg-white border border-gray-200 rounded-lg">
+                          <div className="flex items-center gap-2">
+                            <div className="h-10 w-10 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0">
+                              <svg className="h-5 w-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                              </svg>
+                            </div>
+                            <Input
+                              value={promoCode}
+                              onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
+                              placeholder="Enter coupon code"
+                              className="flex-1 border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 text-sm"
+                            />
+                            <Button
+                              size="sm"
+                              onClick={() => {
+                                if (cartItemCount < 2) {
+                                  toast("Add at least 2 products to use COMBO15");
+                                  return;
+                                }
+                                if (promoCode.trim() === "COMBO15") {
+                                  setDiscountPercentage(15);
+                                  const discount = Math.round(subtotalWithPackaging * 0.15);
+                                  setAppliedDiscount(discount);
+                                  toast("Coupon applied successfully!");
+                                } else {
+                                  toast("Invalid coupon code");
+                                }
+                              }}
+                              className="bg-black text-white hover:bg-black/90 h-9 px-4"
+                            >
+                              Apply
+                            </Button>
+                          </div>
+                        </div>
+                        
+                        {cartItemCount < 2 && (
+                          <p className="text-xs text-gray-500 text-center">
+                            Add 2+ items to unlock COMBO15 discount
+                          </p>
+                        )}
+                      </div>
                     )}
                   </div>
 
