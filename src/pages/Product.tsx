@@ -279,6 +279,12 @@ export default function ProductPage() {
             
             <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight">{product.name}</h1>
 
+            {product.description && (
+              <p className="mt-3 text-sm text-white/70 leading-relaxed">
+                {product.description}
+              </p>
+            )}
+
             <div className="mt-4 flex items-center gap-3">
               {product.originalPrice && (
                 <span className="text-white/50 line-through">
