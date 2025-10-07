@@ -34,7 +34,7 @@ export default function ProductPage() {
     productId: id as any,
   });
   
-  const [qty, setQty] = useState(1);
+  const [qty, setQty] = useState(0);
   const supportsColors =
     (product?.name ?? "").toLowerCase() === "coach belt" ||
     (product?.name ?? "").toLowerCase() === "coach premium belt";
@@ -341,7 +341,7 @@ export default function ProductPage() {
                   variant="ghost"
                   size="icon"
                   className="h-8 w-8 hover:bg-white/10 transition-colors duration-200"
-                  onClick={() => setQty((q) => Math.max(1, q - 1))}
+                  onClick={() => setQty((q) => Math.max(0, q - 1))}
                 >
                   <Minus className="h-4 w-4" />
                 </Button>
