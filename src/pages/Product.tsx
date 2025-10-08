@@ -54,6 +54,16 @@ export default function ProductPage() {
       setColor(product.colors[0]);
     }
   }, [product?._id, product?.colors, supportsColors, color]);
+
+  // Change active image when color changes (map color index to image index)
+  useEffect(() => {
+    if (supportsColors && product?.colors && product?.images && color) {
+      const colorIndex = product.colors.indexOf(color);
+      if (colorIndex !== -1 && colorIndex < product.images.length) {
+        setActiveIndex(colorIndex);
+      }
+    }
+  }, [color, product?.colors, product?.images, supportsColors]);
   
   // Reset packaging when product changes
   useEffect(() => {
