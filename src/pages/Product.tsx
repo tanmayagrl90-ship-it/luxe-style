@@ -305,6 +305,16 @@ export default function ProductPage() {
               <span className="underline">Shipping</span> calculated at checkout.
             </p>
 
+            {/* Box Included indicator for belts */}
+            {product.category.toLowerCase() === "belts" && (
+              <div className="mt-3 inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10">
+                <svg className="h-4 w-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                <span className="text-xs text-white/80 font-medium">Premium Box Included</span>
+              </div>
+            )}
+
             {supportsColors && product?.colors && (
               <div className="mt-6">
                 <p className="text-sm text-white/70 mb-2">Color</p>
