@@ -153,7 +153,7 @@ export default function CategoryPage() {
                     >
                       <Card
                         className="group bg-transparent border-transparent shadow-none cursor-pointer"
-                        onClick={() => navigate(`/product/${product._id}`)}
+                        onClick={() => window.open(`/product/${product._id}`, '_blank')}
                       >
                         <div className="relative aspect-square overflow-hidden rounded-2xl ring-1 ring-white/10">
                           {currentImage ? (

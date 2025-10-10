@@ -253,13 +253,13 @@ export default function CategorySection() {
             >
               <Card
                 className="group cursor-pointer overflow-hidden ring-1 ring-white/10 active:ring-white/30 hover:ring-white/20 bg-transparent transition-all duration-200 touch-manipulation"
-                onClick={() => navigate(category.href)}
+                onClick={() => window.open(category.href, '_blank')}
                 role="link"
                 tabIndex={0}
                 onKeyDown={(e) => {
                   if (e.key === "Enter" || e.key === " ") {
                     e.preventDefault();
-                    navigate(category.href);
+                    window.open(category.href, '_blank');
                   }
                 }}
               >
@@ -336,7 +336,7 @@ export default function CategorySection() {
                     className="p-0 h-auto text-sm sm:text-base text-white hover:text-white/80 active:text-white/70 group-hover:translate-x-1 transition-transform duration-200 touch-manipulation"
                     onClick={(e) => {
                       e.stopPropagation();
-                      navigate(category.href);
+                      window.open(category.href, '_blank');
                     }}
                   >
                     Shop Now
