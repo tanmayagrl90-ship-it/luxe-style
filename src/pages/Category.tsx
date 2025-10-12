@@ -260,7 +260,7 @@ export default function CategoryPage() {
 
                           <div className="flex items-center gap-2">
                             {product.originalPrice && (
-                              <span className="text-base text-white/40 line-through font-light">
+                              <span className="text-base text-white/50 line-through font-semibold">
                                 ₹{product.originalPrice.toLocaleString()}
                               </span>
                             )}
