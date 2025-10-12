@@ -247,13 +247,13 @@ export default function CategoryPage() {
                             {product.name}
                           </h3>
 
-                          <div className="flex items-center gap-3">
+                          <div className="flex items-center gap-2">
                             {product.originalPrice && (
-                              <span className="text-sm text-white/50 line-through">
+                              <span className="text-base text-white/40 line-through font-light">
                                 ₹{product.originalPrice.toLocaleString()}
                               </span>
                             )}
-                            <span className="text-white font-semibold">
+                            <span className="text-base text-white font-bold tracking-tight">
                               ₹{product.price.toLocaleString()}
                             </span>
                           </div>
