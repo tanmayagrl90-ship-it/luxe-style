@@ -1,0 +1,2 @@
+const activeIndex = activeImageIndices[product._id] ?? 0;
+const currentImage = images[activeIndex] ?? images[0];

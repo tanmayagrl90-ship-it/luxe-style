@@ -159,6 +159,7 @@ export default function CategoryPage() {
                           {currentImage ? (
                             <>
                               <img
+                                key={`${product._id}-${activeIndex}`}
                                 src={currentImage}
                                 alt={product.name}
                                 className="absolute inset-0 w-full h-full object-cover transition-opacity duration-300"
