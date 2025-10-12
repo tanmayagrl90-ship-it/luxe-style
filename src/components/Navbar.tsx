@@ -326,7 +326,7 @@ export default function Navbar() {
       )}
 
       {/* Mobile menu overlay + panel (categories only) */}
-      {isMenuOpen && (
+      {mounted && isMenuOpen && (
         <div
           id="luxe-mobile-menu"
           className="fixed inset-0 z-[80]"
