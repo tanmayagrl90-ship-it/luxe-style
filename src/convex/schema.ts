@@ -38,11 +38,14 @@ const schema = defineSchema(
       price: v.number(),
       originalPrice: v.optional(v.number()),
       category: v.string(),
+      brand: v.optional(v.string()),
       images: v.array(v.string()),
       colors: v.optional(v.array(v.string())),
       featured: v.boolean(),
       inStock: v.boolean(),
-    }).index("by_category", ["category"]),
+    })
+      .index("by_category", ["category"])
+      .index("by_brand", ["brand"]),
 
   cart: defineTable({
     userId: v.id("users"),

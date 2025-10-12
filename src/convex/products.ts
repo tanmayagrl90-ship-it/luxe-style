@@ -43,6 +43,7 @@ export const createProduct = mutation({
     price: v.number(),
     originalPrice: v.optional(v.number()),
     category: v.string(),
+    brand: v.optional(v.string()),
     images: v.array(v.string()),
     colors: v.optional(v.array(v.string())),
     featured: v.optional(v.boolean()),
@@ -65,6 +66,7 @@ export const updateProduct = mutation({
     price: v.optional(v.number()),
     originalPrice: v.optional(v.number()),
     category: v.optional(v.string()),
+    brand: v.optional(v.string()),
     images: v.optional(v.array(v.string())),
     colors: v.optional(v.array(v.string())),
     featured: v.optional(v.boolean()),
@@ -154,6 +156,29 @@ export const cleanupBeltsKeepCoach = mutation({
       }
     }
     return { removed };
+  },
+});
+
+export const getProductsByBrand = query({
+  args: { brand: v.string() },
+  handler: async (ctx, args) => {
+    return await ctx.db
+      .query("products")
+      .withIndex("by_brand", (q) => q.eq("brand", args.brand))
+      .order("desc")
+      .collect();
+  },
+});
+
+export const getAllBrands = query({
+  args: {},
+  handler: async (ctx) => {
+    const products = await ctx.db.query("products").collect();
+    const brands = new Set<string>();
+    products.forEach(p => {
+      if (p.brand) brands.add(p.brand);
+    });
+    return Array.from(brands).sort();
   },
 });
 
