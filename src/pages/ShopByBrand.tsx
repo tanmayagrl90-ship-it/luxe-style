@@ -5,108 +5,126 @@ import Footer from "@/components/Footer";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 
-// Brand data with logos from CDN sources
-const BRAND_LOGOS: Record<string, { name: string; logo: string; searchTerm: string }> = {
-  gucci: {
+// Brand data with logos from reliable CDN sources
+const BRAND_LOGOS: Record<string, { name: string; logo: string }> = {
+  "gucci": {
     name: "Gucci",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/40/Gucci_Logo.svg/2560px-Gucci_Logo.svg.png",
-    searchTerm: "gucci"
+    logo: "https://logos-world.net/wp-content/uploads/2020/04/Gucci-Logo.png"
   },
-  montblanc: {
+  "mont blanc": {
     name: "Mont Blanc",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/Montblanc_logo.svg/2560px-Montblanc_logo.svg.png",
-    searchTerm: "mont blanc"
+    logo: "https://logos-world.net/wp-content/uploads/2021/03/Montblanc-Logo.png"
   },
-  burberry: {
+  "burberry": {
     name: "Burberry",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Burberry_logo.svg/2560px-Burberry_logo.svg.png",
-    searchTerm: "burberry"
+    logo: "https://logos-world.net/wp-content/uploads/2020/04/Burberry-Logo.png"
   },
-  hermes: {
+  "hermes": {
     name: "Hermès",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Herm%C3%A8s_logo.svg/2560px-Herm%C3%A8s_logo.svg.png",
-    searchTerm: "hermes"
+    logo: "https://logos-world.net/wp-content/uploads/2020/11/Hermes-Logo.png"
   },
-  lv: {
+  "louis vuitton": {
     name: "Louis Vuitton",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/76/Louis_Vuitton_logo_and_wordmark.svg/2560px-Louis_Vuitton_logo_and_wordmark.svg.png",
-    searchTerm: "lv"
+    logo: "https://logos-world.net/wp-content/uploads/2020/04/Louis-Vuitton-Logo.png"
   },
-  ferragamo: {
+  "lv": {
+    name: "Louis Vuitton",
+    logo: "https://logos-world.net/wp-content/uploads/2020/04/Louis-Vuitton-Logo.png"
+  },
+  "ferragamo": {
     name: "Ferragamo",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Salvatore_Ferragamo_Logo.svg/2560px-Salvatore_Ferragamo_Logo.svg.png",
-    searchTerm: "ferragamo"
+    logo: "https://logos-world.net/wp-content/uploads/2021/02/Salvatore-Ferragamo-Logo.png"
   },
-  marcjacobs: {
+  "marc jacobs": {
     name: "Marc Jacobs",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Marc_Jacobs_logo.svg/2560px-Marc_Jacobs_logo.svg.png",
-    searchTerm: "marc jacob"
+    logo: "https://logos-world.net/wp-content/uploads/2021/03/Marc-Jacobs-Logo.png"
   },
-  prada: {
+  "prada": {
     name: "Prada",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c6/Prada_logo.svg/2560px-Prada_logo.svg.png",
-    searchTerm: "prada"
+    logo: "https://logos-world.net/wp-content/uploads/2020/05/Prada-Logo.png"
   },
-  celine: {
+  "celine": {
     name: "Celine",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/Celine_logo.svg/2560px-Celine_logo.svg.png",
-    searchTerm: "celine"
+    logo: "https://logos-world.net/wp-content/uploads/2021/03/Celine-Logo.png"
   },
-  chanel: {
+  "chanel": {
     name: "Chanel",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Chanel_logo_interlocking_cs.svg/2560px-Chanel_logo_interlocking_cs.svg.png",
-    searchTerm: "chanel"
+    logo: "https://logos-world.net/wp-content/uploads/2020/05/Chanel-Logo.png"
   },
-  tomford: {
+  "tom ford": {
     name: "Tom Ford",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/Tom_Ford_logo.svg/2560px-Tom_Ford_logo.svg.png",
-    searchTerm: "tomford"
+    logo: "https://logos-world.net/wp-content/uploads/2021/03/Tom-Ford-Logo.png"
   },
-  coach: {
+  "tomford": {
+    name: "Tom Ford",
+    logo: "https://logos-world.net/wp-content/uploads/2021/03/Tom-Ford-Logo.png"
+  },
+  "coach": {
     name: "Coach",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Coach_logo.svg/2560px-Coach_logo.svg.png",
-    searchTerm: "coach"
+    logo: "https://logos-world.net/wp-content/uploads/2020/09/Coach-Logo.png"
   },
-  guess: {
+  "guess": {
     name: "Guess",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Guess_logo.svg/2560px-Guess_logo.svg.png",
-    searchTerm: "guess"
+    logo: "https://logos-world.net/wp-content/uploads/2020/09/Guess-Logo.png"
   },
-  armani: {
+  "armani": {
     name: "Armani Exchange",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/Armani_Exchange_logo.svg/2560px-Armani_Exchange_logo.svg.png",
-    searchTerm: "armani"
+    logo: "https://logos-world.net/wp-content/uploads/2020/12/Armani-Exchange-Logo.png"
   },
-  michaelkors: {
+  "michael kors": {
     name: "Michael Kors",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/Michael_Kors_logo.svg/2560px-Michael_Kors_logo.svg.png",
-    searchTerm: "michael kors"
+    logo: "https://logos-world.net/wp-content/uploads/2020/09/Michael-Kors-Logo.png"
   },
-  ferrari: {
+  "ferrari": {
     name: "Ferrari",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c0/Scuderia_Ferrari_Logo.svg/2560px-Scuderia_Ferrari_Logo.svg.png",
-    searchTerm: "ferrari"
+    logo: "https://logos-world.net/wp-content/uploads/2020/05/Ferrari-Logo.png"
   },
-  moscot: {
+  "moscot": {
     name: "Moscot",
-    logo: "https://moscot.com/cdn/shop/files/MOSCOT_LOGO_BLACK.png",
-    searchTerm: "moscot"
+    logo: "https://moscot.com/cdn/shop/files/MOSCOT_LOGO_BLACK.png"
+  },
+  "cartier": {
+    name: "Cartier",
+    logo: "https://logos-world.net/wp-content/uploads/2020/11/Cartier-Logo.png"
+  },
+  "ray ban": {
+    name: "Ray-Ban",
+    logo: "https://logos-world.net/wp-content/uploads/2020/12/Ray-Ban-Logo.png"
+  },
+  "rayban": {
+    name: "Ray-Ban",
+    logo: "https://logos-world.net/wp-content/uploads/2020/12/Ray-Ban-Logo.png"
   }
 };
 
 export default function ShopByBrand() {
-  const allProducts = useQuery(api.products.getAllProducts);
+  const allBrands = useQuery(api.products.getAllBrands);
 
-  // Detect which brands are actually in the products
-  const availableBrands = Object.entries(BRAND_LOGOS).filter(([key, brand]) => {
-    return allProducts?.some(product => 
-      product.name.toLowerCase().includes(brand.searchTerm.toLowerCase())
-    );
-  });
+  // Map database brands to logo data
+  const availableBrands = (allBrands ?? [])
+    .map(brand => {
+      const brandKey = brand.toLowerCase();
+      const logoData = BRAND_LOGOS[brandKey];
+      
+      if (logoData) {
+        return {
+          brand: brand,
+          name: logoData.name,
+          logo: logoData.logo
+        };
+      }
+      
+      // Fallback: create a simple text-based logo if no image available
+      return {
+        brand: brand,
+        name: brand,
+        logo: null
+      };
+    })
+    .filter(b => b.logo !== null); // Only show brands with logos
 
-  const handleBrandClick = (searchTerm: string) => {
-    // Navigate to a search results page or filter products by brand
-    window.open(`/brand/${encodeURIComponent(searchTerm)}`, '_blank');
+  const handleBrandClick = (brand: string) => {
+    window.open(`/brand/${encodeURIComponent(brand)}`, '_blank');
   };
 
   return (
@@ -127,22 +145,26 @@ export default function ShopByBrand() {
 
             {/* Brand Grid */}
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
-              {availableBrands.map(([key, brand], index) => (
+              {availableBrands.map((brandData, index) => (
                 <motion.div
-                  key={key}
+                  key={brandData.brand}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.05, duration: 0.3 }}
-                  onClick={() => handleBrandClick(brand.searchTerm)}
+                  onClick={() => handleBrandClick(brandData.brand)}
                   className="group cursor-pointer"
                 >
                   <div className="relative aspect-square bg-white rounded-2xl p-6 sm:p-8 flex items-center justify-center overflow-hidden transition-all duration-200 hover:scale-105 hover:shadow-2xl">
                     <img
-                      src={brand.logo}
-                      alt={brand.name}
-                      className="w-full h-full object-contain filter grayscale-0 group-hover:grayscale-0 transition-all duration-200"
+                      src={brandData.logo}
+                      alt={brandData.name}
+                      className="w-full h-full object-contain transition-all duration-200"
                       loading="lazy"
+                      onError={(e) => {
+                        // Fallback if image fails to load
+                        e.currentTarget.style.display = 'none';
+                      }}
                     />
                     
                     {/* Hover overlay */}
@@ -154,7 +176,7 @@ export default function ShopByBrand() {
                   {/* Brand name */}
                   <div className="mt-4 text-center">
                     <h3 className="text-sm sm:text-base font-semibold text-white group-hover:text-gray-300 transition-colors duration-200">
-                      {brand.name}
+                      {brandData.name}
                     </h3>
                   </div>
                 </motion.div>
