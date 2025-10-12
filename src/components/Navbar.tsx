@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 
 // Add: thin announcement bar content text
 const ANNOUNCEMENT_TEXT = "Welcome to LUXE: Elevate Your Style with Today's Exclusive Deals!";
@@ -373,35 +373,35 @@ export default function Navbar() {
               <Link
                 to="/category/goggles"
                 className="block text-lg font-normal hover:text-gray-600 transition-colors duration-200 px-0 py-3"
-                onClick={() => setIsMobileMenuOpen(false)}
+                onClick={() => setIsMenuOpen(false)}
               >
                 Goggles
               </Link>
               <Link
                 to="/category/watches"
                 className="block text-lg font-normal hover:text-gray-600 transition-colors duration-200 px-0 py-3"
-                onClick={() => setIsMobileMenuOpen(false)}
+                onClick={() => setIsMenuOpen(false)}
               >
                 Watches
               </Link>
               <Link
                 to="/category/belts"
                 className="block text-lg font-normal hover:text-gray-600 transition-colors duration-200 px-0 py-3"
-                onClick={() => setIsMobileMenuOpen(false)}
+                onClick={() => setIsMenuOpen(false)}
               >
                 Belts
               </Link>
               <Link
                 to="/category/giftbox"
                 className="block text-lg font-normal hover:text-gray-600 transition-colors duration-200 px-0 py-3"
-                onClick={() => setIsMobileMenuOpen(false)}
+                onClick={() => setIsMenuOpen(false)}
               >
                 Gift box
               </Link>
               <Link
                 to="/shop-by-brand"
                 className="block text-lg font-normal hover:text-gray-600 transition-colors duration-200 px-0 py-3"
-                onClick={() => setIsMobileMenuOpen(false)}
+                onClick={() => setIsMenuOpen(false)}
               >
                 Shop by brand
               </Link>
