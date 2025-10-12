@@ -15,11 +15,19 @@ const BRAND_LOGOS: Record<string, { name: string; logo: string }> = {
     name: "Mont Blanc",
     logo: "https://logos-world.net/wp-content/uploads/2021/03/Montblanc-Logo.png"
   },
+  "montblanc": {
+    name: "Mont Blanc",
+    logo: "https://logos-world.net/wp-content/uploads/2021/03/Montblanc-Logo.png"
+  },
   "burberry": {
     name: "Burberry",
     logo: "https://logos-world.net/wp-content/uploads/2020/04/Burberry-Logo.png"
   },
   "hermes": {
+    name: "Hermès",
+    logo: "https://logos-world.net/wp-content/uploads/2020/11/Hermes-Logo.png"
+  },
+  "hermès": {
     name: "Hermès",
     logo: "https://logos-world.net/wp-content/uploads/2020/11/Hermes-Logo.png"
   },
@@ -36,6 +44,10 @@ const BRAND_LOGOS: Record<string, { name: string; logo: string }> = {
     logo: "https://logos-world.net/wp-content/uploads/2021/02/Salvatore-Ferragamo-Logo.png"
   },
   "marc jacobs": {
+    name: "Marc Jacobs",
+    logo: "https://logos-world.net/wp-content/uploads/2021/03/Marc-Jacobs-Logo.png"
+  },
+  "marc jacob": {
     name: "Marc Jacobs",
     logo: "https://logos-world.net/wp-content/uploads/2021/03/Marc-Jacobs-Logo.png"
   },
@@ -71,11 +83,19 @@ const BRAND_LOGOS: Record<string, { name: string; logo: string }> = {
     name: "Armani Exchange",
     logo: "https://logos-world.net/wp-content/uploads/2020/12/Armani-Exchange-Logo.png"
   },
+  "armani exchange": {
+    name: "Armani Exchange",
+    logo: "https://logos-world.net/wp-content/uploads/2020/12/Armani-Exchange-Logo.png"
+  },
   "michael kors": {
     name: "Michael Kors",
     logo: "https://logos-world.net/wp-content/uploads/2020/09/Michael-Kors-Logo.png"
   },
   "ferrari": {
+    name: "Ferrari",
+    logo: "https://logos-world.net/wp-content/uploads/2020/05/Ferrari-Logo.png"
+  },
+  "scuderia ferrari": {
     name: "Ferrari",
     logo: "https://logos-world.net/wp-content/uploads/2020/05/Ferrari-Logo.png"
   },
@@ -99,9 +119,31 @@ const BRAND_LOGOS: Record<string, { name: string; logo: string }> = {
 
 export default function ShopByBrand() {
   const allBrands = useQuery(api.products.getAllBrands);
+  const allProducts = useQuery(api.products.getAllProducts);
 
-  // Map database brands to logo data
-  const availableBrands = (allBrands ?? [])
+  // Extract brands from product names if brand field is not set
+  const detectedBrands = new Set<string>();
+  
+  if (allProducts) {
+    allProducts.forEach(product => {
+      // If product has brand field, use it
+      if (product.brand) {
+        detectedBrands.add(product.brand);
+      } else {
+        // Otherwise, detect from product name
+        const nameLower = product.name.toLowerCase();
+        Object.keys(BRAND_LOGOS).forEach(brandKey => {
+          if (nameLower.includes(brandKey)) {
+            // Use the display name from BRAND_LOGOS
+            detectedBrands.add(BRAND_LOGOS[brandKey].name);
+          }
+        });
+      }
+    });
+  }
+
+  // Map detected brands to logo data
+  const availableBrands = Array.from(detectedBrands)
     .map(brand => {
       const brandKey = brand.toLowerCase();
       const logoData = BRAND_LOGOS[brandKey];
@@ -121,7 +163,8 @@ export default function ShopByBrand() {
         logo: null
       };
     })
-    .filter(b => b.logo !== null); // Only show brands with logos
+    .filter(b => b.logo !== null) // Only show brands with logos
+    .sort((a, b) => a.name.localeCompare(b.name)); // Sort alphabetically
 
   const handleBrandClick = (brand: string) => {
     window.open(`/brand/${encodeURIComponent(brand)}`, '_blank');
