@@ -43,6 +43,10 @@ const BRAND_LOGOS: Record<string, { name: string; logo: string }> = {
     name: "Ferragamo",
     logo: "https://logos-world.net/wp-content/uploads/2021/02/Salvatore-Ferragamo-Logo.png"
   },
+  "salvatore ferragamo": {
+    name: "Ferragamo",
+    logo: "https://logos-world.net/wp-content/uploads/2021/02/Salvatore-Ferragamo-Logo.png"
+  },
   "marc jacobs": {
     name: "Marc Jacobs",
     logo: "https://logos-world.net/wp-content/uploads/2021/03/Marc-Jacobs-Logo.png"
@@ -96,6 +100,10 @@ const BRAND_LOGOS: Record<string, { name: string; logo: string }> = {
     logo: "https://logos-world.net/wp-content/uploads/2020/05/Ferrari-Logo.png"
   },
   "scuderia ferrari": {
+    name: "Ferrari",
+    logo: "https://logos-world.net/wp-content/uploads/2020/05/Ferrari-Logo.png"
+  },
+  "scuderia": {
     name: "Ferrari",
     logo: "https://logos-world.net/wp-content/uploads/2020/05/Ferrari-Logo.png"
   },
