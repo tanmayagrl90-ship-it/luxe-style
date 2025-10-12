@@ -390,6 +390,20 @@ export default function Navbar() {
               >
                 Belts
               </a>
+              <a
+                href="/category/gift-box"
+                className="block px-0 py-3 text-gray-900 text-lg font-normal hover:text-gray-600 transition-colors duration-200"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Gift box
+              </a>
+              <a
+                href="/category/shop-by-brand"
+                className="block px-0 py-3 text-gray-900 text-lg font-normal hover:text-gray-600 transition-colors duration-200"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Shop by brand
+              </a>
             </div>
 
             {/* Instagram link at bottom */}
