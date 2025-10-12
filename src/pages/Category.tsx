@@ -254,7 +254,7 @@ export default function CategoryPage() {
                         </div>
 
                         <div className="px-1 sm:px-0 pt-3">
-                          <h3 className="font-extrabold tracking-tight text-white text-base md:text-lg mb-1 line-clamp-2">
+                          <h3 className="font-extrabold tracking-tight text-white text-base md:text-lg mb-1 line-clamp-1">
                             {product.name}
                           </h3>
 
