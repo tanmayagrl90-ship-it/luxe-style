@@ -128,7 +128,7 @@ export default function CategoryPage() {
 
             {!products ? (
               // Loading skeleton
-              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+              <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 {[1, 2, 3, 4, 5, 6].map((i) => (
                   <div key={i} className="space-y-3">
                     <Skeleton className="aspect-square rounded-2xl bg-white/10" />
