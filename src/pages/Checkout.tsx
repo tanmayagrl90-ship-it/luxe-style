@@ -462,7 +462,7 @@ export default function Checkout() {
                     value={details.state}
                     onValueChange={(v) => setDetails((d) => ({ ...d, state: v }))}
                   >
-                    <SelectTrigger className="bg-white/10 border-white/20 text-white h-12 text-base">
+                    <SelectTrigger className="w-full bg-white/10 border-white/20 text-white h-12 text-base">
                       <SelectValue placeholder="State" />
                     </SelectTrigger>
                     <SelectContent>
