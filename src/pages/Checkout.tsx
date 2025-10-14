@@ -39,8 +39,35 @@ export default function Checkout() {
     user?._id ? { userId: user._id } : "skip"
   );
 
+  const userOrders = useQuery(
+    api.orders.getUserOrders,
+    user?._id ? { userId: user._id } : "skip"
+  );
+
   const createOrder = useMutation(api.orders.createOrder);
   const setCartItemQuantity = useMutation(api.cart.setCartItemQuantity);
+
+  // Get the most recent saved address
+  const savedAddress = userOrders && userOrders.length > 0 
+    ? userOrders[0].shippingAddress 
+    : null;
+
+  const loadSavedAddress = () => {
+    if (savedAddress) {
+      setDetails({
+        email: details.email,
+        firstName: savedAddress.firstName,
+        lastName: savedAddress.lastName,
+        address1: savedAddress.address1,
+        address2: savedAddress.address2 || "",
+        city: savedAddress.city,
+        state: savedAddress.state,
+        pin: savedAddress.pin,
+        phone: savedAddress.phone,
+      });
+      toast.success("Saved address loaded");
+    }
+  };
 
   const cartItemCount = (cartItems ?? []).reduce(
     (sum, item) => sum + (item.quantity ?? 0),
@@ -396,7 +423,19 @@ export default function Checkout() {
 
             {/* Delivery Section */}
             <div className="bg-white/5 rounded-lg p-8 border border-white/10">
-              <h2 className="text-2xl font-bold mb-6 text-white">Delivery</h2>
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-white">Delivery</h2>
+                {savedAddress && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={loadSavedAddress}
+                    className="border-white/20 bg-white/10 text-white hover:bg-white/20 text-sm"
+                  >
+                    Use Saved Address
+                  </Button>
+                )}
+              </div>
               <div className="space-y-5">
                 <div>
                   <Select value="India" disabled>
