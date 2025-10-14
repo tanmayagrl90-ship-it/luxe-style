@@ -186,11 +186,15 @@ export default function Navbar() {
     (cartItems ?? []).reduce((sum, item) => sum + (item.product.price ?? 0) * (item.quantity ?? 1), 0);
 
   const subtotalWithPackaging = estimatedTotal + packagingCharges;
+  
+  // Delivery fee: ₹99 by default, waived if FREESHIP is applied
+  const deliveryFee = appliedCouponCode === "FREESHIP" ? 0 : 99;
+  
   // Calculate discount: if percentage is set, use that; otherwise use fixed amount
   const finalDiscount = discountPercentage > 0 
     ? Math.round(subtotalWithPackaging * (discountPercentage / 100))
     : appliedDiscount;
-  const discountedTotal = Math.max(0, subtotalWithPackaging - finalDiscount);
+  const discountedTotal = Math.max(0, subtotalWithPackaging + deliveryFee - finalDiscount);
 
   // Generate UPI QR code URL with locked amount
   const generateQRCode = () => {
@@ -557,7 +561,7 @@ export default function Navbar() {
                               <p className="text-xs text-green-600">
                                 {appliedCouponCode === "COMBO15" && `15% off - ₹${finalDiscount.toLocaleString()} saved`}
                                 {appliedCouponCode === "WATCH15" && `15% off on watches - ₹${finalDiscount.toLocaleString()} saved`}
-                                {appliedCouponCode === "FREESHIP" && `Free delivery unlocked`}
+                                {appliedCouponCode === "FREESHIP" && `Free delivery - ₹99 saved`}
                               </p>
                             </div>
                           </div>
@@ -647,11 +651,7 @@ export default function Navbar() {
                                 setAppliedCouponCode("WATCH15");
                                 toast("Watch discount applied!");
                               } else if (code === "FREESHIP") {
-                                    if (subtotalWithPackaging < 799) {
-                                      toast("Add items worth ₹799 or more to use FREESHIP");
-                                      return;
-                                    }
-                                    // Free shipping - we'll handle this as a note, no discount on product total
+                                    // Free shipping - removes ₹99 delivery fee
                                     setAppliedCouponCode("FREESHIP");
                                     toast("Free delivery unlocked!");
                                   } else {
@@ -767,50 +767,33 @@ export default function Navbar() {
                           )}
 
                           {/* FREESHIP coupon card */}
-                          {subtotalWithPackaging >= 799 ? (
-                            <div className="p-3 bg-white border border-gray-200 rounded-lg shadow-sm">
-                              <div className="flex items-start gap-3">
-                                <div className="h-14 w-14 rounded-lg bg-gradient-to-br from-green-600 to-green-800 flex flex-col items-center justify-center flex-shrink-0">
-                                  <svg className="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
-                                  </svg>
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                  <p className="text-sm font-semibold text-gray-900 mb-1">Free Delivery</p>
-                                  <p className="text-xs text-gray-600 mb-2">On orders above ₹799</p>
-                                  <div className="flex items-center justify-between">
-                                    <p className="text-xs font-medium text-gray-700">Code: <span className="font-bold text-gray-900">FREESHIP</span></p>
-                                    <Button
-                                      size="sm"
-                                      onClick={() => {
-                                        setPromoCode("FREESHIP");
-                                        setAppliedCouponCode("FREESHIP");
-                                        toast("Free delivery unlocked!");
-                                      }}
-                                      className="bg-green-600 text-white hover:bg-green-700 h-7 px-4 text-xs font-semibold"
-                                    >
-                                      APPLY
-                                    </Button>
-                                  </div>
+                          <div className="p-3 bg-white border border-gray-200 rounded-lg shadow-sm">
+                            <div className="flex items-start gap-3">
+                              <div className="h-14 w-14 rounded-lg bg-gradient-to-br from-green-600 to-green-800 flex flex-col items-center justify-center flex-shrink-0">
+                                <svg className="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+                                </svg>
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className="text-sm font-semibold text-gray-900 mb-1">Free Delivery</p>
+                                <p className="text-xs text-gray-600 mb-2">Save ₹99 on delivery</p>
+                                <div className="flex items-center justify-between">
+                                  <p className="text-xs font-medium text-gray-700">Code: <span className="font-bold text-gray-900">FREESHIP</span></p>
+                                  <Button
+                                    size="sm"
+                                    onClick={() => {
+                                      setPromoCode("FREESHIP");
+                                      setAppliedCouponCode("FREESHIP");
+                                      toast("Free delivery unlocked!");
+                                    }}
+                                    className="bg-green-600 text-white hover:bg-green-700 h-7 px-4 text-xs font-semibold"
+                                  >
+                                    APPLY
+                                  </Button>
                                 </div>
                               </div>
                             </div>
-                          ) : (
-                            <div className="p-3 bg-gray-50 border border-gray-200 rounded-lg opacity-60">
-                              <div className="flex items-start gap-3">
-                                <div className="h-14 w-14 rounded-lg bg-gray-300 flex flex-col items-center justify-center flex-shrink-0">
-                                  <svg className="h-8 w-8 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
-                                  </svg>
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                  <p className="text-sm font-semibold text-gray-700 mb-1">Free Delivery</p>
-                                  <p className="text-xs text-gray-500 mb-2">Add ₹{(799 - subtotalWithPackaging).toLocaleString()} more to unlock</p>
-                                  <p className="text-xs font-medium text-gray-600">Code: <span className="font-bold">FREESHIP</span></p>
-                                </div>
-                              </div>
-                            </div>
-                          )}
+                          </div>
                         </div>
                       </div>
                     )}
@@ -829,16 +812,20 @@ export default function Navbar() {
                       <p className="font-semibold">₹{packagingCharges.toLocaleString()}</p>
                     </div>
                   )}
+                  <div className="flex items-center justify-between text-gray-900">
+                    <p className="font-semibold">Delivery fee</p>
+                    <p className="font-semibold">₹{deliveryFee.toLocaleString()}</p>
+                  </div>
                   {finalDiscount > 0 && (
                     <div className="flex items-center justify-between text-gray-900">
                       <p className="font-semibold text-green-700">Discount ({appliedCouponCode})</p>
                       <p className="font-semibold text-green-700">-₹{finalDiscount.toLocaleString()}</p>
                     </div>
                   )}
-                  {appliedCouponCode === "FREESHIP" && subtotalWithPackaging >= 799 && (
+                  {appliedCouponCode === "FREESHIP" && (
                     <div className="flex items-center justify-between text-gray-900">
-                      <p className="font-semibold text-green-700">Free Delivery</p>
-                      <p className="font-semibold text-green-700">₹0</p>
+                      <p className="font-semibold text-green-700">Free Delivery (FREESHIP)</p>
+                      <p className="font-semibold text-green-700">-₹99</p>
                     </div>
                   )}
                   <div className="flex items-center justify-between text-gray-900">
@@ -1069,16 +1056,21 @@ export default function Navbar() {
                     </div>
                   )}
 
+                  <div className="flex items-center justify-between">
+                    <p className="font-semibold">Delivery fee</p>
+                    <p className="font-semibold">₹{deliveryFee.toLocaleString()}</p>
+                  </div>
+
                   {finalDiscount > 0 && (
                     <div className="flex items-center justify-between">
                       <p className="font-semibold text-green-700">Discount ({appliedCouponCode})</p>
                       <p className="font-semibold text-green-700">-₹{finalDiscount.toLocaleString()}</p>
                     </div>
                   )}
-                  {appliedCouponCode === "FREESHIP" && subtotalWithPackaging >= 799 && (
+                  {appliedCouponCode === "FREESHIP" && (
                     <div className="flex items-center justify-between">
-                      <p className="font-semibold text-green-700">Free Delivery</p>
-                      <p className="font-semibold text-green-700">₹0</p>
+                      <p className="font-semibold text-green-700">Free Delivery (FREESHIP)</p>
+                      <p className="font-semibold text-green-700">-₹99</p>
                     </div>
                   )}
                   
