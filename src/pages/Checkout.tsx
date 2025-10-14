@@ -451,7 +451,7 @@ export default function Checkout() {
                   className="bg-white/10 border-white/20 text-white placeholder:text-white/50 h-12 text-base"
                 />
 
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-[1fr_2fr_1fr] gap-4">
                   <Input
                     placeholder="City"
                     value={details.city}
