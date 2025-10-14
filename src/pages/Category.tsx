@@ -19,6 +19,7 @@ const prettyName: Record<string, string> = {
   goggles: "Goggles",
   watches: "Watches",
   belts: "Belts",
+  "gift box": "Gift Box",
 };
 
 export default function CategoryPage() {

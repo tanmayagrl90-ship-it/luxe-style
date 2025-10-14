@@ -372,28 +372,28 @@ export default function Navbar() {
             <nav className="space-y-1">
               <Link
                 to="/category/goggles"
-                className="block text-lg font-normal text-gray-900 hover:text-gray-600 transition-colors duration-200 px-0 py-3"
+                className="text-lg font-normal hover:text-gray-600 transition-colors duration-200 px-0 py-3 text-gray-900"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Goggles
               </Link>
               <Link
                 to="/category/watches"
-                className="block text-lg font-normal text-gray-900 hover:text-gray-600 transition-colors duration-200 px-0 py-3"
+                className="text-lg font-normal hover:text-gray-600 transition-colors duration-200 px-0 py-3 text-gray-900"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Watches
               </Link>
               <Link
                 to="/category/belts"
-                className="block text-lg font-normal text-gray-900 hover:text-gray-600 transition-colors duration-200 px-0 py-3"
+                className="text-lg font-normal hover:text-gray-600 transition-colors duration-200 px-0 py-3 text-gray-900"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Belts
               </Link>
               <Link
-                to="/category/giftbox"
-                className="block text-lg font-normal text-gray-900 hover:text-gray-600 transition-colors duration-200 px-0 py-3"
+                to="/category/gift box"
+                className="text-lg font-normal hover:text-gray-600 transition-colors duration-200 px-0 py-3 text-gray-900"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Gift box
