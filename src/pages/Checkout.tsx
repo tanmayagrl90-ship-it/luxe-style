@@ -352,50 +352,45 @@ export default function Checkout() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f2f2f2] text-[#111111]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="min-h-screen bg-black text-white">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Header */}
-        <div className="mb-8">
+        <div className="mb-12">
           <button
             onClick={() => navigate("/")}
-            className="text-3xl font-extrabold tracking-widest font-['Abril_Fatface',serif] text-black"
+            className="text-4xl font-extrabold tracking-widest font-['Abril_Fatface',serif] text-white"
           >
             LUXE
           </button>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           {/* Left Column - Contact & Delivery Form */}
-          <div className="space-y-6">
+          <div className="space-y-8">
             {/* Contact Section */}
-            <div className="bg-white rounded-lg p-6 shadow-sm">
-              <h2 className="text-xl font-bold mb-4">Contact</h2>
+            <div className="bg-white/5 rounded-lg p-8 border border-white/10">
+              <h2 className="text-2xl font-bold mb-6 text-white">Contact</h2>
               <div className="space-y-4">
                 <div>
                   <Input
-                    type="email"
-                    placeholder="Email"
-                    value={details.email}
-                    onChange={(e) => setDetails((d) => ({ ...d, email: e.target.value }))}
-                    className="w-full bg-white border-gray-300"
+                    type="tel"
+                    placeholder="Contact number"
+                    inputMode="tel"
+                    value={details.phone}
+                    onChange={(e) => setDetails((d) => ({ ...d, phone: e.target.value }))}
+                    className="w-full bg-white/10 border-white/20 text-white placeholder:text-white/50 h-12 text-base"
                   />
-                </div>
-                <div className="flex items-center gap-2">
-                  <input type="checkbox" id="newsletter" className="h-4 w-4" />
-                  <label htmlFor="newsletter" className="text-sm">
-                    Email me with news and offers
-                  </label>
                 </div>
               </div>
             </div>
 
             {/* Delivery Section */}
-            <div className="bg-white rounded-lg p-6 shadow-sm">
-              <h2 className="text-xl font-bold mb-4">Delivery</h2>
-              <div className="space-y-4">
+            <div className="bg-white/5 rounded-lg p-8 border border-white/10">
+              <h2 className="text-2xl font-bold mb-6 text-white">Delivery</h2>
+              <div className="space-y-5">
                 <div>
                   <Select value="India" disabled>
-                    <SelectTrigger className="w-full bg-white border-gray-300">
+                    <SelectTrigger className="w-full bg-white/10 border-white/20 text-white h-12 text-base">
                       <SelectValue placeholder="Country/Region" />
                     </SelectTrigger>
                     <SelectContent>
@@ -409,13 +404,13 @@ export default function Checkout() {
                     placeholder="First name"
                     value={details.firstName}
                     onChange={(e) => setDetails((d) => ({ ...d, firstName: e.target.value }))}
-                    className="bg-white border-gray-300"
+                    className="bg-white/10 border-white/20 text-white placeholder:text-white/50 h-12 text-base"
                   />
                   <Input
                     placeholder="Last name"
                     value={details.lastName}
                     onChange={(e) => setDetails((d) => ({ ...d, lastName: e.target.value }))}
-                    className="bg-white border-gray-300"
+                    className="bg-white/10 border-white/20 text-white placeholder:text-white/50 h-12 text-base"
                   />
                 </div>
 
@@ -424,10 +419,10 @@ export default function Checkout() {
                     placeholder="Address"
                     value={details.address1}
                     onChange={(e) => setDetails((d) => ({ ...d, address1: e.target.value }))}
-                    className="bg-white border-gray-300 pr-10"
+                    className="bg-white/10 border-white/20 text-white placeholder:text-white/50 h-12 text-base pr-10"
                   />
                   <svg
-                    className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-white/40"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -445,7 +440,7 @@ export default function Checkout() {
                   placeholder="Apartment, suite, etc. (optional)"
                   value={details.address2}
                   onChange={(e) => setDetails((d) => ({ ...d, address2: e.target.value }))}
-                  className="bg-white border-gray-300"
+                  className="bg-white/10 border-white/20 text-white placeholder:text-white/50 h-12 text-base"
                 />
 
                 <div className="grid grid-cols-3 gap-4">
@@ -453,13 +448,13 @@ export default function Checkout() {
                     placeholder="City"
                     value={details.city}
                     onChange={(e) => setDetails((d) => ({ ...d, city: e.target.value }))}
-                    className="bg-white border-gray-300"
+                    className="bg-white/10 border-white/20 text-white placeholder:text-white/50 h-12 text-base"
                   />
                   <Select
                     value={details.state}
                     onValueChange={(v) => setDetails((d) => ({ ...d, state: v }))}
                   >
-                    <SelectTrigger className="bg-white border-gray-300">
+                    <SelectTrigger className="bg-white/10 border-white/20 text-white h-12 text-base">
                       <SelectValue placeholder="State" />
                     </SelectTrigger>
                     <SelectContent>
@@ -499,31 +494,8 @@ export default function Checkout() {
                     inputMode="numeric"
                     value={details.pin}
                     onChange={(e) => setDetails((d) => ({ ...d, pin: e.target.value }))}
-                    className="bg-white border-gray-300"
+                    className="bg-white/10 border-white/20 text-white placeholder:text-white/50 h-12 text-base"
                   />
-                </div>
-
-                <div className="relative">
-                  <Input
-                    placeholder="Phone"
-                    inputMode="tel"
-                    value={details.phone}
-                    onChange={(e) => setDetails((d) => ({ ...d, phone: e.target.value }))}
-                    className="bg-white border-gray-300 pr-10"
-                  />
-                  <svg
-                    className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
                 </div>
               </div>
             </div>
@@ -531,14 +503,14 @@ export default function Checkout() {
 
           {/* Right Column - Order Summary */}
           <div>
-            <div className="bg-white rounded-lg p-6 shadow-sm sticky top-8">
-              <h2 className="text-xl font-bold mb-4">Order Summary</h2>
+            <div className="bg-white/5 rounded-lg p-8 border border-white/10 sticky top-8">
+              <h2 className="text-2xl font-bold mb-6 text-white">Order Summary</h2>
 
               {/* Product List */}
-              <div className="space-y-4 mb-6">
+              <div className="space-y-5 mb-8">
                 {cartItems.map((item) => (
                   <div key={item._id} className="flex gap-4">
-                    <div className="relative h-20 w-20 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
+                    <div className="relative h-24 w-24 rounded-lg overflow-hidden bg-white/10 flex-shrink-0">
                       {item.product.images?.[0] && (
                         <img
                           src={item.product.images[0]}
@@ -546,20 +518,20 @@ export default function Checkout() {
                           className="h-full w-full object-cover"
                         />
                       )}
-                      <div className="absolute -top-2 -right-2 h-6 w-6 rounded-full bg-gray-700 text-white text-xs flex items-center justify-center font-medium">
+                      <div className="absolute -top-2 -right-2 h-7 w-7 rounded-full bg-white text-black text-sm flex items-center justify-center font-bold">
                         {item.quantity}
                       </div>
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="font-medium text-sm truncate">{item.product.name}</p>
+                      <p className="font-medium text-base truncate text-white">{item.product.name}</p>
                       {(item as any).color && (
-                        <p className="text-xs text-gray-600">
+                        <p className="text-sm text-white/60">
                           {String((item as any).color).charAt(0).toUpperCase() +
                             String((item as any).color).slice(1)}
                         </p>
                       )}
                       {(item as any).packaging && (
-                        <p className="text-xs text-gray-600">
+                        <p className="text-sm text-white/60">
                           {(item as any).packaging === "indian"
                             ? "Indian Box"
                             : (item as any).packaging === "imported"
@@ -569,7 +541,7 @@ export default function Checkout() {
                       )}
                     </div>
                     <div className="text-right">
-                      <p className="font-medium">
+                      <p className="font-semibold text-base text-white">
                         ₹{(item.product.price * item.quantity).toLocaleString()}
                       </p>
                     </div>
@@ -578,18 +550,18 @@ export default function Checkout() {
               </div>
 
               {/* Discount Code */}
-              <div className="mb-6">
-                <div className="flex gap-2">
+              <div className="mb-8">
+                <div className="flex gap-3">
                   <Input
                     placeholder="Discount code"
                     value={promoCode}
                     onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
-                    className="flex-1 bg-white border-gray-300"
+                    className="flex-1 bg-white/10 border-white/20 text-white placeholder:text-white/50 h-12 text-base"
                   />
                   <Button
                     onClick={applyPromoCode}
                     variant="outline"
-                    className="border-gray-300"
+                    className="border-white/20 bg-white/10 text-white hover:bg-white/20 h-12 px-6"
                   >
                     Apply
                   </Button>
@@ -597,36 +569,36 @@ export default function Checkout() {
               </div>
 
               {/* Pricing Breakdown */}
-              <div className="space-y-3 pb-4 border-b border-gray-200">
-                <div className="flex justify-between text-sm">
+              <div className="space-y-4 pb-6 border-b border-white/10">
+                <div className="flex justify-between text-base text-white/80">
                   <span>Subtotal</span>
-                  <span>₹{estimatedTotal.toLocaleString()}</span>
+                  <span className="text-white">₹{estimatedTotal.toLocaleString()}</span>
                 </div>
 
                 {packagingCharges > 0 && (
-                  <div className="flex justify-between text-sm">
+                  <div className="flex justify-between text-base text-white/80">
                     <span>Packaging charges</span>
-                    <span>₹{packagingCharges.toLocaleString()}</span>
+                    <span className="text-white">₹{packagingCharges.toLocaleString()}</span>
                   </div>
                 )}
 
                 {finalDiscount > 0 && (
-                  <div className="flex justify-between text-sm text-green-700">
+                  <div className="flex justify-between text-base text-emerald-400">
                     <span>Discount ({appliedCouponCode})</span>
                     <span>-₹{finalDiscount.toLocaleString()}</span>
                   </div>
                 )}
 
-                <div className="flex justify-between text-sm">
+                <div className="flex justify-between text-base text-white/80">
                   <span>Shipping</span>
-                  <span className="text-gray-500">
+                  <span className="text-white/60">
                     {details.address1 ? "Calculated at next step" : "Enter shipping address"}
                   </span>
                 </div>
               </div>
 
               {/* Total */}
-              <div className="flex justify-between text-xl font-bold pt-4 mb-6">
+              <div className="flex justify-between text-2xl font-bold pt-6 mb-8 text-white">
                 <span>Total</span>
                 <span>INR ₹{discountedTotal.toLocaleString()}</span>
               </div>
@@ -634,7 +606,7 @@ export default function Checkout() {
               {/* Proceed to Payment Button */}
               <Button
                 onClick={handleProceedToPayment}
-                className="w-full h-12 bg-black text-white hover:bg-black/90 text-base font-medium"
+                className="w-full h-14 bg-white text-black hover:bg-white/90 text-lg font-semibold"
               >
                 Proceed to Payment
               </Button>
