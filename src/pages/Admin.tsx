@@ -856,6 +856,26 @@ export default function Admin() {
               </div>
             </div>
             <div className="space-y-2">
+              <Label>Category</Label>
+              <Select
+                value={editForm.category}
+                onValueChange={(v) =>
+                  setEditForm((f) => ({ ...f, category: v as typeof editForm.category }))
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a category" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="goggles">Goggles</SelectItem>
+                  <SelectItem value="watches">Watches</SelectItem>
+                  <SelectItem value="belts">Belts</SelectItem>
+                  <SelectItem value="gift box">Gift Box</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
               <Label htmlFor="e_images">Image URLs (comma separated)</Label>
               <Input
                 id="e_images"
