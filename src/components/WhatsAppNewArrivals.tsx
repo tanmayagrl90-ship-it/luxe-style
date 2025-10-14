@@ -4,9 +4,14 @@ import { motion } from "framer-motion";
 import { MessageCircle, Sparkles } from "lucide-react";
 
 export default function WhatsAppNewArrivals() {
-  const handleWhatsAppClick = () => {
+  const handleCommunityClick = () => {
     const communityUrl = "https://chat.whatsapp.com/DBdZEP66bVk2NRcFoumLLx";
     window.location.href = communityUrl;
+  };
+
+  const handleDirectMessageClick = () => {
+    const dmUrl = "https://wa.me/9871629699";
+    window.location.href = dmUrl;
   };
 
   return (
@@ -39,7 +44,7 @@ export default function WhatsAppNewArrivals() {
                   
                   <div className="flex flex-col sm:flex-row gap-2.5 sm:gap-3 justify-center lg:justify-start">
                     <Button
-                      onClick={handleWhatsAppClick}
+                      onClick={handleCommunityClick}
                       className="h-12 sm:h-14 px-6 sm:px-8 rounded-full bg-[#25D366] text-white hover:bg-[#20bd5b] active:bg-[#1ea952] transition-colors duration-200 text-base sm:text-lg font-medium shadow-lg touch-manipulation"
                     >
                       <MessageCircle className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
@@ -48,7 +53,7 @@ export default function WhatsAppNewArrivals() {
                     
                     <Button
                       variant="outline"
-                      onClick={handleWhatsAppClick}
+                      onClick={handleDirectMessageClick}
                       className="h-12 sm:h-14 px-6 sm:px-8 rounded-full border-2 border-white/40 bg-transparent text-white hover:bg-white/20 active:bg-white/30 hover:border-white/60 transition-all duration-200 text-base sm:text-lg font-medium touch-manipulation"
                     >
                       Chat on WhatsApp
