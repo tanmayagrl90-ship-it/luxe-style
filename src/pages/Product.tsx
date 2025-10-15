@@ -196,11 +196,18 @@ export default function ProductPage() {
                   <img
                     src={image}
                     alt={product.name}
-                    className="absolute inset-0 w-full h-full object-cover rounded-2xl transition-opacity duration-300"
+                    className={`absolute inset-0 w-full h-full object-cover rounded-2xl transition-opacity duration-300 ${!product.inStock ? 'brightness-50' : ''}`}
                     loading="eager"
                     fetchPriority="high"
                     decoding="sync"
                   />
+                  {!product.inStock && (
+                    <div className="absolute inset-0 flex items-center justify-center z-10">
+                      <span className="text-red-500 text-sm font-semibold tracking-wider" style={{ fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif" }}>
+                        OUT OF STOCK
+                      </span>
+                    </div>
+                  )}
                   <ProductZoom images={images} productName={product.name} initialIndex={activeIndex} />
                   
                   {/* Navigation overlays - only show if multiple images */}

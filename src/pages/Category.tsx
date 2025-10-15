@@ -174,7 +174,7 @@ export default function CategoryPage() {
                                 key={`${product._id}-${activeIndex}`}
                                 src={currentImage}
                                 alt={product.name}
-                                className="absolute inset-0 w-full h-full object-cover transition-opacity duration-300"
+                                className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${!product.inStock ? 'brightness-50' : ''}`}
                                 loading="eager"
                                 fetchPriority={index < 6 ? "high" : "auto"}
                                 decoding="async"
@@ -188,6 +188,14 @@ export default function CategoryPage() {
                                   }
                                 }}
                               />
+
+                              {!product.inStock && (
+                                <div className="absolute inset-0 flex items-center justify-center z-10">
+                                  <span className="text-red-500 text-xs sm:text-sm font-semibold tracking-wider" style={{ fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif" }}>
+                                    OUT OF STOCK
+                                  </span>
+                                </div>
+                              )}
 
                               {/* Image navigation arrows - only show if multiple images */}
                               {hasMultipleImages && (
