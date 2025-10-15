@@ -34,6 +34,7 @@ export default function CategoryPage() {
 
   // Track active image index for each product
   const [activeImageIndices, setActiveImageIndices] = useState<Record<string, number>>({});
+  const [hoverIntervals, setHoverIntervals] = useState<Record<string, NodeJS.Timeout>>({});
 
   // Preload all product images for smooth transitions
   useEffect(() => {
@@ -45,6 +46,44 @@ export default function CategoryPage() {
       img.src = url;
     });
   }, [products]);
+
+  // Cleanup intervals on unmount
+  useEffect(() => {
+    return () => {
+      Object.values(hoverIntervals).forEach(interval => clearInterval(interval));
+    };
+  }, [hoverIntervals]);
+
+  const handleMouseEnter = (productId: string, totalImages: number) => {
+    if (totalImages <= 1) return;
+    
+    // Start auto-sliding
+    const interval = setInterval(() => {
+      setActiveImageIndices(prev => {
+        const currentIndex = prev[productId] ?? 0;
+        const newIndex = (currentIndex + 1) % totalImages;
+        return { ...prev, [productId]: newIndex };
+      });
+    }, 800); // Change image every 800ms
+    
+    setHoverIntervals(prev => ({ ...prev, [productId]: interval }));
+  };
+
+  const handleMouseLeave = (productId: string) => {
+    // Stop auto-sliding and reset to first image
+    const interval = hoverIntervals[productId];
+    if (interval) {
+      clearInterval(interval);
+      setHoverIntervals(prev => {
+        const newIntervals = { ...prev };
+        delete newIntervals[productId];
+        return newIntervals;
+      });
+    }
+    
+    // Reset to first image
+    setActiveImageIndices(prev => ({ ...prev, [productId]: 0 }));
+  };
 
   const wishlistProductIds = new Set(
     (wishlistItems ?? []).map((item) => item.productId)
@@ -166,6 +205,8 @@ export default function CategoryPage() {
                       <Card
                         className="group bg-transparent border-transparent shadow-none cursor-pointer"
                         onClick={() => window.open(`/product/${product._id}`, '_blank')}
+                        onMouseEnter={() => handleMouseEnter(product._id, images.length)}
+                        onMouseLeave={() => handleMouseLeave(product._id)}
                       >
                         <div className="relative aspect-square overflow-hidden rounded-2xl ring-1 ring-white/10">
                           {currentImage ? (
