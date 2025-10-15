@@ -38,6 +38,7 @@ export default function Admin() {
   const products = useQuery(api.products.getAllProducts);
   const updateProduct = useMutation(api.products.updateProduct);
   const deleteProduct = useMutation(api.products.deleteProduct);
+  const productStats = useQuery(api.products.getProductCountByCategory);
 
   // Add: strict admin access (by email and/or role)
   const allowedEmails = new Set<string>(["vidhigadgets@gmail.com"]);
@@ -457,6 +458,33 @@ export default function Admin() {
             View Customer Analytics
           </Button>
         </div>
+
+        {/* Product Statistics Card */}
+        {productStats && (
+          <Card className="border border-gray-200 mb-8">
+            <CardHeader>
+              <CardTitle>Product Statistics</CardTitle>
+              <CardDescription>Overview of your product inventory</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+                <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-4 border border-blue-200">
+                  <p className="text-sm text-blue-600 font-medium mb-1">Total Products</p>
+                  <p className="text-3xl font-bold text-blue-900">{productStats.total}</p>
+                </div>
+                {Object.entries(productStats.byCategory).map(([category, count]) => (
+                  <div 
+                    key={category}
+                    className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg p-4 border border-gray-200"
+                  >
+                    <p className="text-sm text-gray-600 font-medium mb-1 capitalize">{category}</p>
+                    <p className="text-3xl font-bold text-gray-900">{count}</p>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         <div className="grid lg:grid-cols-2 gap-8">
           <Card className="border border-gray-200">
