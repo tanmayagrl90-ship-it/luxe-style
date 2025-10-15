@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/hooks/use-auth";
-import { ShoppingBag, User, Search, Menu } from "lucide-react";
+import { ShoppingBag, User, Search, Menu, X } from "lucide-react";
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router";
@@ -124,12 +124,26 @@ export default function Navbar() {
     phone: "",
   });
 
+  // Add state for search
+  const [searchQuery, setSearchQuery] = useState("");
+  const [showSearchInput, setShowSearchInput] = useState(false);
+
   // ADD: promo code state and derived helpers
   const [promoCode, setPromoCode] = useState("");
   const [appliedDiscount, setAppliedDiscount] = useState<number>(0);
   const [discountPercentage, setDiscountPercentage] = useState<number>(0);
   const [appliedCouponCode, setAppliedCouponCode] = useState<string>("");
   const [qrCodeUrl, setQrCodeUrl] = useState<string>("");
+
+  // Add search handler
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+      setShowSearchInput(false);
+      setSearchQuery("");
+    }
+  };
 
   useEffect(() => {
     setMounted(true);

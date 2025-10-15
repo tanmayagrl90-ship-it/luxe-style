@@ -189,3 +189,80 @@ export const deleteProduct = mutation({
     return { success: true };
   },
 });
+
+export const searchProducts = query({
+  args: { searchTerm: v.string() },
+  handler: async (ctx, args) => {
+    if (!args.searchTerm || args.searchTerm.trim().length === 0) {
+      return [];
+    }
+
+    const allProducts = await ctx.db.query("products").collect();
+    const searchLower = args.searchTerm.toLowerCase().trim();
+    
+    // Helper function to calculate relevance score
+    const calculateScore = (product: any) => {
+      let score = 0;
+      const name = product.name.toLowerCase();
+      const category = product.category.toLowerCase();
+      const brand = (product.brand || "").toLowerCase();
+      const description = product.description.toLowerCase();
+      
+      // Exact match in name (highest priority)
+      if (name === searchLower) score += 100;
+      
+      // Name starts with search term
+      if (name.startsWith(searchLower)) score += 50;
+      
+      // Name contains search term
+      if (name.includes(searchLower)) score += 30;
+      
+      // Category exact match
+      if (category === searchLower) score += 40;
+      
+      // Category contains search term
+      if (category.includes(searchLower)) score += 20;
+      
+      // Brand exact match
+      if (brand === searchLower) score += 35;
+      
+      // Brand contains search term
+      if (brand.includes(searchLower)) score += 15;
+      
+      // Description contains search term
+      if (description.includes(searchLower)) score += 10;
+      
+      // Fuzzy matching for common misspellings
+      const fuzzyMatches: Record<string, string[]> = {
+        "goggles": ["gogles", "gogle", "googles", "goggle", "sunglasses", "sunglass"],
+        "watches": ["watch", "waches", "watche", "wach"],
+        "belts": ["belt", "blet", "beltt"],
+        "tomford": ["tom ford", "tomfrd", "tom", "ford"],
+        "guess": ["gues", "gess", "guees"],
+        "coach": ["couch", "coch", "koach"],
+      };
+      
+      for (const [correct, variants] of Object.entries(fuzzyMatches)) {
+        if (variants.some(v => searchLower.includes(v))) {
+          if (name.includes(correct) || category.includes(correct) || brand.includes(correct)) {
+            score += 25;
+          }
+        }
+      }
+      
+      return score;
+    };
+    
+    // Score and filter products
+    const scoredProducts = allProducts
+      .map(product => ({
+        product,
+        score: calculateScore(product)
+      }))
+      .filter(item => item.score > 0)
+      .sort((a, b) => b.score - a.score)
+      .map(item => item.product);
+    
+    return scoredProducts;
+  },
+});
