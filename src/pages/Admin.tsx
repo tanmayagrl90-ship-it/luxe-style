@@ -33,6 +33,12 @@ type NewProduct = {
   inStock: boolean;
 };
 
+// Add new type for unified media items
+type MediaItem = {
+  url: string;
+  type: 'image' | 'video';
+};
+
 export default function Admin() {
   const navigate = useNavigate();
   const { isLoading, isAuthenticated, user } = useAuth();
@@ -65,18 +71,9 @@ export default function Admin() {
 
   const [newColor, setNewColor] = useState("");
 
-  // Add: uploaded image URLs from device (public Convex URLs)
-  const [uploadedUrls, setUploadedUrls] = useState<string[]>([]);
-  // NEW: uploaded image URLs used while editing
-  const [editUploadedUrls, setEditUploadedUrls] = useState<string[]>([]);
-
-  // Add: uploaded video URLs from device (public Convex URLs)
-  const [uploadedVideoUrls, setUploadedVideoUrls] = useState<string[]>([]);
-  // NEW: uploaded video URLs used while editing
-  const [editUploadedVideoUrls, setEditUploadedVideoUrls] = useState<string[]>([]);
-
-  // NEW: category filter for existing products
-  const [selectedCategory, setSelectedCategory] = useState<"all" | "goggles" | "watches" | "belts" | "gift box">("all");
+  // Replace separate image/video states with unified media state
+  const [uploadedMedia, setUploadedMedia] = useState<MediaItem[]>([]);
+  const [editUploadedMedia, setEditUploadedMedia] = useState<MediaItem[]>([]);
 
   // Add: Convex storage upload action
   const generateUploadUrl = useAction((api as any).storage.generateUploadUrl);
@@ -98,59 +95,26 @@ export default function Admin() {
     }
   };
 
-  // Optimized: helper to upload an array of image files/blobs with instant preview
-  const uploadImageFiles = async (files: Array<File>) => {
+  // Updated: unified media upload helper
+  const uploadMediaFiles = async (files: Array<File>, isEdit: boolean = false) => {
     if (!files || files.length === 0) return;
     
-    // Show instant preview using blob URLs
-    const blobUrls = files.map(file => URL.createObjectURL(file));
-    setUploadedUrls((prev) => [...prev, ...blobUrls]);
+    const blobItems: MediaItem[] = files.map(file => ({
+      url: URL.createObjectURL(file),
+      type: file.type.startsWith('video/') ? 'video' : 'image'
+    }));
     
-    const newUrls: Array<string> = [];
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i];
-      try {
-        const postUrl: string = await generateUploadUrl({});
-        const res = await fetch(postUrl, {
-          method: "POST",
-          headers: { "Content-Type": file.type || "application/octet-stream" },
-          body: file,
-        });
-        if (!res.ok) throw new Error("Upload failed");
-        const json = (await res.json()) as { storageId: string };
-        const publicUrl: string = await resolvePublicUrl({ storageId: json.storageId as any });
-        await ensureFileAvailable(publicUrl);
-        
-        // Replace blob URL with actual URL
-        setUploadedUrls((prev) => {
-          const newArr = [...prev];
-          const blobIndex = newArr.indexOf(blobUrls[i]);
-          if (blobIndex !== -1) {
-            newArr[blobIndex] = publicUrl;
-            URL.revokeObjectURL(blobUrls[i]); // Clean up blob URL
-          }
-          return newArr;
-        });
-        newUrls.push(publicUrl);
-      } catch (err) {
-        console.error(err);
-        // Remove failed blob URL
-        setUploadedUrls((prev) => prev.filter(u => u !== blobUrls[i]));
-        URL.revokeObjectURL(blobUrls[i]);
-      }
+    if (isEdit) {
+      setEditUploadedMedia((prev) => [...prev, ...blobItems]);
+    } else {
+      setUploadedMedia((prev) => [...prev, ...blobItems]);
     }
-  };
-
-  // Optimized: helper for edit dialog uploads with instant preview
-  const uploadImageFilesForEdit = async (files: Array<File>) => {
-    if (!files || files.length === 0) return;
     
-    const blobUrls = files.map(file => URL.createObjectURL(file));
-    setEditUploadedUrls((prev) => [...prev, ...blobUrls]);
-    
-    const newUrls: Array<string> = [];
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
+      const blobUrl = blobItems[i].url;
+      const mediaType = blobItems[i].type;
+      
       try {
         const postUrl: string = await generateUploadUrl({});
         const res = await fetch(postUrl, {
@@ -163,96 +127,21 @@ export default function Admin() {
         const publicUrl: string = await resolvePublicUrl({ storageId: json.storageId as any });
         await ensureFileAvailable(publicUrl);
         
-        setEditUploadedUrls((prev) => {
+        const updateFn = isEdit ? setEditUploadedMedia : setUploadedMedia;
+        updateFn((prev) => {
           const newArr = [...prev];
-          const blobIndex = newArr.indexOf(blobUrls[i]);
+          const blobIndex = newArr.findIndex(item => item.url === blobUrl);
           if (blobIndex !== -1) {
-            newArr[blobIndex] = publicUrl;
-            URL.revokeObjectURL(blobUrls[i]);
-          }
-          return newArr;
-        });
-        newUrls.push(publicUrl);
-      } catch (err) {
-        console.error(err);
-        setEditUploadedUrls((prev) => prev.filter(u => u !== blobUrls[i]));
-        URL.revokeObjectURL(blobUrls[i]);
-      }
-    }
-  };
-
-  // Optimized: video uploads with instant preview
-  const uploadVideoFiles = async (files: Array<File>) => {
-    if (!files || files.length === 0) return;
-    
-    const blobUrls = files.map(file => URL.createObjectURL(file));
-    setUploadedVideoUrls((prev) => [...prev, ...blobUrls]);
-    
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i];
-      try {
-        const postUrl: string = await generateUploadUrl({});
-        const res = await fetch(postUrl, {
-          method: "POST",
-          headers: { "Content-Type": file.type || "application/octet-stream" },
-          body: file,
-        });
-        if (!res.ok) throw new Error("Upload failed");
-        const json = (await res.json()) as { storageId: string };
-        const publicUrl: string = await resolvePublicUrl({ storageId: json.storageId as any });
-        await ensureFileAvailable(publicUrl);
-        
-        setUploadedVideoUrls((prev) => {
-          const newArr = [...prev];
-          const blobIndex = newArr.indexOf(blobUrls[i]);
-          if (blobIndex !== -1) {
-            newArr[blobIndex] = publicUrl;
-            URL.revokeObjectURL(blobUrls[i]);
+            newArr[blobIndex] = { url: publicUrl, type: mediaType };
+            URL.revokeObjectURL(blobUrl);
           }
           return newArr;
         });
       } catch (err) {
         console.error(err);
-        setUploadedVideoUrls((prev) => prev.filter(u => u !== blobUrls[i]));
-        URL.revokeObjectURL(blobUrls[i]);
-      }
-    }
-  };
-
-  // Optimized: edit dialog video uploads
-  const uploadVideoFilesForEdit = async (files: Array<File>) => {
-    if (!files || files.length === 0) return;
-    
-    const blobUrls = files.map(file => URL.createObjectURL(file));
-    setEditUploadedVideoUrls((prev) => [...prev, ...blobUrls]);
-    
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i];
-      try {
-        const postUrl: string = await generateUploadUrl({});
-        const res = await fetch(postUrl, {
-          method: "POST",
-          headers: { "Content-Type": file.type || "application/octet-stream" },
-          body: file,
-        });
-        if (!res.ok) throw new Error("Upload failed");
-        const json = (await res.json()) as { storageId: string };
-        const publicUrl: string = await resolvePublicUrl({ storageId: json.storageId as any });
-        await ensureFileAvailable(publicUrl);
-        
-        setEditUploadedVideoUrls((prev) => {
-          const newArr = [...prev];
-          const blobIndex = newArr.indexOf(blobUrls[i]);
-          if (blobIndex !== -1) {
-            newArr[blobIndex] = publicUrl;
-            URL.revokeObjectURL(blobUrls[i]);
-          }
-          return newArr;
-        });
-      } catch (err) {
-        console.error(err);
-        setEditUploadedVideoUrls((prev) => prev.filter(u => u !== blobUrls[i]));
-        URL.revokeObjectURL(blobUrls[i]);
+        const updateFn = isEdit ? setEditUploadedMedia : setUploadedMedia;
+        updateFn((prev) => prev.filter(item => item.url !== blobUrl));
+        URL.revokeObjectURL(blobUrl);
       }
     }
   };
@@ -262,56 +151,26 @@ export default function Admin() {
     if (!files || files.length === 0) return;
     try {
       setIsSubmitting(true);
-      await uploadImageFiles(Array.from(files));
-      toast("Images uploaded");
+      await uploadMediaFiles(Array.from(files), false);
+      toast("Media uploaded");
     } catch (err) {
       console.error(err);
-      toast("Failed to upload image(s). Please try again.");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  // Add: video file upload handler
-  const handleVideoFilesUpload = async (files: FileList | null) => {
-    if (!files || files.length === 0) return;
-    try {
-      setIsSubmitting(true);
-      await uploadVideoFiles(Array.from(files));
-      toast("Videos uploaded");
-    } catch (err) {
-      console.error(err);
-      toast("Failed to upload video(s). Please try again.");
+      toast("Failed to upload media. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
   };
 
   // Add: video file upload handler for edit dialog
-  const handleEditVideoFilesUpload = async (files: FileList | null) => {
-    if (!files || files.length === 0) return;
-    try {
-      setIsSubmitting(true);
-      await uploadVideoFilesForEdit(Array.from(files));
-      toast("Videos uploaded");
-    } catch (err) {
-      console.error(err);
-      toast("Failed to upload video(s). Please try again.");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  // NEW: file upload handler for edit dialog
   const handleEditFilesUpload = async (files: FileList | null) => {
     if (!files || files.length === 0) return;
     try {
       setIsSubmitting(true);
-      await uploadImageFilesForEdit(Array.from(files));
-      toast("Images uploaded");
+      await uploadMediaFiles(Array.from(files), true);
+      toast("Media uploaded");
     } catch (err) {
       console.error(err);
-      toast("Failed to upload image(s). Please try again.");
+      toast("Failed to upload media. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -326,7 +185,7 @@ export default function Admin() {
       for (const item of Array.from(items)) {
         if (item.kind === "file") {
           const file = item.getAsFile();
-          if (file && file.type.startsWith("image/")) {
+          if (file && (file.type.startsWith("image/") || file.type.startsWith("video/"))) {
             files.push(file);
           }
         }
@@ -334,11 +193,11 @@ export default function Admin() {
       if (files.length === 0) return;
       e.preventDefault();
       setIsSubmitting(true);
-      await uploadImageFiles(files);
-      toast(`Pasted ${files.length} image${files.length > 1 ? "s" : ""}`);
+      await uploadMediaFiles(files, false);
+      toast(`Pasted ${files.length} item${files.length > 1 ? "s" : ""}`);
     } catch (err) {
       console.error(err);
-      toast("Failed to upload pasted image(s). Please try again.");
+      toast("Failed to upload pasted media. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -361,7 +220,7 @@ export default function Admin() {
       if (files.length === 0) return;
       e.preventDefault();
       setIsSubmitting(true);
-      await uploadVideoFiles(files);
+      await uploadMediaFiles(files, false);
       toast(`Pasted ${files.length} video${files.length > 1 ? "s" : ""}`);
     } catch (err) {
       console.error(err);
@@ -380,42 +239,19 @@ export default function Admin() {
       for (const item of Array.from(items)) {
         if (item.kind === "file") {
           const file = item.getAsFile();
-          if (file && file.type.startsWith("image/")) files.push(file);
+          if (file && (file.type.startsWith("image/") || file.type.startsWith("video/"))) {
+            files.push(file);
+          }
         }
       }
       if (files.length === 0) return;
       e.preventDefault();
       setIsSubmitting(true);
-      await uploadImageFilesForEdit(files);
-      toast(`Pasted ${files.length} image${files.length > 1 ? "s" : ""}`);
+      await uploadMediaFiles(files, true);
+      toast(`Pasted ${files.length} item${files.length > 1 ? "s" : ""}`);
     } catch (err) {
       console.error(err);
-      toast("Failed to upload pasted image(s). Please try again.");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  // Add: paste handler for videos in edit dialog
-  const handleEditVideoPasteUpload = async (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
-    try {
-      const items = e.clipboardData?.items;
-      if (!items || items.length === 0) return;
-      const files: Array<File> = [];
-      for (const item of Array.from(items)) {
-        if (item.kind === "file") {
-          const file = item.getAsFile();
-          if (file && file.type.startsWith("video/")) files.push(file);
-        }
-      }
-      if (files.length === 0) return;
-      e.preventDefault();
-      setIsSubmitting(true);
-      await uploadVideoFilesForEdit(files);
-      toast(`Pasted ${files.length} video${files.length > 1 ? "s" : ""}`);
-    } catch (err) {
-      console.error(err);
-      toast("Failed to upload pasted video(s). Please try again.");
+      toast("Failed to upload pasted media. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -432,7 +268,7 @@ export default function Admin() {
     e.preventDefault();
     if (draggedIndex === null || draggedIndex === index) return;
     
-    setUploadedUrls((prev) => {
+    setUploadedMedia((prev) => {
       const newArr = [...prev];
       const draggedItem = newArr[draggedIndex];
       newArr.splice(draggedIndex, 1);
@@ -457,7 +293,7 @@ export default function Admin() {
     e.preventDefault();
     if (editDraggedIndex === null || editDraggedIndex === index) return;
     
-    setEditUploadedUrls((prev) => {
+    setEditUploadedMedia((prev) => {
       const newArr = [...prev];
       const draggedItem = newArr[editDraggedIndex];
       newArr.splice(editDraggedIndex, 1);
@@ -470,6 +306,9 @@ export default function Admin() {
   const handleEditDragEnd = () => {
     setEditDraggedIndex(null);
   };
+
+  // Add missing selectedCategory state to fix TS errors and enable category filtering
+  const [selectedCategory, setSelectedCategory] = useState<"all" | "goggles" | "watches" | "belts" | "gift box">("all");
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
@@ -512,25 +351,17 @@ export default function Admin() {
       toast("Original price must be a valid number greater than 0.");
       return;
     }
-    const imagesArray = form.images
-      .split(",")
-      .map((s) => s.trim())
-      .filter(Boolean);
-
-    const videosArray = form.videos
-      .split(",")
-      .map((s) => s.trim())
-      .filter(Boolean);
 
     try {
       setIsSubmitting(true);
-      // Clean URLs by removing query params and blob URLs
-      const cleanedUploaded = uploadedUrls
-        .filter(u => !u.startsWith('blob:'))
-        .map((u) => u.split("?")[0]);
-      const cleanedVideoUploaded = uploadedVideoUrls
-        .filter(u => !u.startsWith('blob:'))
-        .map((u) => u.split("?")[0]);
+      
+      // Separate images and videos from unified media
+      const cleanedMedia = uploadedMedia
+        .filter(item => !item.url.startsWith('blob:'))
+        .map(item => ({ ...item, url: item.url.split("?")[0] }));
+      
+      const images = cleanedMedia.filter(item => item.type === 'image').map(item => item.url);
+      const videos = cleanedMedia.filter(item => item.type === 'video').map(item => item.url);
       
       await createProduct({
         name: form.name.trim(),
@@ -538,12 +369,8 @@ export default function Admin() {
         price: priceNum,
         originalPrice: originalPriceNum,
         category: form.category,
-        images: [...cleanedUploaded, ...(imagesArray.length ? imagesArray : [])].length
-          ? [...cleanedUploaded, ...(imagesArray.length ? imagesArray : [])]
-          : ["/api/placeholder/400/400"],
-        videos: [...cleanedVideoUploaded, ...videosArray].length > 0 
-          ? [...cleanedVideoUploaded, ...videosArray] 
-          : undefined,
+        images: images.length > 0 ? images : ["/api/placeholder/400/400"],
+        videos: videos.length > 0 ? videos : undefined,
         colors: form.colors.length > 0 ? form.colors : undefined,
         featured: form.featured,
         inStock: form.inStock,
@@ -561,8 +388,7 @@ export default function Admin() {
         featured: false,
         inStock: true,
       }));
-      setUploadedUrls([]);
-      setUploadedVideoUrls([]);
+      setUploadedMedia([]);
       setNewColor("");
     } catch (err) {
       console.error(err);
@@ -601,6 +427,7 @@ export default function Admin() {
 
   const [editNewColor, setEditNewColor] = useState("");
 
+  // Update openEdit to include existing images & videos in a unified reorderable list
   const openEdit = (p: any) => {
     setEditId(p._id as string);
     setEditForm({
@@ -615,13 +442,19 @@ export default function Admin() {
       featured: !!p.featured,
       inStock: !!p.inStock,
     });
-    // NEW: reset any previously uploaded edit URLs
-    setEditUploadedUrls([]);
-    setEditUploadedVideoUrls([]);
+
+    // Build initial unified media list from existing product data (images first, then videos)
+    const initialMedia: MediaItem[] = [
+      ...(Array.isArray(p.images) ? p.images.map((url: string) => ({ url, type: 'image' as const })) : []),
+      ...(Array.isArray(p.videos) ? p.videos.map((url: string) => ({ url, type: 'video' as const })) : []),
+    ];
+    setEditUploadedMedia(initialMedia);
+
     setEditNewColor("");
     setIsEditOpen(true);
   };
 
+  // Update submitEdit to use unified reorder list when available and avoid duplications
   const submitEdit = async () => {
     if (!editId) return;
     const priceNum = Number(editForm.price);
@@ -634,27 +467,29 @@ export default function Admin() {
       toast("Original price must be a valid number greater than 0.");
       return;
     }
-    const imagesArray = editForm.images
-      .split(",")
-      .map((s) => s.trim())
-      .filter(Boolean);
-
-    const videosArray = editForm.videos
-      .split(",")
-      .map((s) => s.trim())
-      .filter(Boolean);
-
-    const cleanedEditUploaded = editUploadedUrls
-      .filter(u => !u.startsWith('blob:'))
-      .map((u) => u.split("?")[0]);
-    const cleanedEditVideoUploaded = editUploadedVideoUrls
-      .filter(u => !u.startsWith('blob:'))
-      .map((u) => u.split("?")[0]);
-    const combinedImages: Array<string> = [...cleanedEditUploaded, ...imagesArray];
-    const combinedVideos: Array<string> = [...cleanedEditVideoUploaded, ...videosArray];
 
     try {
       setIsSubmitting(true);
+
+      // Prefer unified list (drag-reordered) if present; otherwise fallback to manual fields
+      const hasUnifiedList = editUploadedMedia.length > 0;
+      let combinedImages: string[] = [];
+      let combinedVideos: string[] = [];
+
+      if (hasUnifiedList) {
+        const cleanedMedia = editUploadedMedia
+          .filter(item => !item.url.startsWith('blob:'))
+          .map(item => ({ ...item, url: item.url.split("?")[0] }));
+
+        combinedImages = cleanedMedia.filter(item => item.type === 'image').map(item => item.url);
+        combinedVideos = cleanedMedia.filter(item => item.type === 'video').map(item => item.url);
+      } else {
+        const manualImages = editForm.images.split(",").map((s) => s.trim()).filter(Boolean);
+        const manualVideos = editForm.videos.split(",").map((s) => s.trim()).filter(Boolean);
+        combinedImages = manualImages;
+        combinedVideos = manualVideos;
+      }
+
       const payload: any = {
         id: editId as any,
         name: editForm.name.trim(),
@@ -665,6 +500,7 @@ export default function Admin() {
         featured: editForm.featured,
         inStock: editForm.inStock,
       };
+
       if (combinedImages.length > 0) {
         payload.images = combinedImages;
       }
@@ -674,6 +510,7 @@ export default function Admin() {
       if (editForm.colors.length > 0) {
         payload.colors = editForm.colors;
       }
+
       await updateProduct(payload);
       toast("Product updated.");
       setIsEditOpen(false);
@@ -838,21 +675,21 @@ export default function Admin() {
                   </Select>
                 </div>
 
-                {/* Updated: Device upload section with drag-and-drop */}
+                {/* Updated: Unified media upload section with drag-and-drop */}
                 <div className="space-y-2">
-                  <Label htmlFor="upload">Upload Images (multiple)</Label>
+                  <Label htmlFor="upload">Upload Images & Videos (multiple)</Label>
                   <Input
                     id="upload"
                     type="file"
-                    accept="image/*"
+                    accept="image/*,video/*"
                     multiple
                     onChange={(e) => handleFilesUpload(e.target.files)}
                   />
-                  {uploadedUrls.length > 0 && (
+                  {uploadedMedia.length > 0 && (
                     <div className="mt-2 grid grid-cols-3 gap-2">
-                      {uploadedUrls.map((url, idx) => (
+                      {uploadedMedia.map((item, idx) => (
                         <div
-                          key={url + idx}
+                          key={item.url + idx}
                           draggable
                           onDragStart={() => handleDragStart(idx)}
                           onDragOver={(e) => handleDragOver(e, idx)}
@@ -861,14 +698,26 @@ export default function Admin() {
                             draggedIndex === idx ? 'opacity-50' : ''
                           }`}
                         >
-                          <img
-                            src={url}
-                            alt={`uploaded-${idx}`}
-                            className="h-20 w-full object-cover rounded-md border"
-                          />
+                          {item.type === 'image' ? (
+                            <img
+                              src={item.url}
+                              alt={`media-${idx}`}
+                              className="h-20 w-full object-cover rounded-md border"
+                            />
+                          ) : (
+                            <video
+                              src={item.url}
+                              className="h-20 w-full object-cover rounded-md border"
+                              muted
+                            />
+                          )}
                           {/* Number badge */}
                           <div className="absolute top-1 left-1 bg-black/80 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
                             {idx + 1}
+                          </div>
+                          {/* Media type indicator */}
+                          <div className="absolute top-1 right-8 bg-blue-600/90 text-white text-[10px] px-1.5 py-0.5 rounded">
+                            {item.type === 'video' ? 'VIDEO' : 'IMG'}
                           </div>
                           {/* Drag handle */}
                           <div className="absolute top-1 left-7 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -878,9 +727,9 @@ export default function Admin() {
                             type="button"
                             className="absolute top-1 right-1 text-[10px] px-2 py-0.5 rounded bg-black/70 text-white"
                             onClick={() =>
-                              setUploadedUrls((prev) => prev.filter((u) => u !== url))
+                              setUploadedMedia((prev) => prev.filter((_, i) => i !== idx))
                             }
-                            aria-label="Remove image"
+                            aria-label="Remove media"
                           >
                             Remove
                           </button>
@@ -889,70 +738,21 @@ export default function Admin() {
                     </div>
                   )}
                   <p className="text-xs text-gray-500">
-                    Drag images to reorder them. First image will be the main product image.
+                    Drag media to reorder them. First item will be the main product media. Videos and images can be mixed.
                   </p>
                 </div>
 
-                {/* Add: Video upload section */}
+                {/* Updated: Paste area for both images and videos */}
                 <div className="space-y-2">
-                  <Label htmlFor="video-upload">Upload Videos (multiple)</Label>
-                  <Input
-                    id="video-upload"
-                    type="file"
-                    accept="video/*"
-                    multiple
-                    onChange={(e) => handleVideoFilesUpload(e.target.files)}
-                  />
-                  {uploadedVideoUrls.length > 0 && (
-                    <div className="mt-2 grid grid-cols-3 gap-2">
-                      {uploadedVideoUrls.map((url, idx) => (
-                        <div key={url + idx} className="relative">
-                          <video
-                            src={url}
-                            className="h-20 w-full object-cover rounded-md border"
-                            muted
-                          />
-                          <button
-                            type="button"
-                            className="absolute top-1 right-1 text-[10px] px-2 py-0.5 rounded bg-black/70 text-white"
-                            onClick={() =>
-                              setUploadedVideoUrls((prev) => prev.filter((u) => u !== url))
-                            }
-                            aria-label="Remove video"
-                          >
-                            Remove
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-
-                {/* NEW: Paste images area */}
-                <div className="space-y-2">
-                  <Label htmlFor="paste-area">Or paste images (Ctrl/⌘+V)</Label>
+                  <Label htmlFor="paste-area">Or paste images/videos (Ctrl/⌘+V)</Label>
                   <textarea
                     id="paste-area"
                     onPaste={handlePasteUpload}
-                    placeholder="Click here and paste images from clipboard"
+                    placeholder="Click here and paste images or videos from clipboard"
                     className="w-full h-16 rounded-md border border-gray-200 p-3 text-sm bg-white/90"
                   />
                   <p className="text-xs text-gray-500">
-                    Tip: Copy an image (or screenshot) and press Ctrl/⌘+V here. We'll upload it automatically.
-                  </p>
-                </div>
-
-                {/* Add: Paste videos area */}
-                <div className="space-y-2">
-                  <Label htmlFor="video-paste-area">Or paste videos (Ctrl/⌘+V)</Label>
-                  <textarea
-                    id="video-paste-area"
-                    onPaste={handleVideoPasteUpload}
-                    placeholder="Click here and paste videos from clipboard"
-                    className="w-full h-16 rounded-md border border-gray-200 p-3 text-sm bg-white/90"
-                  />
-                  <p className="text-xs text-gray-500">
-                    Tip: Copy a video and press Ctrl/⌘+V here. We'll upload it automatically.
+                    Tip: Copy an image or video and press Ctrl/⌘+V here. We'll upload it automatically.
                   </p>
                 </div>
 
@@ -1171,7 +971,7 @@ export default function Admin() {
         </div>
       </div>
 
-      {/* Edit Dialog with drag-and-drop */}
+      {/* Updated Edit Dialog with unified media */}
       <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
         <DialogContent className="sm:max-w-lg max-h-[90vh] flex flex-col">
           <DialogHeader>
@@ -1246,32 +1046,57 @@ export default function Admin() {
               />
             </div>
 
-            {/* Add: Video upload in edit */}
             <div className="space-y-2">
-              <Label htmlFor="e_video_upload">Upload Videos (multiple)</Label>
+              <Label htmlFor="e_upload">Upload Images & Videos (multiple)</Label>
               <Input
-                id="e_video_upload"
+                id="e_upload"
                 type="file"
-                accept="video/*"
+                accept="image/*,video/*"
                 multiple
-                onChange={(e) => handleEditVideoFilesUpload(e.target.files)}
+                onChange={(e) => handleEditFilesUpload(e.target.files)}
               />
-              {editUploadedVideoUrls.length > 0 && (
+              {editUploadedMedia.length > 0 && (
                 <div className="mt-2 grid grid-cols-3 gap-2">
-                  {editUploadedVideoUrls.map((url, idx) => (
-                    <div key={url + idx} className="relative">
-                      <video
-                        src={url}
-                        className="h-20 w-full object-cover rounded-md border"
-                        muted
-                      />
+                  {editUploadedMedia.map((item, idx) => (
+                    <div
+                      key={item.url + idx}
+                      draggable
+                      onDragStart={() => handleEditDragStart(idx)}
+                      onDragOver={(e) => handleEditDragOver(e, idx)}
+                      onDragEnd={handleEditDragEnd}
+                      className={`relative cursor-move group ${
+                        editDraggedIndex === idx ? 'opacity-50' : ''
+                      }`}
+                    >
+                      {item.type === 'image' ? (
+                        <img
+                          src={item.url}
+                          alt={`media-${idx}`}
+                          className="h-20 w-full object-cover rounded-md border"
+                        />
+                      ) : (
+                        <video
+                          src={item.url}
+                          className="h-20 w-full object-cover rounded-md border"
+                          muted
+                        />
+                      )}
+                      <div className="absolute top-1 left-1 bg-black/80 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                        {idx + 1}
+                      </div>
+                      <div className="absolute top-1 right-8 bg-blue-600/90 text-white text-[10px] px-1.5 py-0.5 rounded">
+                        {item.type === 'video' ? 'VIDEO' : 'IMG'}
+                      </div>
+                      <div className="absolute top-1 left-7 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <GripVertical className="h-4 w-4 text-white drop-shadow-lg" />
+                      </div>
                       <button
                         type="button"
                         className="absolute top-1 right-1 text-[10px] px-2 py-0.5 rounded bg-black/70 text-white"
                         onClick={() =>
-                          setEditUploadedVideoUrls((prev) => prev.filter((u) => u !== url))
+                          setEditUploadedMedia((prev) => prev.filter((_, i) => i !== idx))
                         }
-                        aria-label="Remove video"
+                        aria-label="Remove media"
                       >
                         Remove
                       </button>
@@ -1281,17 +1106,16 @@ export default function Admin() {
               )}
             </div>
 
-            {/* Add: Paste videos in edit */}
             <div className="space-y-2">
-              <Label htmlFor="e_video_paste">Or paste videos (Ctrl/⌘+V)</Label>
+              <Label htmlFor="e_paste">Or paste images/videos (Ctrl/⌘+V)</Label>
               <textarea
-                id="e_video_paste"
-                onPaste={handleEditVideoPasteUpload}
-                placeholder="Click here and paste videos from clipboard"
+                id="e_paste"
+                onPaste={handleEditPasteUpload}
+                placeholder="Click here and paste images or videos from clipboard"
                 className="w-full h-16 rounded-md border border-gray-200 p-3 text-sm bg-white/90"
               />
               <p className="text-xs text-gray-500">
-                Tip: Copy a video and press Ctrl/⌘+V here. We'll upload it automatically.
+                Tip: Copy an image or video and press Ctrl/⌘+V here. We'll upload it automatically.
               </p>
             </div>
 
