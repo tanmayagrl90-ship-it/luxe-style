@@ -158,6 +158,102 @@ const BRAND_LOGOS: Record<string, { name: string; logo: string }> = {
   "rolex": {
     name: "Rolex",
     logo: "https://logos-world.net/wp-content/uploads/2020/09/Rolex-Logo.png"
+  },
+  "versace": {
+    name: "Versace",
+    logo: "https://logos-world.net/wp-content/uploads/2020/09/Versace-Logo.png"
+  },
+  "dior": {
+    name: "Dior",
+    logo: "https://logos-world.net/wp-content/uploads/2020/11/Dior-Logo.png"
+  },
+  "fendi": {
+    name: "Fendi",
+    logo: "https://logos-world.net/wp-content/uploads/2020/11/Fendi-Logo.png"
+  },
+  "balenciaga": {
+    name: "Balenciaga",
+    logo: "https://logos-world.net/wp-content/uploads/2021/02/Balenciaga-Logo.png"
+  },
+  "givenchy": {
+    name: "Givenchy",
+    logo: "https://logos-world.net/wp-content/uploads/2020/12/Givenchy-Logo.png"
+  },
+  "valentino": {
+    name: "Valentino",
+    logo: "https://logos-world.net/wp-content/uploads/2021/02/Valentino-Logo.png"
+  },
+  "bottega veneta": {
+    name: "Bottega Veneta",
+    logo: "https://logos-world.net/wp-content/uploads/2020/12/Bottega-Veneta-Logo.png"
+  },
+  "bottega": {
+    name: "Bottega Veneta",
+    logo: "https://logos-world.net/wp-content/uploads/2020/12/Bottega-Veneta-Logo.png"
+  },
+  "dolce gabbana": {
+    name: "Dolce & Gabbana",
+    logo: "https://logos-world.net/wp-content/uploads/2020/09/Dolce-Gabbana-Logo.png"
+  },
+  "dolce": {
+    name: "Dolce & Gabbana",
+    logo: "https://logos-world.net/wp-content/uploads/2020/09/Dolce-Gabbana-Logo.png"
+  },
+  "d&g": {
+    name: "Dolce & Gabbana",
+    logo: "https://logos-world.net/wp-content/uploads/2020/09/Dolce-Gabbana-Logo.png"
+  },
+  "omega": {
+    name: "Omega",
+    logo: "https://logos-world.net/wp-content/uploads/2020/09/Omega-Logo.png"
+  },
+  "tag heuer": {
+    name: "TAG Heuer",
+    logo: "https://logos-world.net/wp-content/uploads/2020/09/TAG-Heuer-Logo.png"
+  },
+  "tag": {
+    name: "TAG Heuer",
+    logo: "https://logos-world.net/wp-content/uploads/2020/09/TAG-Heuer-Logo.png"
+  },
+  "patek philippe": {
+    name: "Patek Philippe",
+    logo: "https://logos-world.net/wp-content/uploads/2020/09/Patek-Philippe-Logo.png"
+  },
+  "patek": {
+    name: "Patek Philippe",
+    logo: "https://logos-world.net/wp-content/uploads/2020/09/Patek-Philippe-Logo.png"
+  },
+  "hublot": {
+    name: "Hublot",
+    logo: "https://logos-world.net/wp-content/uploads/2020/09/Hublot-Logo.png"
+  },
+  "iwc": {
+    name: "IWC Schaffhausen",
+    logo: "https://logos-world.net/wp-content/uploads/2020/09/IWC-Logo.png"
+  },
+  "tissot": {
+    name: "Tissot",
+    logo: "https://logos-world.net/wp-content/uploads/2020/09/Tissot-Logo.png"
+  },
+  "seiko": {
+    name: "Seiko",
+    logo: "https://logos-world.net/wp-content/uploads/2020/09/Seiko-Logo.png"
+  },
+  "citizen": {
+    name: "Citizen",
+    logo: "https://logos-world.net/wp-content/uploads/2020/09/Citizen-Logo.png"
+  },
+  "oakley": {
+    name: "Oakley",
+    logo: "https://logos-world.net/wp-content/uploads/2020/12/Oakley-Logo.png"
+  },
+  "persol": {
+    name: "Persol",
+    logo: "https://logos-world.net/wp-content/uploads/2021/03/Persol-Logo.png"
+  },
+  "police": {
+    name: "Police",
+    logo: "https://logos-world.net/wp-content/uploads/2021/03/Police-Logo.png"
   }
 };
 
@@ -176,6 +272,8 @@ export default function ShopByBrand() {
       } else {
         // Otherwise, detect from product name
         const nameLower = product.name.toLowerCase();
+        
+        // Check each brand key to see if it's in the product name
         Object.keys(BRAND_LOGOS).forEach(brandKey => {
           if (nameLower.includes(brandKey)) {
             // Use the display name from BRAND_LOGOS
