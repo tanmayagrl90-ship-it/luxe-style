@@ -282,9 +282,39 @@ export default function Navbar() {
           </motion.div>
 
           <div className="flex items-center space-x-4">
-            <Button variant="ghost" size="icon" className="hidden sm:flex hover:bg-white/10">
-              <Search className="h-6 w-6 text-white" />
-            </Button>
+            {showSearchInput ? (
+              <form onSubmit={handleSearch} className="hidden sm:flex items-center gap-2">
+                <Input
+                  type="search"
+                  placeholder="Search products..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-64 h-9 bg-white/10 border-white/20 text-white placeholder:text-white/50"
+                  autoFocus
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => {
+                    setShowSearchInput(false);
+                    setSearchQuery("");
+                  }}
+                  className="hover:bg-white/10"
+                >
+                  <X className="h-5 w-5 text-white" />
+                </Button>
+              </form>
+            ) : (
+              <Button
+                variant="ghost"
+                size="icon"
+                className="hidden sm:flex hover:bg-white/10"
+                onClick={() => setShowSearchInput(true)}
+              >
+                <Search className="h-6 w-6 text-white" />
+              </Button>
+            )}
 
             <Button variant="ghost" size="icon" className="relative hover:bg-white/10" onClick={() => setIsCartOpen(true)} aria-label="Open cart">
               <ShoppingBag className="h-6 w-6 text-white" />
