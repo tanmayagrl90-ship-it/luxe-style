@@ -1,1 +1,9 @@
-.slice(0, 12)
+useEffect(() => {
+  if (!isCartOpen || !cartItems) return;
+  if (cartItemCount < 2 && appliedCouponCode === "COMBO15") {
+    setAppliedDiscount(0);
+    setPromoCode("");
+    setDiscountPercentage(0);
+    setAppliedCouponCode("");
+  }
+}, [isCartOpen, cartItems, cartItemCount, appliedCouponCode]);

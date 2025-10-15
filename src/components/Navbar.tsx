@@ -174,12 +174,16 @@ export default function Navbar() {
   useEffect(() => {
     if (!isCartOpen || !cartItems) return;
     if (cartItemCount < 2 && appliedCouponCode === "COMBO15") {
-      setAppliedDiscount(0);
-      setPromoCode("");
-      setDiscountPercentage(0);
-      setAppliedCouponCode("");
+      // Use a ref or timeout to prevent rapid state updates
+      const timer = setTimeout(() => {
+        setAppliedDiscount(0);
+        setPromoCode("");
+        setDiscountPercentage(0);
+        setAppliedCouponCode("");
+      }, 100);
+      return () => clearTimeout(timer);
     }
-  }, [isCartOpen, cartItems, cartItemCount, appliedCouponCode]);
+  }, [isCartOpen, cartItemCount, appliedCouponCode]);
 
   // Add mutation for updating cart quantities
   const setCartItemQuantity = useMutation(api.cart.setCartItemQuantity);
