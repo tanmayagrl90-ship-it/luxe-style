@@ -26,6 +26,7 @@ type NewProduct = {
   originalPrice: string;
   category: "goggles" | "watches" | "belts" | "gift box";
   images: string; // comma separated
+  videos: string; // comma separated
   colors: string[];
   featured: boolean;
   inStock: boolean;
@@ -55,6 +56,7 @@ export default function Admin() {
     originalPrice: "",
     category: "goggles",
     images: "",
+    videos: "",
     colors: [],
     featured: false,
     inStock: true,
@@ -66,6 +68,11 @@ export default function Admin() {
   const [uploadedUrls, setUploadedUrls] = useState<string[]>([]);
   // NEW: uploaded image URLs used while editing
   const [editUploadedUrls, setEditUploadedUrls] = useState<string[]>([]);
+
+  // Add: uploaded video URLs from device (public Convex URLs)
+  const [uploadedVideoUrls, setUploadedVideoUrls] = useState<string[]>([]);
+  // NEW: uploaded video URLs used while editing
+  const [editUploadedVideoUrls, setEditUploadedVideoUrls] = useState<string[]>([]);
 
   // NEW: category filter for existing products
   const [selectedCategory, setSelectedCategory] = useState<"all" | "goggles" | "watches" | "belts" | "gift box">("all");
@@ -144,6 +151,50 @@ export default function Admin() {
     setEditUploadedUrls((prev) => [...prev, ...newUrls]);
   };
 
+  // Add: helper to upload video files — resolve via Convex and wait for availability
+  const uploadVideoFiles = async (files: Array<File>) => {
+    if (!files || files.length === 0) return;
+    const newUrls: Array<string> = [];
+    for (const file of files) {
+      const postUrl: string = await generateUploadUrl({});
+      const res = await fetch(postUrl, {
+        method: "POST",
+        headers: { "Content-Type": file.type || "application/octet-stream" },
+        body: file,
+      });
+      if (!res.ok) throw new Error("Upload failed");
+      const json = (await res.json()) as { storageId: string };
+      const publicUrl: string = await resolvePublicUrl({ storageId: json.storageId as any });
+      await ensureFileAvailable(publicUrl);
+      const previewUrl =
+        publicUrl + (publicUrl.includes("?") ? "&" : "?") + "v=" + Date.now();
+      newUrls.push(previewUrl);
+    }
+    setUploadedVideoUrls((prev) => [...prev, ...newUrls]);
+  };
+
+  // Add: helper for edit dialog video uploads
+  const uploadVideoFilesForEdit = async (files: Array<File>) => {
+    if (!files || files.length === 0) return;
+    const newUrls: Array<string> = [];
+    for (const file of files) {
+      const postUrl: string = await generateUploadUrl({});
+      const res = await fetch(postUrl, {
+        method: "POST",
+        headers: { "Content-Type": file.type || "application/octet-stream" },
+        body: file,
+      });
+      if (!res.ok) throw new Error("Upload failed");
+      const json = (await res.json()) as { storageId: string };
+      const publicUrl: string = await resolvePublicUrl({ storageId: json.storageId as any });
+      await ensureFileAvailable(publicUrl);
+      const previewUrl =
+        publicUrl + (publicUrl.includes("?") ? "&" : "?") + "v=" + Date.now();
+      newUrls.push(previewUrl);
+    }
+    setEditUploadedVideoUrls((prev) => [...prev, ...newUrls]);
+  };
+
   // Update: reuse helper for input[type=file] uploads
   const handleFilesUpload = async (files: FileList | null) => {
     if (!files || files.length === 0) return;
@@ -154,6 +205,36 @@ export default function Admin() {
     } catch (err) {
       console.error(err);
       toast("Failed to upload image(s). Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // Add: video file upload handler
+  const handleVideoFilesUpload = async (files: FileList | null) => {
+    if (!files || files.length === 0) return;
+    try {
+      setIsSubmitting(true);
+      await uploadVideoFiles(Array.from(files));
+      toast("Videos uploaded");
+    } catch (err) {
+      console.error(err);
+      toast("Failed to upload video(s). Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // Add: video file upload handler for edit dialog
+  const handleEditVideoFilesUpload = async (files: FileList | null) => {
+    if (!files || files.length === 0) return;
+    try {
+      setIsSubmitting(true);
+      await uploadVideoFilesForEdit(Array.from(files));
+      toast("Videos uploaded");
+    } catch (err) {
+      console.error(err);
+      toast("Failed to upload video(s). Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -201,6 +282,33 @@ export default function Admin() {
     }
   };
 
+  // Add: paste handler for videos in create form
+  const handleVideoPasteUpload = async (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
+    try {
+      const items = e.clipboardData?.items;
+      if (!items || items.length === 0) return;
+      const files: Array<File> = [];
+      for (const item of Array.from(items)) {
+        if (item.kind === "file") {
+          const file = item.getAsFile();
+          if (file && file.type.startsWith("video/")) {
+            files.push(file);
+          }
+        }
+      }
+      if (files.length === 0) return;
+      e.preventDefault();
+      setIsSubmitting(true);
+      await uploadVideoFiles(files);
+      toast(`Pasted ${files.length} video${files.length > 1 ? "s" : ""}`);
+    } catch (err) {
+      console.error(err);
+      toast("Failed to upload pasted video(s). Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   // NEW: paste handler for edit dialog
   const handleEditPasteUpload = async (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
     try {
@@ -221,6 +329,31 @@ export default function Admin() {
     } catch (err) {
       console.error(err);
       toast("Failed to upload pasted image(s). Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // Add: paste handler for videos in edit dialog
+  const handleEditVideoPasteUpload = async (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
+    try {
+      const items = e.clipboardData?.items;
+      if (!items || items.length === 0) return;
+      const files: Array<File> = [];
+      for (const item of Array.from(items)) {
+        if (item.kind === "file") {
+          const file = item.getAsFile();
+          if (file && file.type.startsWith("video/")) files.push(file);
+        }
+      }
+      if (files.length === 0) return;
+      e.preventDefault();
+      setIsSubmitting(true);
+      await uploadVideoFilesForEdit(files);
+      toast(`Pasted ${files.length} video${files.length > 1 ? "s" : ""}`);
+    } catch (err) {
+      console.error(err);
+      toast("Failed to upload pasted video(s). Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -273,10 +406,16 @@ export default function Admin() {
       .map((s) => s.trim())
       .filter(Boolean);
 
+    const videosArray = form.videos
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean);
+
     try {
       setIsSubmitting(true);
-      // Strip cache-busting params when saving to DB
       const cleanedUploaded = uploadedUrls.map((u) => u.split("?")[0]);
+      const cleanedVideoUploaded = uploadedVideoUrls.map((u) => u.split("?")[0]);
+      
       await createProduct({
         name: form.name.trim(),
         description: form.description.trim(),
@@ -286,6 +425,9 @@ export default function Admin() {
         images: [...cleanedUploaded, ...(imagesArray.length ? imagesArray : [])].length
           ? [...cleanedUploaded, ...(imagesArray.length ? imagesArray : [])]
           : ["/api/placeholder/400/400"],
+        videos: [...cleanedVideoUploaded, ...videosArray].length > 0 
+          ? [...cleanedVideoUploaded, ...videosArray] 
+          : undefined,
         colors: form.colors.length > 0 ? form.colors : undefined,
         featured: form.featured,
         inStock: form.inStock,
@@ -299,11 +441,13 @@ export default function Admin() {
         price: "",
         originalPrice: "",
         images: "",
+        videos: "",
         colors: [],
         featured: false,
         inStock: true,
       }));
       setUploadedUrls([]);
+      setUploadedVideoUrls([]);
       setNewColor("");
     } catch (err) {
       console.error(err);
@@ -323,6 +467,7 @@ export default function Admin() {
     originalPrice: string;
     category: "goggles" | "watches" | "belts" | "gift box";
     images: string;
+    videos: string;
     colors: string[];
     featured: boolean;
     inStock: boolean;
@@ -333,6 +478,7 @@ export default function Admin() {
     originalPrice: "",
     category: "goggles",
     images: "",
+    videos: "",
     colors: [],
     featured: false,
     inStock: true,
@@ -349,12 +495,14 @@ export default function Admin() {
       originalPrice: p.originalPrice ? String(p.originalPrice) : "",
       category: (p.category as "goggles" | "watches" | "belts" | "gift box") ?? "goggles",
       images: Array.isArray(p.images) ? p.images.join(", ") : "",
+      videos: Array.isArray(p.videos) ? p.videos.join(", ") : "",
       colors: Array.isArray(p.colors) ? p.colors : [],
       featured: !!p.featured,
       inStock: !!p.inStock,
     });
     // NEW: reset any previously uploaded edit URLs
     setEditUploadedUrls([]);
+    setEditUploadedVideoUrls([]);
     setEditNewColor("");
     setIsEditOpen(true);
   };
@@ -376,9 +524,15 @@ export default function Admin() {
       .map((s) => s.trim())
       .filter(Boolean);
 
-    // Combine newly uploaded edit images (strip ?v=...) + typed URLs
+    const videosArray = editForm.videos
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean);
+
     const cleanedEditUploaded = editUploadedUrls.map((u) => u.split("?")[0]);
+    const cleanedEditVideoUploaded = editUploadedVideoUrls.map((u) => u.split("?")[0]);
     const combinedImages: Array<string> = [...cleanedEditUploaded, ...imagesArray];
+    const combinedVideos: Array<string> = [...cleanedEditVideoUploaded, ...videosArray];
 
     try {
       setIsSubmitting(true);
@@ -394,6 +548,9 @@ export default function Admin() {
       };
       if (combinedImages.length > 0) {
         payload.images = combinedImages;
+      }
+      if (combinedVideos.length > 0) {
+        payload.videos = combinedVideos;
       }
       if (editForm.colors.length > 0) {
         payload.colors = editForm.colors;
@@ -597,6 +754,41 @@ export default function Admin() {
                   )}
                 </div>
 
+                {/* Add: Video upload section */}
+                <div className="space-y-2">
+                  <Label htmlFor="video-upload">Upload Videos (multiple)</Label>
+                  <Input
+                    id="video-upload"
+                    type="file"
+                    accept="video/*"
+                    multiple
+                    onChange={(e) => handleVideoFilesUpload(e.target.files)}
+                  />
+                  {uploadedVideoUrls.length > 0 && (
+                    <div className="mt-2 grid grid-cols-3 gap-2">
+                      {uploadedVideoUrls.map((url, idx) => (
+                        <div key={url + idx} className="relative">
+                          <video
+                            src={url}
+                            className="h-20 w-full object-cover rounded-md border"
+                            muted
+                          />
+                          <button
+                            type="button"
+                            className="absolute top-1 right-1 text-[10px] px-2 py-0.5 rounded bg-black/70 text-white"
+                            onClick={() =>
+                              setUploadedVideoUrls((prev) => prev.filter((u) => u !== url))
+                            }
+                            aria-label="Remove video"
+                          >
+                            Remove
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
                 {/* NEW: Paste images area */}
                 <div className="space-y-2">
                   <Label htmlFor="paste-area">Or paste images (Ctrl/⌘+V)</Label>
@@ -611,6 +803,20 @@ export default function Admin() {
                   </p>
                 </div>
 
+                {/* Add: Paste videos area */}
+                <div className="space-y-2">
+                  <Label htmlFor="video-paste-area">Or paste videos (Ctrl/⌘+V)</Label>
+                  <textarea
+                    id="video-paste-area"
+                    onPaste={handleVideoPasteUpload}
+                    placeholder="Click here and paste videos from clipboard"
+                    className="w-full h-16 rounded-md border border-gray-200 p-3 text-sm bg-white/90"
+                  />
+                  <p className="text-xs text-gray-500">
+                    Tip: Copy a video and press Ctrl/⌘+V here. We'll upload it automatically.
+                  </p>
+                </div>
+
                 {/* Existing: URL input remains, now optional */}
                 <div className="space-y-2">
                   <Label htmlFor="images">Or paste image URLs (comma separated)</Label>
@@ -620,6 +826,20 @@ export default function Admin() {
                     onChange={(e) => handleChange("images", e.target.value)}
                     placeholder="/api/placeholder/400/400, https://example.com/img2.jpg"
                   />
+                </div>
+
+                {/* Add: Video URL input */}
+                <div className="space-y-2">
+                  <Label htmlFor="videos">Or paste video URLs (comma separated)</Label>
+                  <Input
+                    id="videos"
+                    value={form.videos}
+                    onChange={(e) => handleChange("videos", e.target.value)}
+                    placeholder="https://youtube.com/watch?v=..., https://vimeo.com/..."
+                  />
+                  <p className="text-xs text-gray-500">
+                    Supports YouTube, Vimeo, or direct video URLs
+                  </p>
                 </div>
 
                 {/* Color Options */}
@@ -913,32 +1133,32 @@ export default function Admin() {
               />
             </div>
 
-            {/* NEW: Upload Images in Edit */}
+            {/* Add: Video upload in edit */}
             <div className="space-y-2">
-              <Label htmlFor="e_upload">Upload Images (multiple)</Label>
+              <Label htmlFor="e_video_upload">Upload Videos (multiple)</Label>
               <Input
-                id="e_upload"
+                id="e_video_upload"
                 type="file"
-                accept="image/*"
+                accept="video/*"
                 multiple
-                onChange={(e) => handleEditFilesUpload(e.target.files)}
+                onChange={(e) => handleEditVideoFilesUpload(e.target.files)}
               />
-              {editUploadedUrls.length > 0 && (
+              {editUploadedVideoUrls.length > 0 && (
                 <div className="mt-2 grid grid-cols-3 gap-2">
-                  {editUploadedUrls.map((url, idx) => (
+                  {editUploadedVideoUrls.map((url, idx) => (
                     <div key={url + idx} className="relative">
-                      <img
+                      <video
                         src={url}
-                        alt={`uploaded-edit-${idx}`}
                         className="h-20 w-full object-cover rounded-md border"
+                        muted
                       />
                       <button
                         type="button"
                         className="absolute top-1 right-1 text-[10px] px-2 py-0.5 rounded bg-black/70 text-white"
                         onClick={() =>
-                          setEditUploadedUrls((prev) => prev.filter((u) => u !== url))
+                          setEditUploadedVideoUrls((prev) => prev.filter((u) => u !== url))
                         }
-                        aria-label="Remove image"
+                        aria-label="Remove video"
                       >
                         Remove
                       </button>
@@ -948,18 +1168,29 @@ export default function Admin() {
               )}
             </div>
 
-            {/* NEW: Paste Images in Edit */}
+            {/* Add: Paste videos in edit */}
             <div className="space-y-2">
-              <Label htmlFor="e_paste">Or paste images (Ctrl/⌘+V)</Label>
+              <Label htmlFor="e_video_paste">Or paste videos (Ctrl/⌘+V)</Label>
               <textarea
-                id="e_paste"
-                onPaste={handleEditPasteUpload}
-                placeholder="Click here and paste images from clipboard"
+                id="e_video_paste"
+                onPaste={handleEditVideoPasteUpload}
+                placeholder="Click here and paste videos from clipboard"
                 className="w-full h-16 rounded-md border border-gray-200 p-3 text-sm bg-white/90"
               />
               <p className="text-xs text-gray-500">
-                Tip: Copy an image (or screenshot) and press Ctrl/⌘+V here. We'll upload it automatically.
+                Tip: Copy a video and press Ctrl/⌘+V here. We'll upload it automatically.
               </p>
+            </div>
+
+            {/* Add: Video URL input in edit */}
+            <div className="space-y-2">
+              <Label htmlFor="e_videos">Video URLs (comma separated)</Label>
+              <Input
+                id="e_videos"
+                value={editForm.videos}
+                onChange={(e) => setEditForm((f) => ({ ...f, videos: e.target.value }))}
+                placeholder="https://youtube.com/watch?v=..., https://vimeo.com/..."
+              />
             </div>
 
             {/* Color Options for Edit */}

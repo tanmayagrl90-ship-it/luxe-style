@@ -43,18 +43,28 @@ export const createProduct = mutation({
     price: v.number(),
     originalPrice: v.optional(v.number()),
     category: v.string(),
-    brand: v.optional(v.string()),
     images: v.array(v.string()),
+    videos: v.optional(v.array(v.string())),
     colors: v.optional(v.array(v.string())),
-    featured: v.optional(v.boolean()),
-    inStock: v.optional(v.boolean()),
+    brand: v.optional(v.string()),
+    featured: v.boolean(),
+    inStock: v.boolean(),
   },
   handler: async (ctx, args) => {
-    return await ctx.db.insert("products", {
-      ...args,
-      featured: args.featured ?? false,
-      inStock: args.inStock ?? true,
+    const productId = await ctx.db.insert("products", {
+      name: args.name,
+      description: args.description,
+      price: args.price,
+      originalPrice: args.originalPrice,
+      category: args.category,
+      images: args.images,
+      videos: args.videos,
+      colors: args.colors,
+      brand: args.brand,
+      featured: args.featured,
+      inStock: args.inStock,
     });
+    return productId;
   },
 });
 
@@ -66,22 +76,16 @@ export const updateProduct = mutation({
     price: v.optional(v.number()),
     originalPrice: v.optional(v.number()),
     category: v.optional(v.string()),
-    brand: v.optional(v.string()),
     images: v.optional(v.array(v.string())),
+    videos: v.optional(v.array(v.string())),
     colors: v.optional(v.array(v.string())),
+    brand: v.optional(v.string()),
     featured: v.optional(v.boolean()),
     inStock: v.optional(v.boolean()),
   },
   handler: async (ctx, args) => {
     const { id, ...updates } = args;
-    // Remove undefined keys so we only patch provided fields
-    const toPatch: Record<string, unknown> = {};
-    for (const [k, v] of Object.entries(updates)) {
-      if (v !== undefined) toPatch[k] = v;
-    }
-    if (Object.keys(toPatch).length === 0) return id;
-    await ctx.db.patch(id, toPatch);
-    return id;
+    await ctx.db.patch(id, updates);
   },
 });
 
