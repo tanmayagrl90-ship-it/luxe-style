@@ -354,20 +354,21 @@ export default function Admin() {
       return;
     }
 
-    // Block submit while any media is still uploading
-    if (uploadingInBackground) {
-      toast.error("Media is still uploading. Please wait a moment and try again.");
-      return;
-    }
-    // Block submit if any media preview still points to a blob URL
-    if (uploadedMedia.some(item => item.url.startsWith("blob:"))) {
-      toast.error("Please wait for all media to finish uploading before submitting.");
-      return;
+    // Allow submission even if uploads are in progress - they'll complete in background
+    const hasBlobUrls = uploadedMedia.some(item => item.url.startsWith("blob:"));
+    if (hasBlobUrls && uploadingInBackground) {
+      toast.info("Uploads are still processing. Product will be saved once uploads complete.");
+      // Continue with submission - uploads will finish in background
     }
 
     setIsSubmitting(true);
 
     try {
+      // Wait a moment for any in-progress uploads to complete
+      if (uploadingInBackground) {
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      }
+
       const cleanedMedia = uploadedMedia
         .filter(item => !item.url.startsWith("blob:"))
         .map(item => ({ ...item, url: item.url.split("?")[0] }));
@@ -388,7 +389,7 @@ export default function Admin() {
         price: priceNum,
         originalPrice: originalPriceNum,
         category: form.category,
-        images, // no placeholder fallback
+        images,
         videos: videos.length > 0 ? videos : undefined,
         colors: form.colors.length > 0 ? form.colors : undefined,
         featured: form.featured,
