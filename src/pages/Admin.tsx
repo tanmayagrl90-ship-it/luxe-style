@@ -817,31 +817,6 @@ export default function Admin() {
                   </p>
                 </div>
 
-                {/* Existing: URL input remains, now optional */}
-                <div className="space-y-2">
-                  <Label htmlFor="images">Or paste image URLs (comma separated)</Label>
-                  <Input
-                    id="images"
-                    value={form.images}
-                    onChange={(e) => handleChange("images", e.target.value)}
-                    placeholder="/api/placeholder/400/400, https://example.com/img2.jpg"
-                  />
-                </div>
-
-                {/* Add: Video URL input */}
-                <div className="space-y-2">
-                  <Label htmlFor="videos">Or paste video URLs (comma separated)</Label>
-                  <Input
-                    id="videos"
-                    value={form.videos}
-                    onChange={(e) => handleChange("videos", e.target.value)}
-                    placeholder="https://youtube.com/watch?v=..., https://vimeo.com/..."
-                  />
-                  <p className="text-xs text-gray-500">
-                    Supports YouTube, Vimeo, or direct video URLs
-                  </p>
-                </div>
-
                 {/* Color Options */}
                 <div className="space-y-2">
                   <Label>Color Options (optional)</Label>
@@ -1180,17 +1155,6 @@ export default function Admin() {
               <p className="text-xs text-gray-500">
                 Tip: Copy a video and press Ctrl/⌘+V here. We'll upload it automatically.
               </p>
-            </div>
-
-            {/* Add: Video URL input in edit */}
-            <div className="space-y-2">
-              <Label htmlFor="e_videos">Video URLs (comma separated)</Label>
-              <Input
-                id="e_videos"
-                value={editForm.videos}
-                onChange={(e) => setEditForm((f) => ({ ...f, videos: e.target.value }))}
-                placeholder="https://youtube.com/watch?v=..., https://vimeo.com/..."
-              />
             </div>
 
             {/* Color Options for Edit */}
