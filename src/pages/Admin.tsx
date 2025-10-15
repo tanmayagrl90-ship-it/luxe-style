@@ -80,18 +80,14 @@ export default function Admin() {
   // Add: Convex storage URL resolver action (returns a canonical public URL)
   const resolvePublicUrl = useAction((api as any).storage.resolvePublicUrl);
 
-  // Optimized: wait until the uploaded file is publicly readable (reduced delays)
+  // Optimized: wait until the uploaded file is publicly readable (minimal delay)
   const ensureFileAvailable = async (url: string) => {
-    // Reduced to just 2 quick attempts instead of 8 long ones
-    const delays = [0, 200]; // ms
-    for (let i = 0; i < delays.length; i++) {
-      if (delays[i]) await new Promise((r) => setTimeout(r, delays[i]));
-      try {
-        const res = await fetch(url, { method: "HEAD", cache: "no-store" });
-        if (res.ok) return;
-      } catch {
-        // try next
-      }
+    // Single quick check - blob URLs show instantly, actual upload happens in background
+    try {
+      const res = await fetch(url, { method: "HEAD", cache: "no-store" });
+      if (res.ok) return;
+    } catch {
+      // File will be available shortly, continue anyway
     }
   };
 
