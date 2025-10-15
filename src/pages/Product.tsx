@@ -182,7 +182,14 @@ export default function ProductPage() {
   }
 
   const images = product.images ?? [];
-  const image = images[activeIndex] ?? images[0];
+  const videos = product.videos ?? [];
+  const totalMedia = images.length + videos.length;
+  
+  // Determine if current active index is an image or video
+  const isVideo = activeIndex >= images.length;
+  const currentMedia = isVideo 
+    ? videos[activeIndex - images.length]
+    : images[activeIndex];
 
   return (
     <div className="min-h-screen bg-black text-white">
@@ -191,16 +198,32 @@ export default function ProductPage() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 grid lg:grid-cols-2 gap-10">
           <Card className="bg-black border-white/10 overflow-hidden rounded-2xl">
             <div className="relative aspect-square group">
-              {image ? (
+              {currentMedia ? (
                 <>
-                  <img
-                    src={image}
-                    alt={product.name}
-                    className={`absolute inset-0 w-full h-full object-cover rounded-2xl transition-opacity duration-300 ${!product.inStock ? 'brightness-50' : ''}`}
-                    loading="eager"
-                    fetchPriority="high"
-                    decoding="async"
-                  />
+                  {isVideo ? (
+                    <video
+                      src={currentMedia}
+                      className={`absolute inset-0 w-full h-full object-cover rounded-2xl ${!product.inStock ? 'brightness-50' : ''}`}
+                      controls
+                      autoPlay
+                      muted
+                      loop
+                      playsInline
+                    />
+                  ) : (
+                    <>
+                      <img
+                        src={currentMedia}
+                        alt={product.name}
+                        className={`absolute inset-0 w-full h-full object-cover rounded-2xl transition-opacity duration-300 ${!product.inStock ? 'brightness-50' : ''}`}
+                        loading="eager"
+                        fetchPriority="high"
+                        decoding="async"
+                      />
+                      <ProductZoom images={images} productName={product.name} initialIndex={activeIndex} />
+                    </>
+                  )}
+                  
                   {!product.inStock && (
                     <div className="absolute inset-0 flex items-center justify-center z-10">
                       <span className="text-red-500 text-sm font-semibold tracking-wider" style={{ fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif" }}>
@@ -208,16 +231,15 @@ export default function ProductPage() {
                       </span>
                     </div>
                   )}
-                  <ProductZoom images={images} productName={product.name} initialIndex={activeIndex} />
                   
-                  {/* Navigation overlays - only show if multiple images */}
-                  {images.length > 1 && (
+                  {/* Navigation overlays - only show if multiple media items */}
+                  {totalMedia > 1 && (
                     <>
-                      {/* Left side - Previous image */}
+                      {/* Left side - Previous media */}
                       <button
-                        onClick={() => setActiveIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1))}
+                        onClick={() => setActiveIndex((prev) => (prev === 0 ? totalMedia - 1 : prev - 1))}
                         className="absolute left-0 top-0 bottom-0 w-1/3 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10"
-                        aria-label="Previous image"
+                        aria-label="Previous media"
                       >
                         <div className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/60 backdrop-blur-sm rounded-full p-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                           <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -226,11 +248,11 @@ export default function ProductPage() {
                         </div>
                       </button>
                       
-                      {/* Right side - Next image */}
+                      {/* Right side - Next media */}
                       <button
-                        onClick={() => setActiveIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1))}
+                        onClick={() => setActiveIndex((prev) => (prev === totalMedia - 1 ? 0 : prev + 1))}
                         className="absolute right-0 top-0 bottom-0 w-1/3 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10"
-                        aria-label="Next image"
+                        aria-label="Next media"
                       >
                         <div className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/60 backdrop-blur-sm rounded-full p-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                           <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -250,7 +272,7 @@ export default function ProductPage() {
               )}
             </div>
 
-            {images.length > 1 && (
+            {totalMedia > 1 && (
               <div className="p-4">
                 <div className="flex gap-3 overflow-x-auto snap-x snap-mandatory scrollbar-hide">
                   {images.map((src, idx) => (
@@ -270,6 +292,29 @@ export default function ProductPage() {
                         className="h-full w-full object-cover"
                         loading="lazy"
                       />
+                    </button>
+                  ))}
+                  {videos.map((src, idx) => (
+                    <button
+                      key={src + idx}
+                      onClick={() => setActiveIndex(images.length + idx)}
+                      className={`relative h-18 w-18 sm:h-20 sm:w-20 rounded-xl overflow-hidden flex-shrink-0 ring-1 transition-all duration-200 snap-center ${
+                        activeIndex === images.length + idx
+                          ? "ring-white"
+                          : "ring-white/20 hover:ring-white/40"
+                      }`}
+                      aria-label={`View video ${idx + 1}`}
+                    >
+                      <video
+                        src={src}
+                        className="h-full w-full object-cover"
+                        muted
+                      />
+                      <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+                        <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M8 5v14l11-7z"/>
+                        </svg>
+                      </div>
                     </button>
                   ))}
                 </div>
