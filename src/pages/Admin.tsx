@@ -74,6 +74,7 @@ export default function Admin() {
   // Replace separate image/video states with unified media state
   const [uploadedMedia, setUploadedMedia] = useState<MediaItem[]>([]);
   const [editUploadedMedia, setEditUploadedMedia] = useState<MediaItem[]>([]);
+  const [uploadingInBackground, setUploadingInBackground] = useState(false);
 
   // Add: Convex storage upload action
   const generateUploadUrl = useAction((api as any).storage.generateUploadUrl);
@@ -91,7 +92,7 @@ export default function Admin() {
     }
   };
 
-  // Updated: unified media upload helper
+  // Updated: unified media upload helper - non-blocking with background upload
   const uploadMediaFiles = async (files: Array<File>, isEdit: boolean = false) => {
     if (!files || files.length === 0) return;
     
@@ -106,8 +107,11 @@ export default function Admin() {
       setUploadedMedia((prev) => [...prev, ...blobItems]);
     }
     
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i];
+    // Upload in background without blocking
+    setUploadingInBackground(true);
+    
+    // Process uploads asynchronously
+    Promise.all(files.map(async (file, i) => {
       const blobUrl = blobItems[i].url;
       const mediaType = blobItems[i].type;
       
@@ -121,7 +125,6 @@ export default function Admin() {
         if (!res.ok) throw new Error("Upload failed");
         const json = (await res.json()) as { storageId: string };
         const publicUrl: string = await resolvePublicUrl({ storageId: json.storageId as any });
-        await ensureFileAvailable(publicUrl);
         
         const updateFn = isEdit ? setEditUploadedMedia : setUploadedMedia;
         updateFn((prev) => {
@@ -139,7 +142,9 @@ export default function Admin() {
         updateFn((prev) => prev.filter(item => item.url !== blobUrl));
         URL.revokeObjectURL(blobUrl);
       }
-    }
+    })).finally(() => {
+      setUploadingInBackground(false);
+    });
   };
 
   // Update: reuse helper for input[type=file] uploads
@@ -324,7 +329,6 @@ export default function Admin() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Prevent double submission
     if (isSubmitting) return;
     
     if (!form.name.trim()) {
@@ -346,10 +350,16 @@ export default function Admin() {
       return;
     }
 
+    // Check if any media is still uploading
+    const hasBlobUrls = uploadedMedia.some(item => item.url.startsWith('blob:'));
+    if (hasBlobUrls && uploadingInBackground) {
+      toast("Media is still uploading. Please wait a moment...");
+      return;
+    }
+
     try {
       setIsSubmitting(true);
       
-      // Separate images and videos from unified media
       const cleanedMedia = uploadedMedia
         .filter(item => !item.url.startsWith('blob:'))
         .map(item => ({ ...item, url: item.url.split("?")[0] }));
