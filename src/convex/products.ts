@@ -14,8 +14,50 @@ export const getProductsByCategory = query({
     return await ctx.db
       .query("products")
       .withIndex("by_category", (q) => q.eq("category", args.category))
-      .order("desc") // Show newest products first so the last added item is visible at the top
+      .order("desc")
       .collect();
+  },
+});
+
+export const getFilteredProducts = query({
+  args: {
+    category: v.string(),
+    minPrice: v.optional(v.number()),
+    maxPrice: v.optional(v.number()),
+    brands: v.optional(v.array(v.string())),
+    colors: v.optional(v.array(v.string())),
+  },
+  handler: async (ctx, args) => {
+    let products = await ctx.db
+      .query("products")
+      .withIndex("by_category", (q) => q.eq("category", args.category))
+      .order("desc")
+      .collect();
+
+    // Filter by price
+    if (args.minPrice !== undefined || args.maxPrice !== undefined) {
+      products = products.filter((p) => {
+        const price = p.price;
+        if (args.minPrice !== undefined && price < args.minPrice) return false;
+        if (args.maxPrice !== undefined && price > args.maxPrice) return false;
+        return true;
+      });
+    }
+
+    // Filter by brands
+    if (args.brands && args.brands.length > 0) {
+      products = products.filter((p) => p.brand && args.brands!.includes(p.brand));
+    }
+
+    // Filter by colors
+    if (args.colors && args.colors.length > 0) {
+      products = products.filter((p) => {
+        if (!p.colors) return false;
+        return p.colors.some((c) => args.colors!.includes(c));
+      });
+    }
+
+    return products;
   },
 });
 
