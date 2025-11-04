@@ -33,95 +33,18 @@ export default function CategoryPage() {
   const navigate = useNavigate();
 
   // Filter states
-  const [minPrice, setMinPrice] = useState<number>(0);
-  const [maxPrice, setMaxPrice] = useState<number>(10000);
-  const [selectedBrands, setSelectedBrands] = useState<Set<string>>(new Set());
-  const [selectedColors, setSelectedColors] = useState<Set<string>>(new Set());
-  const [showFilters, setShowFilters] = useState(false);
-  const [expandedFilters, setExpandedFilters] = useState<Set<string>>(new Set(["price", "brand", "color"]));
-
-  // Get filtered products
-  const filteredProducts = useQuery(api.products.getFilteredProducts, {
-    category,
-    minPrice,
-    maxPrice,
-    brands: selectedBrands.size > 0 ? Array.from(selectedBrands) : undefined,
-    colors: selectedColors.size > 0 ? Array.from(selectedColors) : undefined,
-  });
-
-  const products = filteredProducts;
-
-  // Extract unique brands and colors from all products
-  const uniqueBrands = allProducts
-    ? Array.from(new Set(allProducts.filter(p => p.brand).map(p => p.brand!)))
-        .sort()
-    : [];
-
-  const uniqueColors = allProducts
-    ? Array.from(new Set(allProducts.flatMap(p => p.colors ?? []))).sort()
-    : [];
-
-  const priceRange = allProducts
-    ? {
-        min: Math.min(...allProducts.map(p => p.price)),
-        max: Math.max(...allProducts.map(p => p.price)),
-      }
-    : { min: 0, max: 10000 };
+  // Get all products for the category
+  const products = useQuery(api.products.getProductsByCategory, { category });
 
   // Track active image index for each product
   const [activeImageIndices, setActiveImageIndices] = useState<Record<string, number>>({});
   const [hoverIntervals, setHoverIntervals] = useState<Record<string, NodeJS.Timeout>>({});
 
-  const toggleFilter = (filterName: string) => {
-    setExpandedFilters(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(filterName)) {
-        newSet.delete(filterName);
-      } else {
-        newSet.add(filterName);
-      }
-      return newSet;
-    });
-  };
-
-  const toggleBrand = (brand: string) => {
-    setSelectedBrands(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(brand)) {
-        newSet.delete(brand);
-      } else {
-        newSet.add(brand);
-      }
-      return newSet;
-    });
-  };
-
-  const toggleColor = (color: string) => {
-    setSelectedColors(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(color)) {
-        newSet.delete(color);
-      } else {
-        newSet.add(color);
-      }
-      return newSet;
-    });
-  };
-
-  const resetFilters = () => {
-    setMinPrice(priceRange.min);
-    setMaxPrice(priceRange.max);
-    setSelectedBrands(new Set());
-    setSelectedColors(new Set());
-  };
-
-  const hasActiveFilters = selectedBrands.size > 0 || selectedColors.size > 0 || minPrice > priceRange.min || maxPrice < priceRange.max;
-
   // Aggressively preload all product images for instant display
   useEffect(() => {
-    if (!allProducts || allProducts.length === 0) return;
+    if (!products || products.length === 0) return;
     
-    const imageUrls = allProducts.flatMap(p => p.images ?? []);
+    const imageUrls = products.flatMap(p => p.images ?? []);
     
     // Create link preload tags for critical images
     const fragment = document.createDocumentFragment();
@@ -262,171 +185,17 @@ export default function CategoryPage() {
       <main className="pt-20">
         <section className="bg-black">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-            {/* Header with Filter Toggle */}
-            <div className="mb-8 flex items-start justify-between gap-4">
-              <div>
-                <h1 className="text-3xl lg:text-4xl font-bold tracking-tight text-white">
-                  {prettyName[category] ?? "Collection"}
-                </h1>
-                <p className="text-gray-300 mt-2">Explore our premium {prettyName[category] ?? "products"}.</p>
-              </div>
-              <Button
-                onClick={() => setShowFilters(!showFilters)}
-                className="lg:hidden mt-2 bg-white/10 hover:bg-white/20 text-white border border-white/20 rounded-full"
-              >
-                Filters
-              </Button>
+            {/* Header */}
+            <div className="mb-8">
+              <h1 className="text-3xl lg:text-4xl font-bold tracking-tight text-white">
+                {prettyName[category] ?? "Collection"}
+              </h1>
+              <p className="text-gray-300 mt-2">Explore our premium {prettyName[category] ?? "products"}.</p>
             </div>
 
-            <div className="flex gap-6 lg:gap-8">
-              {/* Premium Filter Sidebar */}
-              <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.3 }}
-                className={`${
-                  showFilters ? "block" : "hidden"
-                } lg:block w-full lg:w-64 flex-shrink-0`}
-              >
-                <div className="sticky top-24 bg-gradient-to-b from-white/5 to-white/[0.02] border border-white/10 rounded-2xl p-6 backdrop-blur-sm">
-                  <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-lg font-bold text-white">Filters</h2>
-                    {hasActiveFilters && (
-                      <Button
-                        onClick={resetFilters}
-                        variant="ghost"
-                        className="text-xs text-gray-400 hover:text-white h-auto p-0"
-                      >
-                        Reset
-                      </Button>
-                    )}
-                  </div>
-
-                  {/* Price Filter */}
-                  <div className="mb-6 pb-6 border-b border-white/10">
-                    <button
-                      onClick={() => toggleFilter("price")}
-                      className="flex items-center justify-between w-full mb-4 group"
-                    >
-                      <h3 className="text-sm font-semibold text-white group-hover:text-gray-300 transition-colors">
-                        Price Range
-                      </h3>
-                      <ChevronDown
-                        className={`h-4 w-4 text-gray-400 transition-transform ${
-                          expandedFilters.has("price") ? "rotate-180" : ""
-                        }`}
-                      />
-                    </button>
-                    {expandedFilters.has("price") && (
-                      <div className="space-y-4">
-                        <div>
-                          <label className="text-xs text-gray-400 mb-2 block">Min: ₹{minPrice.toLocaleString()}</label>
-                          <input
-                            type="range"
-                            min={priceRange.min}
-                            max={priceRange.max}
-                            value={minPrice}
-                            onChange={(e) => setMinPrice(Number(e.target.value))}
-                            className="w-full h-1 bg-white/10 rounded-lg appearance-none cursor-pointer accent-white"
-                          />
-                        </div>
-                        <div>
-                          <label className="text-xs text-gray-400 mb-2 block">Max: ₹{maxPrice.toLocaleString()}</label>
-                          <input
-                            type="range"
-                            min={priceRange.min}
-                            max={priceRange.max}
-                            value={maxPrice}
-                            onChange={(e) => setMaxPrice(Number(e.target.value))}
-                            className="w-full h-1 bg-white/10 rounded-lg appearance-none cursor-pointer accent-white"
-                          />
-                        </div>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Brand Filter */}
-                  {uniqueBrands.length > 0 && (
-                    <div className="mb-6 pb-6 border-b border-white/10">
-                      <button
-                        onClick={() => toggleFilter("brand")}
-                        className="flex items-center justify-between w-full mb-4 group"
-                      >
-                        <h3 className="text-sm font-semibold text-white group-hover:text-gray-300 transition-colors">
-                          Brand
-                        </h3>
-                        <ChevronDown
-                          className={`h-4 w-4 text-gray-400 transition-transform ${
-                            expandedFilters.has("brand") ? "rotate-180" : ""
-                          }`}
-                        />
-                      </button>
-                      {expandedFilters.has("brand") && (
-                        <div className="space-y-2">
-                          {uniqueBrands.map((brand) => (
-                            <label
-                              key={brand}
-                              className="flex items-center gap-3 cursor-pointer group"
-                            >
-                              <input
-                                type="checkbox"
-                                checked={selectedBrands.has(brand)}
-                                onChange={() => toggleBrand(brand)}
-                                className="w-4 h-4 rounded border-white/20 bg-white/5 cursor-pointer accent-white"
-                              />
-                              <span className="text-sm text-gray-300 group-hover:text-white transition-colors">
-                                {brand}
-                              </span>
-                            </label>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  )}
-
-                  {/* Color Filter */}
-                  {uniqueColors.length > 0 && (
-                    <div>
-                      <button
-                        onClick={() => toggleFilter("color")}
-                        className="flex items-center justify-between w-full mb-4 group"
-                      >
-                        <h3 className="text-sm font-semibold text-white group-hover:text-gray-300 transition-colors">
-                          Color
-                        </h3>
-                        <ChevronDown
-                          className={`h-4 w-4 text-gray-400 transition-transform ${
-                            expandedFilters.has("color") ? "rotate-180" : ""
-                          }`}
-                        />
-                      </button>
-                      {expandedFilters.has("color") && (
-                        <div className="space-y-2">
-                          {uniqueColors.map((color) => (
-                            <label
-                              key={color}
-                              className="flex items-center gap-3 cursor-pointer group"
-                            >
-                              <input
-                                type="checkbox"
-                                checked={selectedColors.has(color)}
-                                onChange={() => toggleColor(color)}
-                                className="w-4 h-4 rounded border-white/20 bg-white/5 cursor-pointer accent-white"
-                              />
-                              <span className="text-sm text-gray-300 group-hover:text-white transition-colors">
-                                {color}
-                              </span>
-                            </label>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </div>
-              </motion.div>
-
+            <div>
               {/* Products Grid */}
-              <div className="flex-1">
+              <div className="w-full">
                 {!products ? (
                   // Loading skeleton
                   <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
