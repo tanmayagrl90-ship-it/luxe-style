@@ -26,6 +26,13 @@ services:
       CONVEX_CLOUD_ORIGIN: https://3000-${BASE44_PUBLIC_HOST_SUFFIX}
       CONVEX_SITE_ORIGIN: https://3000-${BASE44_PUBLIC_HOST_SUFFIX}
       DISABLE_BEACON: "true"
+      # Sandbox log hygiene: on every push/reload the self-hosted backend emits a
+      # few benign warnings - the static analyzer cannot resolve the routes that
+      # Convex Auth adds dynamically (/.well-known/jwks.json, openid-configuration),
+      # component modules that are not part of the function map, and abrupt client
+      # WebSocket disconnects when the browser reloads. Silence only those targets
+      # so real errors stay visible; everything else keeps the default `info` level.
+      RUST_LOG: "info,common::errors=error,isolate::environment::analyze=error,model::components::config=error,local_backend=error"
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3210/version"]
       interval: 5s
