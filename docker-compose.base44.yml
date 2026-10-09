@@ -1,0 +1,115 @@
+# Development environment for this repository (Base44 sandbox).
+#
+# The app is a Vite/React storefront whose backend is a Convex deployment.
+# Convex is normally a hosted service, so here it runs fully self-hosted from the
+# official backend image (SQLite + local file storage), and the Vite dev server
+# proxies the Convex API on the app's own origin (see `server.proxy` in
+# vite.config.ts).
+#
+#   docker compose -f docker-compose.base44.yml up -d
+#
+# Everything is self-contained; RESEND_API_KEY (newsletter email) is optional and
+# comes from the platform secrets file.
+services:
+  convex-backend:
+    # Infrastructure the user does not edit - a prebuilt image is correct here.
+    image: ghcr.io/get-convex/convex-backend:latest
+    restart: on-failure
+    stop_grace_period: 10s
+    stop_signal: SIGINT
+    volumes:
+      - convex-data:/convex/data
+    environment:
+      # Origins the backend advertises to clients (storage URLs, HTTP actions)
+      # and uses to validate Convex Auth tokens. The Vite dev server proxies
+      # these paths back to the backend, so everything stays same-origin.
+      CONVEX_CLOUD_ORIGIN: https://3000-${BASE44_PUBLIC_HOST_SUFFIX}
+      CONVEX_SITE_ORIGIN: https://3000-${BASE44_PUBLIC_HOST_SUFFIX}
+      DISABLE_BEACON: "true"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3210/version"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 10s
+
+  # One-shot: derives the deployment admin key from the credentials persisted in
+  # the data volume, so `convex-setup` can push code. Uses the backend image
+  # because the key tooling only exists there.
+  convex-admin-key:
+    image: ghcr.io/get-convex/convex-backend:latest
+    depends_on:
+      convex-backend:
+        condition: service_healthy
+    volumes:
+      - convex-data:/convex/data
+    entrypoint: ["/bin/bash", "-c"]
+    command:
+      - |
+        set -e
+        mkdir -p /convex/data/base44
+        ./generate_admin_key.sh > /convex/data/base44/admin_key
+        echo "[base44] admin key ready"
+
+  # One-shot: installs dependencies and prepares the Convex deployment
+  # (see scripts/base44-convex-setup.sh). Idempotent, so it is safe to rerun.
+  convex-setup:
+    image: node:22
+    depends_on:
+      convex-admin-key:
+        condition: service_completed_successfully
+    working_dir: /app
+    volumes:
+      - ./:/app
+      - node_modules:/app/node_modules
+      # pnpm's default store lives on the container filesystem, which makes pnpm
+      # create a (large) .pnpm-store inside the mounted project. Keep it in a volume.
+      - pnpm-store:/pnpm-store
+      - convex-data:/convex-data
+    environment:
+      APP_ORIGIN: https://3000-${BASE44_PUBLIC_HOST_SUFFIX}
+      CONVEX_SELF_HOSTED_URL: http://convex-backend:3210
+    # Optional external credentials (kept out of the repo). LAST, so real values win.
+    env_file:
+      - path: /run/base44/app.env
+        required: false
+    command:
+      - sh
+      - -ec
+      - npm install -g pnpm@10.34.6 >/dev/null && bash scripts/base44-convex-setup.sh
+
+  web:
+    image: node:22
+    restart: on-failure
+    depends_on:
+      convex-setup:
+        condition: service_completed_successfully
+    working_dir: /app
+    volumes:
+      - ./:/app
+      - node_modules:/app/node_modules
+    ports:
+      - "3000:3000"
+    environment:
+      # The public origin is also the Convex deployment URL (proxied to convex-backend).
+      VITE_CONVEX_URL: https://3000-${BASE44_PUBLIC_HOST_SUFFIX}
+      BASE44_PREVIEW_MODE:
+      __VITE_ADDITIONAL_SERVER_ALLOWED_HOSTS:
+    command: ["sh", "-ec", "exec ./node_modules/.bin/vite"]
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:3000/').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 60s
+
+volumes:
+  convex-data:
+  node_modules:
+  pnpm-store:
